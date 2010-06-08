@@ -29,7 +29,6 @@ Module Launcher
         If rtnLen > 0 Then
             strTitle = Left$(strTitle, rtnLen)
         End If
-        'MsgBox(strTitle)
         hwnd = FindWindow(vbNullString, strTitle)
         ' hide the app
         ShowWindow(hwnd, SW_HIDE)
@@ -39,10 +38,6 @@ Module Launcher
 
         Dim key As RegistryKey = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Export Smart Objects\\command\")
 
-        'strRead = Registry.ClassesRoot.OpenSubKey(strRoot, True)
-
-        'MsgBox(Err.Number)
-        'MsgBox(Err.Description)
         If key Is Nothing Then
             Dim newKey As RegistryKey
             newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image.11\\shell\\Export Smart Objects\\command")
@@ -60,8 +55,7 @@ Module Launcher
         On Error GoTo 0
 
         Dim args As String() = Environment.GetCommandLineArgs()
-        'MsgBox(args.Length)
-        'End
+
         Dim num As Integer = UBound(args)
         If num < 1 Then
             MsgBox("Utilisez le menu contextuel sur les fichiers .PSD, .PSB")
@@ -75,7 +69,6 @@ Module Launcher
         On Error Resume Next
         If appRef.Documents.Count > 0 Then
             For i = 1 To appRef.Documents.Count
-                'msgbox(appRef.Documents.Item(i).FullName)
                 If args(1) = appRef.Documents.Item(i).FullName Then
                     appRef.ActiveDocument = appRef.Documents.Item(i)
                     docRef = appRef.ActiveDocument
@@ -85,14 +78,12 @@ Module Launcher
             Next
         End If
         If Err.Number <> 0 Then
-            'MsgBox("koin")
             Call showErr("opened")
         End If
         On Error GoTo 0
 
         If openDoc Then
             On Error Resume Next
-            'MsgBox(args(2))
             docRef = appRef.Open(args(1))
             If Err.Number <> 0 Then
                 Call showErr("opened")
@@ -105,7 +96,7 @@ Module Launcher
         Dim compRef As Photoshop.LayerComp
         Dim duppedDocument As Photoshop.Document
         Dim fileNameBody As String
-        'MsgBox(docRef.Name)
+
         compsCount = docRef.LayerComps.Count
         checkLayer(docRef.Layers)
 
@@ -116,13 +107,10 @@ Module Launcher
     End Sub
 
     Sub checkLayer(ByVal obj)
-        'Dim fol
         Dim oLayerRef
         Dim oLayer
-        'Dim fso
-        Dim isVisible
-        'fso = CreateObject("Scripting.FileSystemObject")
-        Dim j
+        Dim isVisible As Boolean
+        Dim j As Integer
         For j = 1 To obj.count
             oLayer = obj.Item(j)
             isVisible = oLayer.visible
@@ -133,7 +121,6 @@ Module Launcher
             ElseIf oLayer.typename = "ArtLayer" Then
                 If oLayer.Kind = 17 Then
 
-                    'msgbox(oLayer.typename)
                     Dim idplacedLayerExportContents
                     idplacedLayerExportContents = appRef.stringIDToTypeID("placedLayerExportContents")
 
@@ -144,18 +131,13 @@ Module Launcher
                     Dim idnull
                     idnull = appRef.charIDToTypeID("null")
 
-                    'msgbox(fso.FolderExists(docRef.Path & "exports\"))
                     If Not Directory.Exists(docRef.Path & "Exports\") Then
                         Directory.CreateDirectory(docRef.Path & "Exports\")
                     End If
-                    'MsgBox(oLayer.Name)
-                    If isExportable(oLayer.Name) Then
-                        If isIllustrator(oLayer.Name) Then
-                            Call desc4.putPath(idnull, docRef.Path & "Exports\" & wipeName(oLayer.Name) & ".ai")
-                        Else
-                            'MsgBox(wipeName(oLayer.Name))
-                            Call desc4.putPath(idnull, docRef.Path & "Exports\" & wipeName(oLayer.Name) & ".psd")
-                        End If
+
+                    Dim soType = getSmartObjectType(appRef)
+                    If soType <> "" Then
+                        Call desc4.putPath(idnull, docRef.Path & "Exports\" & wipeName(oLayer.Name) & soType)
                         Call appRef.ExecuteAction(idplacedLayerExportContents, desc4, 3)
                     End If
                 End If
@@ -164,14 +146,23 @@ Module Launcher
         Next
     End Sub
 
-    Function isIllustrator(ByVal value)
-        Dim myRegExp As Regex
-        isIllustrator = myRegExp.IsMatch(value, "^(v:|vector)", RegexOptions.Multiline And RegexOptions.IgnoreCase)
-    End Function
-
-    Function isExportable(ByVal value)
-        Dim myRegExp As Regex
-        isExportable = Not myRegExp.IsMatch(value, "^(layer|vector)", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+    Function getSmartObjectType(ByVal appRef)
+        Dim aRef As Photoshop.ActionReference = New Photoshop.ActionReference()
+        Call aRef.PutEnumerated(appRef.charIDToTypeID("Lyr "), appRef.charIDToTypeID("Ordn"), appRef.charIDToTypeID("Trgt"))
+        Dim desc = appRef.ExecuteActionGet(aRef)
+        If desc.hasKey(appRef.stringIDToTypeID("smartObject")) Then
+            desc = appRef.ExecuteActionGet(aRef).GetObjectValue(appRef.stringIDToTypeID("smartObject")).GetEnumerationValue(appRef.stringIDToTypeID("placed"))
+            Select Case appRef.typeIDToStringID(desc)
+                Case "vectorData"
+                    getSmartObjectType = ".ai"
+                Case "rasterizeContent"
+                    getSmartObjectType = ".psd"
+                Case Else
+                    getSmartObjectType = ""
+            End Select
+        Else
+            getSmartObjectType = ""
+        End If
     End Function
 
     Function wipeName(ByVal value)
