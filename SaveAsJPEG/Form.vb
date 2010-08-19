@@ -290,7 +290,7 @@ Public Class Form
                 cleanFileName = RegexObj.Replace(currentFileName, "")
 
                 'MsgBox(cleanFileName)
-                Dim RegexObj2 As Regex = New Regex("^" & cleanFileName)
+                Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d|\.)")
 
                 afi = di.GetFiles("*.*")
                 For Each fi In afi
@@ -299,10 +299,7 @@ Public Class Form
                         If isOldFileVersion(fi.Name, currentVersion) Then
                             'MsgBox(fi.Name)
                             On Error Resume Next
-
                             File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
-
-
                         End If
                     End If
                 Next
