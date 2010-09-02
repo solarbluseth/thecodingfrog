@@ -32,14 +32,14 @@ Public Class Form
         If rtnLen > 0 Then
             strTitle = Strings.Left$(strTitle, rtnLen)
         End If
-        'MsgBox(strTitle)
+
         hwnd = FindWindow(vbNullString, strTitle)
+
+        Me.Text = System.Reflection.Assembly.GetExecutingAssembly.GetName().Name.ToString() & " v" & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Major.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Minor.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Build.ToString()
 
         loadConf()
         If isSetup() Then
             args = Environment.GetCommandLineArgs()
-            'MsgBox(args.Length)
-            'End
             Dim num As Integer = UBound(args)
             If num < 2 Then
                 ShowWindow(hwnd, SW_SHOWNORMAL)
@@ -68,11 +68,10 @@ Public Class Form
             End If
 
             key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
-            'MsgBox(key.GetValue("ArchiveDirectory"))
             If key.GetValue("ArchiveDirectory") <> "" Then
                 Me.ArchiveDirectory.Text = key.GetValue("ArchiveDirectory")
             Else
-                Me.AutoArchive.Checked = "Archives"
+                Me.ArchiveDirectory.Text = "Archives"
             End If
         Catch e As Exception
         End Try
@@ -94,7 +93,7 @@ Public Class Form
             Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11")
             Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12")
         End Select
-        'Dim key As RegistryKey = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10")
+
         If (key Is Nothing) Then
             Return False
         Else
@@ -143,8 +142,6 @@ Public Class Form
 
     Private Sub RegInstall(version as String)
 
-        'Dim key As RegistryKey = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100%\\command\")
-
         Dim newKey As RegistryKey
         newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100%\\command")
         newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
@@ -171,7 +168,6 @@ Public Class Form
         newKey.Close()
         Setup()
 
-        'key.Close()
     End Sub
 
     Private Sub RegUninstall(ByVal version As String)
@@ -199,7 +195,6 @@ Public Class Form
         On Error Resume Next
         If appRef.Documents.Count > 0 Then
             For i = 1 To appRef.Documents.Count
-                'msgbox(appRef.Documents.Item(i).FullName)
                 If args(2) = appRef.Documents.Item(i).FullName Then
                     appRef.ActiveDocument = appRef.Documents.Item(i)
                     docRef = appRef.ActiveDocument
@@ -209,14 +204,12 @@ Public Class Form
             Next
         End If
         If Err.Number <> 0 Then
-            'MsgBox("koin")
             Call showErr("opened")
         End If
         On Error GoTo 0
 
         If openDoc Then
             On Error Resume Next
-            'MsgBox(args(2))
             docRef = appRef.Open(args(2))
             If Err.Number <> 0 Then
                 Call showErr("opened")
@@ -229,9 +222,9 @@ Public Class Form
         Dim compRef As Photoshop.LayerComp
         Dim duppedDocument As Photoshop.Document
         Dim fileNameBody As String
-        'MsgBox(docRef.Name)
+
         compsCount = docRef.LayerComps.Count
-        'msgbox(compsCount)
+
         Dim jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
         jpgSaveOptions.EmbedColorProfile = False
         jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
@@ -275,10 +268,9 @@ Public Class Form
             Dim afi() As FileInfo
             Dim fi As FileInfo
 
-            'MsgBox(docRef.Path)
+
             di = New DirectoryInfo(docRef.Path)
             Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
-            'MsgBox(currentFileName)
 
             Dim RegexObj As Regex = New Regex("\d*$")
             Dim myMatches As Match
@@ -289,15 +281,12 @@ Public Class Form
                 currentVersion = myMatches.Value
                 cleanFileName = RegexObj.Replace(currentFileName, "")
 
-                'MsgBox(cleanFileName)
                 Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d|\.)")
 
                 afi = di.GetFiles("*.*")
                 For Each fi In afi
-                    'MsgBox(getFileVersion(fi.Name))
                     If RegexObj2.IsMatch(fi.Name) Then
                         If isOldFileVersion(fi.Name, currentVersion) Then
-                            'MsgBox(fi.Name)
                             On Error Resume Next
                             File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
                         End If
