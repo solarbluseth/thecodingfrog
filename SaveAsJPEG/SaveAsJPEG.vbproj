@@ -11,6 +11,7 @@
     <RootNamespace>SaveAsJPEG</RootNamespace>
     <AssemblyName>SaveAsJPEG</AssemblyName>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
+    <ApplicationIcon>wizard.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -104,6 +105,9 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="wizard.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
