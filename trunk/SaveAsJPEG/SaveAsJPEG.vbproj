@@ -118,6 +118,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetFileName) "C:\Program Files\Adobe"</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"</PostBuildEvent>
   </PropertyGroup>
 </Project>

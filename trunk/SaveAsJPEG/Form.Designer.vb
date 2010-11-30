@@ -24,6 +24,8 @@ Partial Class Form
     Private Sub InitializeComponent()
         Me.Install = New System.Windows.Forms.Button
         Me.GroupBox1 = New System.Windows.Forms.GroupBox
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.ArchiveDirectory = New System.Windows.Forms.TextBox
         Me.AutoArchive = New System.Windows.Forms.CheckBox
         Me.GroupBox2 = New System.Windows.Forms.GroupBox
         Me.LabelCS5 = New System.Windows.Forms.Label
@@ -32,10 +34,13 @@ Partial Class Form
         Me.CS5 = New System.Windows.Forms.Label
         Me.CS4 = New System.Windows.Forms.Label
         Me.CS3 = New System.Windows.Forms.Label
-        Me.ArchiveDirectory = New System.Windows.Forms.TextBox
-        Me.Label1 = New System.Windows.Forms.Label
+        Me.GroupBox3 = New System.Windows.Forms.GroupBox
+        Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
+        Me.Label2 = New System.Windows.Forms.Label
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
+        Me.GroupBox3.SuspendLayout()
+        CType(Me.NamedExportQuality, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Install
@@ -58,6 +63,22 @@ Partial Class Form
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Archive"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(7, 22)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(49, 13)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "Directory"
+        '
+        'ArchiveDirectory
+        '
+        Me.ArchiveDirectory.Location = New System.Drawing.Point(75, 19)
+        Me.ArchiveDirectory.Name = "ArchiveDirectory"
+        Me.ArchiveDirectory.Size = New System.Drawing.Size(178, 20)
+        Me.ArchiveDirectory.TabIndex = 1
         '
         'AutoArchive
         '
@@ -139,27 +160,42 @@ Partial Class Form
         Me.CS3.TabIndex = 1
         Me.CS3.Text = "Photoshop CS3 : "
         '
-        'ArchiveDirectory
+        'GroupBox3
         '
-        Me.ArchiveDirectory.Location = New System.Drawing.Point(75, 19)
-        Me.ArchiveDirectory.Name = "ArchiveDirectory"
-        Me.ArchiveDirectory.Size = New System.Drawing.Size(178, 20)
-        Me.ArchiveDirectory.TabIndex = 1
+        Me.GroupBox3.Controls.Add(Me.NamedExportQuality)
+        Me.GroupBox3.Controls.Add(Me.Label2)
+        Me.GroupBox3.Location = New System.Drawing.Point(12, 231)
+        Me.GroupBox3.Name = "GroupBox3"
+        Me.GroupBox3.Size = New System.Drawing.Size(259, 54)
+        Me.GroupBox3.TabIndex = 3
+        Me.GroupBox3.TabStop = False
+        Me.GroupBox3.Text = "Export by name"
         '
-        'Label1
+        'NamedExportQuality
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(7, 22)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(49, 13)
-        Me.Label1.TabIndex = 2
-        Me.Label1.Text = "Directory"
+        Me.NamedExportQuality.Location = New System.Drawing.Point(75, 19)
+        Me.NamedExportQuality.Maximum = New Decimal(New Integer() {12, 0, 0, 0})
+        Me.NamedExportQuality.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NamedExportQuality.Name = "NamedExportQuality"
+        Me.NamedExportQuality.Size = New System.Drawing.Size(58, 20)
+        Me.NamedExportQuality.TabIndex = 3
+        Me.NamedExportQuality.Value = New Decimal(New Integer() {6, 0, 0, 0})
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(8, 21)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(39, 13)
+        Me.Label2.TabIndex = 1
+        Me.Label2.Text = "Quality"
         '
         'Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 232)
+        Me.ClientSize = New System.Drawing.Size(284, 299)
+        Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
         Me.Name = "Form"
@@ -168,6 +204,9 @@ Partial Class Form
         Me.GroupBox1.PerformLayout()
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
+        Me.GroupBox3.ResumeLayout(False)
+        Me.GroupBox3.PerformLayout()
+        CType(Me.NamedExportQuality, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -183,4 +222,11 @@ Partial Class Form
     Friend WithEvents LabelCS3 As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents ArchiveDirectory As System.Windows.Forms.TextBox
+    Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents NamedExportQuality As System.Windows.Forms.NumericUpDown
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
 End Class
