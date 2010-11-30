@@ -12,6 +12,7 @@ Public Class Form
     Const SW_SHOWMINIMIZED = 2
     Private args As String()
     Private conf_loaded As Boolean = False
+    Private doExportLayerComps As Boolean = False
 
     Const FOUND = "Found"
     Const NOT_FOUND = "Not found"
@@ -81,6 +82,16 @@ Public Class Form
                 Me.NamedExportQuality.Value = CInt(key.GetValue("NamedExportQuality"))
             Else
                 Me.NamedExportQuality.Value = 6
+            End If
+
+            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            'MessageBox.Show(">>> " & key.GetValue("ExportLayerComps"))
+            If key.GetValue("ExportLayerComps") = 1 Then
+                Me.ExportLayerComps.Checked = True
+                doExportLayerComps = True
+            Else
+                Me.ExportLayerComps.Checked = False
+                doExportLayerComps = False
             End If
 
             conf_loaded = True
@@ -280,76 +291,95 @@ Public Class Form
             jpgSaveOptions.Quality = CInt(Me.NamedExportQuality.Value)
         End If
 
-        If compsCount <= 1 Then
-            'Set textItemRef = appRef.ActiveDocument.Layers(1) 
+        If doExportLayerComps Then
+            If compsCount <= 1 Then
+                'Set textItemRef = appRef.ActiveDocument.Layers(1) 
 
-            'textItemRef.TextItem.Contents = Args.Item(1) 
+                'textItemRef.TextItem.Contents = Args.Item(1) 
 
-            'outFileName = Args.Item(1)
-            docRef.SaveAs(args(2), jpgSaveOptions, True)
-        Else
-            'msgbox("comps!")
-            For compsIndex = 1 To compsCount
-                'MsgBox(docRef.LayerComps.Count)
-                'End
-                compRef = docRef.LayerComps.Item(compsIndex)
-                'if (exportInfo.selectionOnly && !compRef.selected) continue; // selected only
-                compRef.Apply()
-                duppedDocument = docRef.Duplicate()
-                'msgbox(compRef.Name)
-                If Not isNamedLayerComp Then
-                    fileNameBody = Split(docRef.Name, ".")(0) & "." & compsIndex & ".jpg"
-                Else
-                    fileNameBody = compRef.Name & ".jpg"
-                End If
-                'msgbox(fileNameBody)
-                duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
-                duppedDocument.Close(2)
-                'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
-                'fileNameBody += "_" + compRef.name;
-                'if (null != compRef.comment)    fileNameBody += "_" + compRef.comment;
-                'fileNameBody = fileNameBody.replace(/[:\/\\*\?\"\<\>\|\\\r\\\n]/g, "_");  // '/\:*?"<>|\r\n' -> '_'
-                'if (fileNameBody.length > 120) fileNameBody = fileNameBody.substring(0,120);
-                'saveFile(duppedDocument, fileNameBody, exportInfo);
-                'duppedDocument.close(SaveOptions.DONOTSAVECHANGES);
-            Next
-        compRef = docRef.LayerComps.Item(1)
-        compRef.Apply()
-        End If
-
-        If Me.AutoArchive.Checked Then
-
-            Dim di As DirectoryInfo
-            Dim afi() As FileInfo
-            Dim fi As FileInfo
-
-
-            di = New DirectoryInfo(docRef.Path)
-            Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
-
-            Dim RegexObj As Regex = New Regex("\d*$")
-            Dim myMatches As Match
-            Dim currentVersion
-            Dim cleanFileName As String
-            If RegexObj.IsMatch(currentFileName) Then
-                myMatches = RegexObj.Match(currentFileName)
-                currentVersion = myMatches.Value
-                cleanFileName = RegexObj.Replace(currentFileName, "")
-                'MsgBox(currentVersion)
-                Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d+|\.)")
-
-                afi = di.GetFiles("*.*")
-                For Each fi In afi
-                    If RegexObj2.IsMatch(fi.Name) Then
-                        'MsgBox(fi.Name)
-                        If isOldFileVersion(fi.Name, currentVersion) Then
-                            On Error Resume Next
-                            'MsgBox(fi.Name)
-                            File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
-                        End If
+                'outFileName = Args.Item(1)
+                docRef.SaveAs(args(2), jpgSaveOptions, True)
+            Else
+                'msgbox("comps!")
+                For compsIndex = 1 To compsCount
+                    'MsgBox(docRef.LayerComps.Count)
+                    'End
+                    compRef = docRef.LayerComps.Item(compsIndex)
+                    'if (exportInfo.selectionOnly && !compRef.selected) continue; // selected only
+                    compRef.Apply()
+                    duppedDocument = docRef.Duplicate()
+                    'msgbox(compRef.Name)
+                    If Not isNamedLayerComp Then
+                        fileNameBody = Split(docRef.Name, ".")(0) & "." & compsIndex & ".jpg"
+                    Else
+                        fileNameBody = compRef.Name & ".jpg"
                     End If
+                    'msgbox(fileNameBody)
+                    duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
+                    duppedDocument.Close(2)
+                    'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
+                    'fileNameBody += "_" + compRef.name;
+                    'if (null != compRef.comment)    fileNameBody += "_" + compRef.comment;
+                    'fileNameBody = fileNameBody.replace(/[:\/\\*\?\"\<\>\|\\\r\\\n]/g, "_");  // '/\:*?"<>|\r\n' -> '_'
+                    'if (fileNameBody.length > 120) fileNameBody = fileNameBody.substring(0,120);
+                    'saveFile(duppedDocument, fileNameBody, exportInfo);
+                    'duppedDocument.close(SaveOptions.DONOTSAVECHANGES);
                 Next
+                compRef = docRef.LayerComps.Item(1)
+                compRef.Apply()
             End If
+
+            If Me.AutoArchive.Checked Then
+
+                Dim di As DirectoryInfo
+                Dim afi() As FileInfo
+                Dim fi As FileInfo
+
+
+                di = New DirectoryInfo(docRef.Path)
+                Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
+
+                Dim RegexObj As Regex = New Regex("\d*$")
+                Dim myMatches As Match
+                Dim currentVersion
+                Dim cleanFileName As String
+                If RegexObj.IsMatch(currentFileName) Then
+                    myMatches = RegexObj.Match(currentFileName)
+                    currentVersion = myMatches.Value
+                    cleanFileName = RegexObj.Replace(currentFileName, "")
+                    'MsgBox(currentVersion)
+                    Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d+|\.)")
+
+                    afi = di.GetFiles("*.*")
+                    For Each fi In afi
+                        If RegexObj2.IsMatch(fi.Name) Then
+                            'MsgBox(fi.Name)
+                            If isOldFileVersion(fi.Name, currentVersion) Then
+                                On Error Resume Next
+                                'MsgBox(fi.Name)
+                                File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
+                            End If
+                        End If
+                    Next
+                End If
+            End If
+        Else
+            Dim oLayer
+            Dim isVisible As Boolean
+
+            For compsIndex = 1 To docRef.Layers.Count()
+                oLayer = docRef.Layers.Item(compsIndex)
+                'isVisible = oLayer.visible
+                appRef.ActiveDocument.ActiveLayer = oLayer
+                'oLayer.Apply()
+                'duppedDocument = docRef.Duplicate()
+                'msgbox(compRef.Name)
+                fileNameBody = oLayer.Name & ".jpg"
+                'msgbox(fileNameBody)
+                docRef.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
+                appRef.ActiveDocument.ActiveLayer.visible = False
+                'duppedDocument.Close(2)
+            Next
         End If
 
         If Not stayOpen Then docRef.Close(2)
@@ -421,6 +451,19 @@ Public Class Form
         If conf_loaded Then
             'MessageBox.Show(Me.NamedExportQuality.Value.ToString())
             newKey.SetValue("NamedExportQuality", Me.NamedExportQuality.Value, RegistryValueKind.String)
+        End If
+        newKey.Close()
+    End Sub
+
+    Private Sub ExportLayerComps_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExportLayerComps.CheckedChanged
+        Dim newKey As RegistryKey
+        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        If Me.ExportLayerComps.Checked Then
+            newKey.SetValue("ExportLayerComps", "1", RegistryValueKind.String)
+            doExportLayerComps = True
+        Else
+            newKey.SetValue("ExportLayerComps", "0", RegistryValueKind.String)
+            doExportLayerComps = False
         End If
         newKey.Close()
     End Sub
