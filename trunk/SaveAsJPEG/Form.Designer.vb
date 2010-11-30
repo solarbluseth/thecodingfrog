@@ -37,6 +37,7 @@ Partial Class Form
         Me.GroupBox3 = New System.Windows.Forms.GroupBox
         Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
         Me.Label2 = New System.Windows.Forms.Label
+        Me.ExportLayerComps = New System.Windows.Forms.CheckBox
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -162,6 +163,7 @@ Partial Class Form
         '
         'GroupBox3
         '
+        Me.GroupBox3.Controls.Add(Me.ExportLayerComps)
         Me.GroupBox3.Controls.Add(Me.NamedExportQuality)
         Me.GroupBox3.Controls.Add(Me.Label2)
         Me.GroupBox3.Location = New System.Drawing.Point(12, 231)
@@ -189,6 +191,16 @@ Partial Class Form
         Me.Label2.Size = New System.Drawing.Size(39, 13)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Quality"
+        '
+        'ExportLayerComps
+        '
+        Me.ExportLayerComps.AutoSize = True
+        Me.ExportLayerComps.Location = New System.Drawing.Point(149, 21)
+        Me.ExportLayerComps.Name = "ExportLayerComps"
+        Me.ExportLayerComps.Size = New System.Drawing.Size(84, 17)
+        Me.ExportLayerComps.TabIndex = 4
+        Me.ExportLayerComps.Text = "LayerComps"
+        Me.ExportLayerComps.UseVisualStyleBackColor = True
         '
         'Form
         '
@@ -229,4 +241,5 @@ Partial Class Form
     Protected Overrides Sub Finalize()
         MyBase.Finalize()
     End Sub
+    Friend WithEvents ExportLayerComps As System.Windows.Forms.CheckBox
 End Class
