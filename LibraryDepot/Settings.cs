@@ -1,10 +1,16 @@
 using System;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using System.Windows.Forms;
+using System.IO;
 using System.Text;
-using PluginCore.Localization;
 using System.Collections;
+using System.ComponentModel;
+using System.Drawing.Design;
+using System.Collections.Generic;
+using System.Windows.Forms.Design;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore;
 
 namespace LibraryDepot
 {
@@ -24,6 +30,7 @@ namespace LibraryDepot
 		/// </summary>
 		[DisplayName("Library path")]
 		[DefaultValue(DEFAULT_LIBRARY_PATH)]
+		[Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
 		public string LibraryPath
 		{
 			get { return this.__librarypath; }

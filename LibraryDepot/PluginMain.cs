@@ -117,20 +117,9 @@ namespace LibraryDepot
         {
             switch (e.Type)
             {
-                case EventType.UIStarted:
-                    //MessageBox.Show(sender.GetType().ToString());
-                    //EditorMenu(sender);
-                    CheckEditorMenuRequirement(sender);
-                    break;
-                case EventType.FileSwitch:
-                    //string cmd2 = (e as DataEvent).Action;
-                    //MessageBox.Show(cmd2);
-                    CheckEditorMenuRequirement(sender);
-                    break;
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    //MessageBox.Show(cmd);
-					if (cmd == "ProjectManager.TreeSelectionChanged")
+                    if (cmd == "ProjectManager.TreeSelectionChanged")
 					{
 					    NodeSelected(sender);
 					}
@@ -144,9 +133,23 @@ namespace LibraryDepot
         /// <param name="sender">The sender.</param>
         private void NodeSelected(Object sender)
         {
-            //int _Idx = 3;
+			try
+			{
+				ToolStripItemCollection __tsi = PluginBase.MainForm.EditorMenu.Items;
+				foreach (ToolStripItem __Item in __tsi)
+				{
+					if (__Item.Text == LocaleHelper.GetString("LibraryDepot.Menu.Title"))
+					{
+						__tsi.Remove(__Item);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
 
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(LocaleHelper.GetString("LibraryDepot.Menu.Title"), PluginBase.MainForm.FindImage("198"));
+			ToolStripMenuItem tsmi = new ToolStripMenuItem(LocaleHelper.GetString("LibraryDepot.Menu.Title"), PluginBase.MainForm.FindImage("205"));
 
 			BuildDirectoryMenu(tsmi, __LibraryPath);
 			BuildFileMenu(tsmi, __LibraryPath);
@@ -167,7 +170,7 @@ namespace LibraryDepot
             String dataPath = Path.Combine(PathHelper.DataDir, "LibraryDepot");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginImage = PluginBase.MainForm.FindImage("99");
+            this.pluginImage = PluginBase.MainForm.FindImage("106");
             
         }
 
@@ -214,8 +217,14 @@ namespace LibraryDepot
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
                 settingObject = (Settings)obj;
             }
-            
-            //settingObject.Changed += SettingChanged;
+
+			__LibraryPath = settingObject.LibraryPath;
+			if (__LibraryPath == "")
+			{
+				__LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
+				settingObject.LibraryPath = __LibraryPath;
+			}
+            settingObject.Changed += SettingChanged;
             
         }
 
@@ -224,13 +233,8 @@ namespace LibraryDepot
         /// </summary>
         public void SaveSettings()
         {
-            //settingObject.Changed -= SettingChanged;
-			//if (settingObject.LibraryPath == "")
-			//{
-			//    MessageBox.Show(GetPath());
-			//    //settingObject.LibraryPath = GetPath() + "/libraries/";
-			//}
-            ObjectSerializer.Serialize(this.settingFilename, settingObject);
+            settingObject.Changed -= SettingChanged;
+			ObjectSerializer.Serialize(this.settingFilename, settingObject);
         }
 
         /// <summary>
@@ -238,33 +242,16 @@ namespace LibraryDepot
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="add">if set to <c>true</c> [add].</param>
-        private void SettingChanged(string type, bool add)
+        private void SettingChanged(string type)
         {
-            
-        }
-
-        private void CheckEditorMenuRequirement(Object sender)
-        {
-			bool __foundMenu = false;
-			try
+			if (type == "LibraryPath")
 			{
-				ToolStripItemCollection __tsi = (sender as IMainForm).EditorMenu.Items;//.Find(LocaleHelper.GetString("TraceUtil.Menu.Title"), true);
-				//MessageBox.Show("moo");
-				foreach (ToolStripItem __Item in __tsi)
+				__LibraryPath = settingObject.LibraryPath;
+				if (__LibraryPath == "")
 				{
-					if (__Item.Text == LocaleHelper.GetString("LibraryDepot.Menu.Title"))
-					{
-						__foundMenu = true;
-						//__tsi.Remove(__Item);
-					}
+					__LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
+					settingObject.LibraryPath = __LibraryPath;
 				}
-				//MessageBox.Show(__foundMenu.ToString());
-				if (!__foundMenu)
-					AddMenu(sender, "EditorMenu");
-			}
-			catch (Exception ex)
-			{
-				//MessageBox.Show(ex.Message);
 			}
         }
 
@@ -273,12 +260,6 @@ namespace LibraryDepot
 			//MessageBox.Show(type);
 			ToolStripMenuItem tsmi = new ToolStripMenuItem(LocaleHelper.GetString("LibraryDepot.Menu.Title"), PluginBase.MainForm.FindImage("198"));
 
-			__LibraryPath = settingObject.LibraryPath;
-			if (__LibraryPath == "")
-			{
-				__LibraryPath = GetPath(PathHelper.AppDir) + "/FlashDevelop/Depot/";
-				settingObject.LibraryPath = __LibraryPath;
-			}
 			//MessageBox.Show(__LibraryPath);
 			BuildDirectoryMenu(tsmi, __LibraryPath);
 			BuildFileMenu(tsmi, __LibraryPath);
@@ -309,7 +290,7 @@ namespace LibraryDepot
 				tsmiDir = new ToolStripMenuItem(__DirectoryInfo.Name, PluginBase.MainForm.FindImage("203"));
 				BuildDirectoryMenu(tsmiDir, __DirectoryPath);
 				BuildFileMenu(tsmiDir, __DirectoryPath);
-				//tsmi.DropDownItems.Add(new ToolStripMenuItem(__DirectoryInfo.Name, null));
+				
 				__menu.DropDownItems.Add(tsmiDir);				
 			}
 		}
@@ -319,7 +300,6 @@ namespace LibraryDepot
 			string[] __Files = Directory.GetFiles(__path);
 			foreach (string __FilePath in __Files)
 			{
-				//MessageBox.Show(__FilePath);
 				FileInfo __FileInfo = new FileInfo(__FilePath);
 				__menu.DropDownItems.Add(new ToolStripMenuItem(__FileInfo.Name, PluginBase.MainForm.FindImage("274"), new EventHandler(delegate
 						{
