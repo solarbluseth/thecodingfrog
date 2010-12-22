@@ -68,6 +68,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -83,7 +84,6 @@
     </Compile>
     <Compile Include="Resources\LocaleHelper.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\en_US.resX">
@@ -94,12 +94,13 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="False" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateFileVersion="False" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>COPY $(TargetPath) "C:\Program Files (x86)\FlashDevelop\Plugins"
-"C:\Program Files (x86)\winzip\wzzip.exe" "$(SolutionDir)\obj\Debug\LibraryDepot.zip" "$(SolutionDir)\obj\Debug\Readme.txt" "$(SolutionDir)\obj\Debug\LibraryDepot.dll"</PostBuildEvent>
+"C:\Program Files (x86)\winzip\wzzip.exe" "$(SolutionDir)\obj\Debug\LibraryDepot.zip" "$(SolutionDir)\Readme.txt" "$(SolutionDir)\obj\Debug\LibraryDepot.dll"
+COPY $(TargetPath) "R:\JLP\FD\"</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
