@@ -70,7 +70,7 @@ namespace LibraryDepot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copy External Library.
+        ///   Looks up a localized string similar to Copy From Library Depot.
         /// </summary>
         internal static string LibraryDepot_Menu_Title {
             get {

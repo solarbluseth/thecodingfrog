@@ -24,8 +24,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SZPath = C:\dev\flashdevelop\FD3\External\Plugins\LibraryDepot\LibraryDepot_sources.zip
-		SZOpenFolder = false
 		SZOpenFile = false
+		SZOpenFolder = false
+		SZPath = C:\dev\flashdevelop\FD3\External\Plugins\LibraryDepot\LibraryDepot_sources.zip
 	EndGlobalSection
 EndGlobal

@@ -121,6 +121,6 @@
     <value>Copying library: </value>
   </data>
   <data name="LibraryDepot.Menu.Title" xml:space="preserve">
-    <value>Copy External Library</value>
+    <value>Copy From Library Depot</value>
   </data>
 </root>

@@ -28,5 +28,9 @@ Known Bugs/Issues
 
 Version History
 
+    / 1.0.5 - December 23, 2010
+      + add support for SWC file
+      * icon change
+      
     / 1.0.1 - December 22, 2010
       - initial implementation of LibraryDepot
