@@ -10,10 +10,11 @@ using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using PluginCore;
+using ProjectManager.Projects;
+using ProjectManager.Actions;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using ProjectManager.Controls.TreeView;
-using ProjectManager.Projects;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
@@ -155,7 +156,7 @@ namespace LibraryDepot
 			BuildFileMenu(tsmi, __LibraryPath);
 
 			(sender as Control).ContextMenuStrip.Items.Insert(0, tsmi);
-			//(sender as Control).ContextMenuStrip.Items.Insert(1, new ToolStripSeparator());
+			(sender as Control).ContextMenuStrip.Items.Insert(1, new ToolStripSeparator());
         }
 
 		#endregion
@@ -268,13 +269,13 @@ namespace LibraryDepot
 			{
 				case "EditorMenu":
 					(sender as IMainForm).EditorMenu.Items.Insert(0, tsmi);
-					//(sender as IMainForm).EditorMenu.Items.Insert(1, new ToolStripSeparator());
+					(sender as IMainForm).EditorMenu.Items.Insert(1, new ToolStripSeparator());
 					break;
 				case "EditMenu":
 					ToolStripMenuItem editMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("EditMenu");
 					//MessageBox.Show(editMenu.Text);
 					editMenu.DropDownItems.Insert(0, tsmi);
-					//editMenu.DropDownItems.Insert(1, new ToolStripSeparator());
+					editMenu.DropDownItems.Insert(1, new ToolStripSeparator());
 					break;
 			}
         }
@@ -289,7 +290,7 @@ namespace LibraryDepot
 				DirectoryInfo __DirectoryInfo = new DirectoryInfo(__DirectoryPath);
 				tsmiDir = new ToolStripMenuItem(__DirectoryInfo.Name, PluginBase.MainForm.FindImage("203"));
 				BuildDirectoryMenu(tsmiDir, __DirectoryPath);
-				BuildFileMenu(tsmiDir, __DirectoryPath);
+				BuildFileMenu(tsmiDir, __DirectoryPath, true);
 				
 				__menu.DropDownItems.Add(tsmiDir);				
 			}
@@ -297,20 +298,65 @@ namespace LibraryDepot
 
 		private void BuildFileMenu(ToolStripMenuItem __menu, string __path)
 		{
+			BuildFileMenu(__menu, __path, false);
+		}
+
+		private void BuildFileMenu(ToolStripMenuItem __menu, string __path, bool __checkexistingdir)
+		{
+			bool __hasItems = false;
 			string[] __Files = Directory.GetFiles(__path);
 			foreach (string __FilePath in __Files)
 			{
 				FileInfo __FileInfo = new FileInfo(__FilePath);
-				__menu.DropDownItems.Add(new ToolStripMenuItem(__FileInfo.Name, PluginBase.MainForm.FindImage("274"), new EventHandler(delegate
+				Image __picto = null;
+				switch (__FileInfo.Extension.ToLower())
+				{
+					case ".zip":
+						//__picto = PluginBase.MainForm.FindImage("133");
+						__picto = PluginBase.MainForm.FindImage("274");
+						break;
+					case ".swc":
+						//__picto = PluginBase.MainForm.FindImage("274");
+						Assembly assembly = Assembly.GetExecutingAssembly();
+						try
+						{
+							__picto = new Bitmap(assembly.GetManifestResourceStream("LibraryDepot.Resources.SwcFile.png"));
+						}
+						catch (Exception ex)
+						{
+							//MessageBox.Show(ex.Message);
+						}
+						break;
+				}
+				__menu.DropDownItems.Add(new ToolStripMenuItem(__FileInfo.Name, __picto, new EventHandler(delegate
 						{
 							OutputLog(__FileInfo.Name);
-							CopyLibrary(__FileInfo.FullName);
+							ChooseCopyType(__FileInfo.FullName);
 						}
 					)));
+				__hasItems = true;
+			}
+			if (__checkexistingdir)
+				if (!__hasItems)
+					__menu.Enabled = false;
+		}
+
+		private void ChooseCopyType(string __file)
+		{
+			FileInfo __FileInfo = new FileInfo(__file);
+			//MessageBox.Show(__FileInfo.Extension);
+			switch (__FileInfo.Extension.ToLower())
+			{
+				case ".zip":
+					ExtractLibrary(__file);
+					break;
+				case ".swc":
+					CopyLibrary(__file);
+					break;
 			}
 		}
 
-		private void CopyLibrary(string __file)
+		private void ExtractLibrary(string __file)
 		{
 			//PluginBase.MainForm.EditorMenu.Hide();
 			using (ZipInputStream s = new ZipInputStream(File.OpenRead(__file)))
@@ -326,12 +372,12 @@ namespace LibraryDepot
 					// create directory
 					if (directoryName.Length > 0)
 					{
-						Directory.CreateDirectory(GetPath() + "/src/" + directoryName);
+						Directory.CreateDirectory(GetPath() + settingObject.SrcPath + directoryName);
 					}
 
 					if (fileName != String.Empty)
 					{
-						using (FileStream streamWriter = File.Create(GetPath() + "/src/" + theEntry.Name))
+						using (FileStream streamWriter = File.Create(GetPath() + settingObject.SrcPath + theEntry.Name))
 						{
 
 							int size = 2048;
@@ -352,6 +398,14 @@ namespace LibraryDepot
 					}
 				}
 			}
+		}
+
+		private void CopyLibrary(string __file)
+		{
+			FileInfo __FileInfo = new FileInfo(__file);
+			if (!Directory.Exists(GetPath() + settingObject.SwcPath))
+				Directory.CreateDirectory(GetPath() + settingObject.SwcPath);
+			File.Copy(__file, GetPath() + settingObject.SwcPath + __FileInfo.Name);
 		}
 
 		private void OutputLog(string __file)
