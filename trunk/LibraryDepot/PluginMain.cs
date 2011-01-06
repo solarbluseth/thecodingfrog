@@ -19,14 +19,17 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Resources;
+using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+//using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+//using System.Timers;
 
 namespace LibraryDepot
 {
+	
+
     public class PluginMain : IPlugin
 	{
-
 		private String pluginName = "LibraryDepot";
 		private String pluginGuid = "01B1E6B4-DA6E-4d3a-A1E7-AD65E4238C37";
         private String pluginHelp = "www.flashdevelop.org/community/";
@@ -36,6 +39,12 @@ namespace LibraryDepot
         private Settings settingObject;
         private Image pluginImage;
 		private string __LibraryPath;
+		private ProjectTreeView __ptv;
+		private string[] __DisallowedDirectories = { ".svn", "_svn" };
+		private string[] __AllowedFiles = { ".as" };
+		//private System.Timers.Timer __timer;
+		private bool _stop;
+		private FileSystemWatcher watcher;
         
 	    #region Required Properties
 
@@ -99,8 +108,6 @@ namespace LibraryDepot
 		{
             this.InitBasics();
             this.LoadSettings();
-            this.AddEventHandlers();
-            this.InitLocalization();
         }
 		
 		/// <summary>
@@ -120,9 +127,10 @@ namespace LibraryDepot
             {
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    if (cmd == "ProjectManager.TreeSelectionChanged")
+					if (cmd == "ProjectManager.TreeSelectionChanged")
 					{
-					    NodeSelected(sender);
+						__ptv = (ProjectTreeView)sender;
+					    BuildContextMenu(sender);
 					}
                     break;
             }
@@ -132,22 +140,34 @@ namespace LibraryDepot
         /// Nodes the selected.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        private void NodeSelected(Object sender)
+        private void BuildContextMenu(Object sender)
         {
+			//MessageBox.Show("BuildContextMenu");
+			int __idx = 0;
+			int __savedpos = 0;
 			try
 			{
-				ToolStripItemCollection __tsi = PluginBase.MainForm.EditorMenu.Items;
+				ToolStripItemCollection __tsi = __ptv.ContextMenuStrip.Items;
 				foreach (ToolStripItem __Item in __tsi)
 				{
+
 					if (__Item.Text == LocaleHelper.GetString("LibraryDepot.Menu.Title"))
 					{
+						// removing menu
 						__tsi.Remove(__Item);
+
+						// removing separator
+						__tsi.RemoveAt(__idx);
+
+						// saving position for recreating treemenu
+						__savedpos = __idx;
 					}
+					__idx++;
 				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				//MessageBox.Show(ex.Message);
 			}
 
 			ToolStripMenuItem tsmi = new ToolStripMenuItem(LocaleHelper.GetString("LibraryDepot.Menu.Title"), PluginBase.MainForm.FindImage("205"));
@@ -155,8 +175,13 @@ namespace LibraryDepot
 			BuildDirectoryMenu(tsmi, __LibraryPath);
 			BuildFileMenu(tsmi, __LibraryPath);
 
-			(sender as Control).ContextMenuStrip.Items.Insert(0, tsmi);
-			(sender as Control).ContextMenuStrip.Items.Insert(1, new ToolStripSeparator());
+			(sender as Control).ContextMenuStrip.Items.Insert(__savedpos, tsmi);
+			(sender as Control).ContextMenuStrip.Items.Insert(__savedpos + 1, new ToolStripSeparator());
+
+			/*if (settingObject.CheckTimer != TimerCheckInterval.Never)
+			{
+				__timer.Start();
+			}*/
         }
 
 		#endregion
@@ -204,7 +229,29 @@ namespace LibraryDepot
                     break;
             }
             this.pluginDesc = LocaleHelper.GetString("Info.Description");
+
+			/*__timer = new System.Timers.Timer();
+			__timer.Elapsed += new ElapsedEventHandler(HandleTimerComplete);
+			if (settingObject.CheckTimer != TimerCheckInterval.Never)
+			{
+				__timer.Interval = (int)settingObject.CheckTimer;
+			}*/
         }
+
+		/*private void HandleTimerComplete(object sender, ElapsedEventArgs e)
+		{
+			//MessageBox.Show("HandleTimerComplete:" + __ptv.ContextMenuStrip.Visible.ToString());
+			if (__ptv.ContextMenuStrip.Visible)
+			{
+				__timer.Stop();
+				__timer.Start();
+			}
+			else
+			{
+				__timer.Stop();
+				BuildContextMenu(__ptv);
+			}
+		}*/
 
         /// <summary>
         /// Loads the plugin settings
@@ -212,22 +259,65 @@ namespace LibraryDepot
         public void LoadSettings()
         {
             settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
-                settingObject = (Settings)obj;
-            }
-
-			__LibraryPath = settingObject.LibraryPath;
-			if (__LibraryPath == "")
+			if (!File.Exists(this.settingFilename))
 			{
-				__LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
-				settingObject.LibraryPath = __LibraryPath;
+				this.SaveSettings(); 
+				
+				FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+				folderBrowserDialog.Description = "Select your library depot folder";
+				if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+				{
+					settingObject.LibraryPath = folderBrowserDialog.SelectedPath;
+					__LibraryPath = folderBrowserDialog.SelectedPath;
+				}
+				else
+				{
+					__LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
+					if (!Directory.Exists(__LibraryPath))
+						Directory.CreateDirectory(__LibraryPath);
+					settingObject.LibraryPath = __LibraryPath;
+				}								
 			}
+			else
+			{
+				Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
+				settingObject = (Settings)obj;
+				__LibraryPath = settingObject.LibraryPath;
+			}
+
+			//__LibraryPath = settingObject.LibraryPath;
+			//if (__LibraryPath == "")
+			//{
+			//    __LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
+			//    settingObject.LibraryPath = __LibraryPath;
+			//}
             settingObject.Changed += SettingChanged;
-            
+
+			watcher = new FileSystemWatcher();
+			watcher.Path = __LibraryPath;
+			watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
+
+			watcher.Created += new FileSystemEventHandler(OnFileEvent);
+			watcher.Deleted += new FileSystemEventHandler(OnFileEvent);
+			watcher.Renamed += new RenamedEventHandler(OnRenameEvent);
+			watcher.IncludeSubdirectories = true;
+			watcher.EnableRaisingEvents = true; 
+
+			this.AddEventHandlers();
+			this.InitLocalization();
         }
+
+		public void OnFileEvent(object sender, FileSystemEventArgs fsea)
+		{
+			BuildContextMenu(__ptv);
+		}
+
+		public void OnRenameEvent(Object source, RenamedEventArgs rea)
+		{
+			BuildContextMenu(__ptv);
+		}
+
+
 
         /// <summary>
         /// Saves the plugin settings
@@ -245,37 +335,26 @@ namespace LibraryDepot
         /// <param name="add">if set to <c>true</c> [add].</param>
         private void SettingChanged(string type)
         {
-			if (type == "LibraryPath")
+			// recreate menu on LibraryPath change
+			switch(type)
 			{
-				__LibraryPath = settingObject.LibraryPath;
-				if (__LibraryPath == "")
-				{
-					__LibraryPath = GetPath(PathHelper.AppDir) + "\\FlashDevelop\\Depot\\";
-					settingObject.LibraryPath = __LibraryPath;
-				}
-			}
-        }
-
-        private void AddMenu(Object sender, string type)
-        {
-			//MessageBox.Show(type);
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(LocaleHelper.GetString("LibraryDepot.Menu.Title"), PluginBase.MainForm.FindImage("198"));
-
-			//MessageBox.Show(__LibraryPath);
-			BuildDirectoryMenu(tsmi, __LibraryPath);
-			BuildFileMenu(tsmi, __LibraryPath);
-
-			switch (type)
-			{
-				case "EditorMenu":
-					(sender as IMainForm).EditorMenu.Items.Insert(0, tsmi);
-					(sender as IMainForm).EditorMenu.Items.Insert(1, new ToolStripSeparator());
+				case "LibraryPath":
+					__LibraryPath = settingObject.LibraryPath; 
+					BuildContextMenu(__ptv);
 					break;
-				case "EditMenu":
-					ToolStripMenuItem editMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("EditMenu");
-					//MessageBox.Show(editMenu.Text);
-					editMenu.DropDownItems.Insert(0, tsmi);
-					editMenu.DropDownItems.Insert(1, new ToolStripSeparator());
+				/*case "CheckTimer":
+					if (settingObject.CheckTimer != TimerCheckInterval.Never)
+					{
+						__timer.Interval = (int)settingObject.CheckTimer;
+						__timer.Start();
+					}
+					else
+					{
+						__timer.Stop();
+					}
+					break;*/
+				case "EnableWatcher":
+					watcher.EnableRaisingEvents = settingObject.EnableWatcher;
 					break;
 			}
         }
@@ -305,6 +384,7 @@ namespace LibraryDepot
 		{
 			bool __hasItems = false;
 			string[] __Files = Directory.GetFiles(__path);
+			bool __isAllowed = false;
 			foreach (string __FilePath in __Files)
 			{
 				FileInfo __FileInfo = new FileInfo(__FilePath);
@@ -312,10 +392,14 @@ namespace LibraryDepot
 				switch (__FileInfo.Extension.ToLower())
 				{
 					case ".zip":
+						__isAllowed = true;
+						__hasItems = true;
 						//__picto = PluginBase.MainForm.FindImage("133");
 						__picto = PluginBase.MainForm.FindImage("274");
 						break;
 					case ".swc":
+						__isAllowed = true;
+						__hasItems = true;
 						//__picto = PluginBase.MainForm.FindImage("274");
 						Assembly assembly = Assembly.GetExecutingAssembly();
 						try
@@ -327,14 +411,17 @@ namespace LibraryDepot
 							//MessageBox.Show(ex.Message);
 						}
 						break;
+					default:
+						__isAllowed = false;
+						break;
 				}
-				__menu.DropDownItems.Add(new ToolStripMenuItem(__FileInfo.Name, __picto, new EventHandler(delegate
+				if (__isAllowed)
+					__menu.DropDownItems.Add(new ToolStripMenuItem(__FileInfo.Name, __picto, new EventHandler(delegate
 						{
 							OutputLog(__FileInfo.Name);
 							ChooseCopyType(__FileInfo.FullName);
 						}
 					)));
-				__hasItems = true;
 			}
 			if (__checkexistingdir)
 				if (!__hasItems)
@@ -344,7 +431,6 @@ namespace LibraryDepot
 		private void ChooseCopyType(string __file)
 		{
 			FileInfo __FileInfo = new FileInfo(__file);
-			//MessageBox.Show(__FileInfo.Extension);
 			switch (__FileInfo.Extension.ToLower())
 			{
 				case ".zip":
@@ -358,8 +444,44 @@ namespace LibraryDepot
 
 		private void ExtractLibrary(string __file)
 		{
-			//PluginBase.MainForm.EditorMenu.Hide();
+			bool __foundSRC = false;
+
 			using (ZipInputStream s = new ZipInputStream(File.OpenRead(__file)))
+			{
+
+				ZipEntry theEntry;
+				while ((theEntry = s.GetNextEntry()) != null)
+				{
+					if (Path.GetDirectoryName(theEntry.Name).ToLower() == "src")
+						__foundSRC = true;
+				}
+			}
+			FastZipEvents events = new FastZipEvents();
+			events.ProcessFile = ProcessFileMethod;
+			FastZip __fastZip = new FastZip(events);
+			string __fileFilter = @"+\.as$";
+			string __directoryFilter;
+
+			if (__foundSRC)
+			{
+				__directoryFilter = @"src";
+				__fastZip.ExtractZip(__file, GetPath(), FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
+
+				if (settingObject.SrcPath.Replace("/", "").Replace("\\", "").ToLower() != "src")
+				{
+					Directory.Move(GetPath() + "/src/", GetPath() + settingObject.SrcPath);
+				}
+			}
+			else
+			{
+				__directoryFilter = null;
+				__fastZip.ExtractZip(__file, GetPath() + settingObject.SrcPath, FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
+			}
+			
+
+
+			//PluginBase.MainForm.EditorMenu.Hide();
+			/*using (ZipInputStream s = new ZipInputStream(File.OpenRead(__file)))
 			{
 
 				ZipEntry theEntry;
@@ -367,38 +489,71 @@ namespace LibraryDepot
 				{
 
 					string directoryName = Path.GetDirectoryName(theEntry.Name);
-					string fileName = Path.GetFileName(theEntry.Name);
-
-					// create directory
-					if (directoryName.Length > 0)
+					if (isDirectoryAllowed(directoryName))
 					{
-						Directory.CreateDirectory(GetPath() + settingObject.SrcPath + directoryName);
-					}
-
-					if (fileName != String.Empty)
-					{
-						using (FileStream streamWriter = File.Create(GetPath() + settingObject.SrcPath + theEntry.Name))
+						string fileName = Path.GetFileName(theEntry.Name);
+						if (isFileAllowed(Path.GetExtension(theEntry.Name)))
 						{
 
-							int size = 2048;
-							byte[] data = new byte[2048];
-							while (true)
+							// create directory
+							if (directoryName.Length > 0)
 							{
-								size = s.Read(data, 0, data.Length);
-								if (size > 0)
+								Directory.CreateDirectory(GetPath() + settingObject.SrcPath + directoryName);
+							}
+
+							if (fileName != String.Empty)
+							{
+								using (FileStream streamWriter = File.Create(GetPath() + settingObject.SrcPath + theEntry.Name))
 								{
-									streamWriter.Write(data, 0, size);
-								}
-								else
-								{
-									break;
+
+									int size = 2048;
+									byte[] data = new byte[2048];
+									while (true)
+									{
+										size = s.Read(data, 0, data.Length);
+										if (size > 0)
+										{
+											streamWriter.Write(data, 0, size);
+										}
+										else
+										{
+											break;
+										}
+									}
 								}
 							}
 						}
 					}
 				}
+			}*/
+		}
+
+		private bool OverwritePrompt(string fileName)
+		{
+
+			// In this method you can choose whether to overwrite a file.
+			DialogResult dr = MessageBox.Show("Overwrite " + fileName, "Overwrite?", MessageBoxButtons.YesNoCancel);
+			if (dr == DialogResult.Cancel)
+			{
+				_stop = true;
+				// Must return true if we want to abort processing, so that the ProcessFileMethod will be called.
+				// When the ProcessFileMethod sets ContinueRunning false, processing will immediately stop.
+				return true;
+			}
+			return dr == DialogResult.Yes;
+		}
+
+		private void ProcessFileMethod(object sender, ScanEventArgs args)
+		{
+
+			string fileName = args.Name;
+			// To stop all further processing, set args.ContinueRunning = false
+			if (_stop)
+			{
+				args.ContinueRunning = false;
 			}
 		}
+
 
 		private void CopyLibrary(string __file)
 		{
@@ -423,6 +578,33 @@ namespace LibraryDepot
 			int __pos = __path.LastIndexOf("\\");
 			string __realpath = __path.Substring(0, __pos + 1);
 			return __realpath;
+		}
+
+		private bool isDirectoryAllowed(string __directory)
+		{
+			if (__directory.Length == 0)
+				return false;
+
+			foreach (string __item in __DisallowedDirectories)
+			{
+				if (__item.ToLower() == __directory.ToLower())
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private bool isFileAllowed(string __fileext)
+		{
+			foreach (string __item in __AllowedFiles)
+			{
+				if (__item.ToLower() == __fileext.ToLower())
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		#endregion
