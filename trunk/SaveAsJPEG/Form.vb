@@ -125,18 +125,60 @@ Public Class Form
 
     Private Function isVersionInstalled(ByVal version As String) As Boolean
         Dim key As RegistryKey
+        Dim os = Environment.OSVersion
+        Dim res As Object
 
-        Select Case Version
-            Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
-            Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
-            Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
-        End Select
+        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+            'MessageBox.Show(version)
+            Select Case version
+                Case "CS3"
+                    Try
+                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG")
+                    Catch ex As Exception
 
-        If (key Is Nothing) Then
-            Return False
+                    End Try
+
+                Case "CS4"
+                    Try
+                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG")
+                    Catch ex As Exception
+
+                    End Try
+
+                Case "CS5"
+                    Try
+                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG")
+                    Catch ex As Exception
+
+                    End Try
+
+            End Select
+
+            Try
+                res = key.GetValue("SubCommands")
+                If (res.ToString <> String.Empty) Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Catch ex As Exception
+                Return False
+            End Try
         Else
-            Return True
+            Select Case version
+                Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
+            End Select
+            If (key Is Nothing) Then
+                Return False
+            Else
+                Return True
+            End If
         End If
+
+
+        
     End Function
 
     Private Sub Setup()
@@ -164,60 +206,150 @@ Public Class Form
 
     Private Sub RegInstall(version as String)
 
+        Dim os = Environment.OSVersion
         Dim newKey As RegistryKey
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
+            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-1"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
+            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
+            newKey.SetValue("MUIVerb", "JPEG 100% (by index)", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG (by name)\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-1"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
+            newKey.SetValue("MUIVerb", "JPEG 60% (by index)", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
+            newKey.SetValue("MUIVerb", "JPEG 100% (by name)", RegistryValueKind.String)
+            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-1"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
 
-        newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\\command")
-        newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-        newKey.Close()
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
+            newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
+            newKey.SetValue("Icon", "shell32.dll,35", RegistryValueKind.String)
+            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            newKey.Close()
+
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
+            newKey.Close()
+        Else
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-1"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG (by name)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-1"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
+            newKey.Close()
+        End If
         Setup()
 
     End Sub
 
     Private Sub RegUninstall(ByVal version As String)
-        Try
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100%\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60%\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100%\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60%\")
+        'MessageBox.Show(version)
+        Dim os = Environment.OSVersion
+
+        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+        Else
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100%\")
+            Catch e As Exception
+            End Try
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60%\")
+            Catch e As Exception
+            End Try
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100%\")
+            Catch e As Exception
+            End Try
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60%\")
+            Catch e As Exception
+            End Try
+
 
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\")
@@ -230,8 +362,8 @@ Public Class Form
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\")
-        Catch e As Exception
-        End Try
+        End If
+        
         Setup()
     End Sub
 
