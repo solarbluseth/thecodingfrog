@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{18BD3755-F848-42D4-B0C3-B143B888B32C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -85,7 +85,7 @@
       <DependentUpon>Form.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <Generator>PublicVbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
@@ -113,7 +113,9 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="wizard.ico" />
+    <EmbeddedResource Include="save as 2.ico" />
+    <EmbeddedResource Include="tools.ico" />
+    <EmbeddedResource Include="wizard.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -124,6 +126,12 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"
+"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)SaveAsJPEG.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll</PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
