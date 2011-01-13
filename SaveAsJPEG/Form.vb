@@ -230,7 +230,7 @@ Public Class Form
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
             newKey.SetValue("MUIVerb", "JPEG 100% (by index)", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100\\command")
@@ -239,7 +239,7 @@ Public Class Form
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
             newKey.SetValue("MUIVerb", "JPEG 60% (by index)", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60\\command")
@@ -248,7 +248,7 @@ Public Class Form
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
             newKey.SetValue("MUIVerb", "JPEG 100% (by name)", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
@@ -257,7 +257,7 @@ Public Class Form
 
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
-            newKey.SetValue("Icon", "shell32.dll,35", RegistryValueKind.String)
+            newKey.SetValue("Icon", "shell32.dll,21", RegistryValueKind.String)
             'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
             newKey.Close()
 
@@ -330,6 +330,27 @@ Public Class Form
 
             Try
                 Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
+            Catch e As Exception
+                'MessageBox.Show (e.Message)
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             Catch e As Exception
             End Try
         Else

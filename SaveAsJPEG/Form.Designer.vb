@@ -22,6 +22,7 @@ Partial Class Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form))
         Me.Install = New System.Windows.Forms.Button
         Me.GroupBox1 = New System.Windows.Forms.GroupBox
         Me.Label1 = New System.Windows.Forms.Label
@@ -35,9 +36,9 @@ Partial Class Form
         Me.CS4 = New System.Windows.Forms.Label
         Me.CS3 = New System.Windows.Forms.Label
         Me.GroupBox3 = New System.Windows.Forms.GroupBox
+        Me.ExportLayerComps = New System.Windows.Forms.CheckBox
         Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
         Me.Label2 = New System.Windows.Forms.Label
-        Me.ExportLayerComps = New System.Windows.Forms.CheckBox
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -173,6 +174,16 @@ Partial Class Form
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Export by name"
         '
+        'ExportLayerComps
+        '
+        Me.ExportLayerComps.AutoSize = True
+        Me.ExportLayerComps.Location = New System.Drawing.Point(149, 21)
+        Me.ExportLayerComps.Name = "ExportLayerComps"
+        Me.ExportLayerComps.Size = New System.Drawing.Size(84, 17)
+        Me.ExportLayerComps.TabIndex = 4
+        Me.ExportLayerComps.Text = "LayerComps"
+        Me.ExportLayerComps.UseVisualStyleBackColor = True
+        '
         'NamedExportQuality
         '
         Me.NamedExportQuality.Location = New System.Drawing.Point(75, 19)
@@ -192,16 +203,6 @@ Partial Class Form
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Quality"
         '
-        'ExportLayerComps
-        '
-        Me.ExportLayerComps.AutoSize = True
-        Me.ExportLayerComps.Location = New System.Drawing.Point(149, 21)
-        Me.ExportLayerComps.Name = "ExportLayerComps"
-        Me.ExportLayerComps.Size = New System.Drawing.Size(84, 17)
-        Me.ExportLayerComps.TabIndex = 4
-        Me.ExportLayerComps.Text = "LayerComps"
-        Me.ExportLayerComps.UseVisualStyleBackColor = True
-        '
         'Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -210,6 +211,7 @@ Partial Class Form
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form"
         Me.Text = "SaveAsJPEG"
         Me.GroupBox1.ResumeLayout(False)
