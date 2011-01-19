@@ -401,29 +401,28 @@ Public Class Form
         If args(1) = -1 Then isNamedLayerComp = True
 
 
-        On Error Resume Next
-        If appRef.Documents.Count > 0 Then
-            For i = 1 To appRef.Documents.Count
-                If args(2) = appRef.Documents.Item(i).FullName Then
-                    appRef.ActiveDocument = appRef.Documents.Item(i)
-                    docRef = appRef.ActiveDocument
-                    openDoc = False
-                    stayOpen = True
-                End If
-            Next
-        End If
-        If Err.Number <> 0 Then
-            Call showErr("opened")
-        End If
-        On Error GoTo 0
+        Try
+            If appRef.Documents.Count > 0 Then
+                For i = 1 To appRef.Documents.Count
+                    If args(2) = appRef.Documents.Item(i).FullName Then
+                        appRef.ActiveDocument = appRef.Documents.Item(i)
+                        docRef = appRef.ActiveDocument
+                        openDoc = False
+                        stayOpen = True
+                    End If
+                Next
+            End If
+        Catch ex As Exception
+            Call showErr(ex.Message)
+        End Try
+
 
         If openDoc Then
-            On Error Resume Next
-            docRef = appRef.Open(args(2))
-            If Err.Number <> 0 Then
-                Call showErr("opened")
-            End If
-            On Error GoTo 0
+            Try
+                docRef = appRef.Open(args(2))
+            Catch ex As Exception
+                Call showErr(ex.Message)
+            End Try
         End If
 
         Dim compsCount As Integer
@@ -482,12 +481,17 @@ Public Class Form
                 compRef.Apply()
             End If
 
+            'MsgBox(Me.AutoArchive.Checked)
             If Me.AutoArchive.Checked Then
 
                 Dim di As DirectoryInfo
                 Dim afi() As FileInfo
                 Dim fi As FileInfo
 
+                'MsgBox(Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\"))
+                If Not Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                    Directory.CreateDirectory(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
+                End If
 
                 di = New DirectoryInfo(docRef.Path)
                 Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
@@ -500,7 +504,9 @@ Public Class Form
                     myMatches = RegexObj.Match(currentFileName)
                     currentVersion = myMatches.Value
                     cleanFileName = RegexObj.Replace(currentFileName, "")
-                    'MsgBox(currentVersion)
+                    cleanFileName = cleanFileName.Replace("+", "\+")
+                    cleanFileName = cleanFileName.Replace(" ", "\s")
+                    'MsgBox(cleanFileName)
                     Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d+|\.)")
 
                     afi = di.GetFiles("*.*")
@@ -508,9 +514,12 @@ Public Class Form
                         If RegexObj2.IsMatch(fi.Name) Then
                             'MsgBox(fi.Name)
                             If isOldFileVersion(fi.Name, currentVersion) Then
-                                On Error Resume Next
-                                'MsgBox(fi.Name)
-                                File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
+                                Try
+                                    File.Move(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name)
+                                Catch ex As Exception
+
+                                End Try
+
                             End If
                         End If
                     Next

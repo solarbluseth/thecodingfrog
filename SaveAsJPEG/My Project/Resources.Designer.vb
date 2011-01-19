@@ -60,6 +60,13 @@ Namespace My.Resources
             End Set
         End Property
         
+        Public ReadOnly Property photoshop() As System.Drawing.Icon
+            Get
+                Dim obj As Object = ResourceManager.GetObject("photoshop", resourceCulture)
+                Return CType(obj,System.Drawing.Icon)
+            End Get
+        End Property
+        
         Public ReadOnly Property save_as_2() As System.Drawing.Icon
             Get
                 Dim obj As Object = ResourceManager.GetObject("save_as_2", resourceCulture)
@@ -70,13 +77,6 @@ Namespace My.Resources
         Public ReadOnly Property tools() As System.Drawing.Icon
             Get
                 Dim obj As Object = ResourceManager.GetObject("tools", resourceCulture)
-                Return CType(obj,System.Drawing.Icon)
-            End Get
-        End Property
-        
-        Public ReadOnly Property wizard() As System.Drawing.Icon
-            Get
-                Dim obj As Object = ResourceManager.GetObject("wizard", resourceCulture)
                 Return CType(obj,System.Drawing.Icon)
             End Get
         End Property
