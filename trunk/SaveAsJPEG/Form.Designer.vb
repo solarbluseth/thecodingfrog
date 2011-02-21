@@ -22,6 +22,7 @@ Partial Class Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form))
         Me.Install = New System.Windows.Forms.Button
         Me.GroupBox1 = New System.Windows.Forms.GroupBox
@@ -39,6 +40,7 @@ Partial Class Form
         Me.ExportLayerComps = New System.Windows.Forms.CheckBox
         Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
         Me.Label2 = New System.Windows.Forms.Label
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -172,7 +174,7 @@ Partial Class Form
         Me.GroupBox3.Size = New System.Drawing.Size(259, 54)
         Me.GroupBox3.TabIndex = 3
         Me.GroupBox3.TabStop = False
-        Me.GroupBox3.Text = "Export by name"
+        Me.GroupBox3.Text = "Export LayerComps/Layers by name"
         '
         'ExportLayerComps
         '
@@ -202,6 +204,9 @@ Partial Class Form
         Me.Label2.Size = New System.Drawing.Size(39, 13)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Quality"
+        '
+        'ToolTip1
+        '
         '
         'Form
         '
@@ -244,4 +249,5 @@ Partial Class Form
         MyBase.Finalize()
     End Sub
     Friend WithEvents ExportLayerComps As System.Windows.Forms.CheckBox
+    Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 End Class
