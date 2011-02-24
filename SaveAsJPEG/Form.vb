@@ -13,6 +13,7 @@ Public Class Form
     Private args As String()
     Private conf_loaded As Boolean = False
     Private doExportLayerComps As Boolean = False
+    Private isJPEG As Boolean = True
 
     Const FOUND = "Found"
     Const NOT_FOUND = "Not found"
@@ -216,24 +217,28 @@ Public Class Form
         Dim newKey As RegistryKey
 
         If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+
+            ' Save as JPEG
             newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
             newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
             newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
             newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
             newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
             newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Config", RegistryValueKind.String)
+            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
             newKey.Close()
 
+
+            ' SaveAsJPEG.100
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
             newKey.SetValue("MUIVerb", "JPEG 100% (by index)", RegistryValueKind.String)
             newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
@@ -243,6 +248,7 @@ Public Class Form
             newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
             newKey.Close()
 
+            ' SaveAsJPEG.60
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
             newKey.SetValue("MUIVerb", "JPEG 60% (by index)", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
@@ -252,6 +258,7 @@ Public Class Form
             newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
             newKey.Close()
 
+            ' SaveAsJPEG.ByName
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
             newKey.SetValue("MUIVerb", "JPEG 100% (by name)", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
@@ -261,6 +268,17 @@ Public Class Form
             newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
             newKey.Close()
 
+            ' SaveAsJPEG.Gif
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif")
+            newKey.SetValue("MUIVerb", "GIF", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
+            newKey.Close()
+
+            ' SaveAsJPEG.Config
             newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
             newKey.SetValue("Icon", "shell32.dll,21", RegistryValueKind.String)
@@ -281,6 +299,10 @@ Public Class Form
 
             newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\\command")
             newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            newKey.Close()
+
+            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\\command")
+            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
             newKey.Close()
 
             newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
@@ -356,6 +378,11 @@ Public Class Form
             End Try
 
             Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif")
+            Catch e As Exception
+            End Try
+
+            Try
                 Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             Catch e As Exception
             End Try
@@ -381,6 +408,7 @@ Public Class Form
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG config\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\")
@@ -405,7 +433,21 @@ Public Class Form
         jpgSaveOptions.EmbedColorProfile = False
         jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
         jpgSaveOptions.Matte = 1 ' psNoMatte 
-        
+
+        'Dim gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        ''gifExportOptionsSaveForWeb.MatteColor = 255
+        'gifExportOptionsSaveForWeb.Format = 3
+        'gifExportOptionsSaveForWeb.ColorReduction = 1
+        'gifExportOptionsSaveForWeb.Colors = 256
+        'gifExportOptionsSaveForWeb.Dither = 3
+        'gifExportOptionsSaveForWeb.DitherAmount = 100
+        'gifExportOptionsSaveForWeb.Quality = 100
+        'gifExportOptionsSaveForWeb.Transparency = True
+        'gifExportOptionsSaveForWeb.TransparencyAmount = 100
+        'gifExportOptionsSaveForWeb.TransparencyDither = 2
+        'gifExportOptionsSaveForWeb.IncludeProfile = False
+        'gifExportOptionsSaveForWeb.Lossy = 0
+        'gifExportOptionsSaveForWeb.WebSnap = 0
 
         Select Case args(3)
             Case "name"
@@ -414,6 +456,9 @@ Public Class Form
             Case "index"
                 isNamedLayerComp = False
                 jpgSaveOptions.Quality = CInt(args(1))
+            Case "gif"
+                isNamedLayerComp = False
+                isJPEG = False
             Case Else
                 isNamedLayerComp = False
                 jpgSaveOptions.Quality = CInt(args(1))
@@ -438,6 +483,7 @@ Public Class Form
 
 
         If openDoc Then
+            MessageBox.Show(args(2))
             Try
                 docRef = appRef.Open(args(2))
             Catch ex As Exception
@@ -457,12 +503,19 @@ Public Class Form
         ' Exporting layercomps by index or name
         If doExportLayerComps Then
             If compsCount <= 1 Then
+                MessageBox.Show("here")
+
                 'Set textItemRef = appRef.ActiveDocument.Layers(1) 
 
                 'textItemRef.TextItem.Contents = Args.Item(1) 
 
                 'outFileName = Args.Item(1)
-                docRef.SaveAs(args(2), jpgSaveOptions, True)
+                If isJPEG Then
+                    docRef.SaveAs(args(2), jpgSaveOptions, True)
+                Else
+                    'docRef.Export(args(2), 2, gifExportOptionsSaveForWeb)
+                End If
+
             Else
                 'msgbox("comps!")
                 For compsIndex = 1 To compsCount
@@ -474,12 +527,18 @@ Public Class Form
                     duppedDocument = docRef.Duplicate()
                     'msgbox(compRef.Name)
                     If Not isNamedLayerComp Then
-                        fileNameBody = docRef.Name.Substring(0, docRef.Name.LastIndexOf(".")) & "." & compsIndex & ".jpg"
+                        fileNameBody = docRef.Name.Substring(0, docRef.Name.LastIndexOf(".")) & "." & compsIndex
                     Else
-                        fileNameBody = compRef.Name & ".jpg"
+                        fileNameBody = compRef.Name
                     End If
                     'msgbox(fileNameBody)
-                    duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
+                    If isJPEG Then
+                        fileNameBody = fileNameBody & ".jpg"
+                        duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
+                    Else
+                        fileNameBody = fileNameBody & ".gif"
+                        'duppedDocument.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
+                    End If
                     duppedDocument.Close(2)
                     'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
                     'fileNameBody += "_" + compRef.name;
