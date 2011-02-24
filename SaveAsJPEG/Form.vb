@@ -434,20 +434,20 @@ Public Class Form
         jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
         jpgSaveOptions.Matte = 1 ' psNoMatte 
 
-        'Dim gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
-        ''gifExportOptionsSaveForWeb.MatteColor = 255
-        'gifExportOptionsSaveForWeb.Format = 3
-        'gifExportOptionsSaveForWeb.ColorReduction = 1
-        'gifExportOptionsSaveForWeb.Colors = 256
-        'gifExportOptionsSaveForWeb.Dither = 3
-        'gifExportOptionsSaveForWeb.DitherAmount = 100
-        'gifExportOptionsSaveForWeb.Quality = 100
-        'gifExportOptionsSaveForWeb.Transparency = True
-        'gifExportOptionsSaveForWeb.TransparencyAmount = 100
-        'gifExportOptionsSaveForWeb.TransparencyDither = 2
-        'gifExportOptionsSaveForWeb.IncludeProfile = False
-        'gifExportOptionsSaveForWeb.Lossy = 0
-        'gifExportOptionsSaveForWeb.WebSnap = 0
+        Dim gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        'gifExportOptionsSaveForWeb.MatteColor = 255
+        gifExportOptionsSaveForWeb.Format = 3
+        gifExportOptionsSaveForWeb.ColorReduction = 1
+        gifExportOptionsSaveForWeb.Colors = 256
+        gifExportOptionsSaveForWeb.Dither = 3
+        gifExportOptionsSaveForWeb.DitherAmount = 100
+        gifExportOptionsSaveForWeb.Quality = 100
+        gifExportOptionsSaveForWeb.Transparency = True
+        gifExportOptionsSaveForWeb.TransparencyAmount = 100
+        gifExportOptionsSaveForWeb.TransparencyDither = 2
+        gifExportOptionsSaveForWeb.IncludeProfile = False
+        gifExportOptionsSaveForWeb.Lossy = 0
+        gifExportOptionsSaveForWeb.WebSnap = 0
 
         Select Case args(3)
             Case "name"
@@ -483,7 +483,6 @@ Public Class Form
 
 
         If openDoc Then
-            MessageBox.Show(args(2))
             Try
                 docRef = appRef.Open(args(2))
             Catch ex As Exception
@@ -503,8 +502,6 @@ Public Class Form
         ' Exporting layercomps by index or name
         If doExportLayerComps Then
             If compsCount <= 1 Then
-                MessageBox.Show("here")
-
                 'Set textItemRef = appRef.ActiveDocument.Layers(1) 
 
                 'textItemRef.TextItem.Contents = Args.Item(1) 
@@ -513,7 +510,8 @@ Public Class Form
                 If isJPEG Then
                     docRef.SaveAs(args(2), jpgSaveOptions, True)
                 Else
-                    'docRef.Export(args(2), 2, gifExportOptionsSaveForWeb)
+                    fileNameBody = docRef.Name.Substring(0, docRef.Name.LastIndexOf(".")) & ".gif"
+                    docRef.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
                 End If
 
             Else
@@ -537,7 +535,7 @@ Public Class Form
                         duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
                     Else
                         fileNameBody = fileNameBody & ".gif"
-                        'duppedDocument.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
+                        duppedDocument.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
                     End If
                     duppedDocument.Close(2)
                     'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
