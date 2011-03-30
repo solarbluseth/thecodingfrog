@@ -84,6 +84,13 @@ Public Class Form
             End If
 
             key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            If key.GetValue("ExcludeDirectories") <> "" Then
+                Me.ExcludeDirectories.Text = key.GetValue("ExcludeDirectories")
+            Else
+                Me.ExcludeDirectories.Text = "+ Elements"
+            End If
+
+            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
             'MessageBox.Show(">>> " & key.GetValue("NamedExportQuality"))
             If key.GetValue("NamedExportQuality") <> "" Then
                 Me.NamedExportQuality.Value = CInt(key.GetValue("NamedExportQuality"))
@@ -426,9 +433,6 @@ Public Class Form
         
         Dim isNamedLayerComp As Boolean = False
 
-        'MessageBox.Show("ok")
-        'If args(1) = -1 Then isNamedLayerComp = True
-
         Dim jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
         jpgSaveOptions.EmbedColorProfile = False
         jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
@@ -551,9 +555,13 @@ Public Class Form
             End If
 
             'MsgBox(Me.AutoArchive.Checked)
-            If Me.AutoArchive.Checked Then
+            Dim di As DirectoryInfo
+            di = New DirectoryInfo(docRef.Path)
 
-                Dim di As DirectoryInfo
+            'MsgBox(di.Name)
+            If Me.AutoArchive.Checked And Not isExcludeDirectory(di.Name) Then
+
+                'Dim di As DirectoryInfo
                 Dim afi() As FileInfo
                 Dim fi As FileInfo
 
@@ -562,7 +570,7 @@ Public Class Form
                     Directory.CreateDirectory(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
                 End If
 
-                di = New DirectoryInfo(docRef.Path)
+                'di = New DirectoryInfo(docRef.Path)
                 Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
 
                 Dim RegexObj As Regex = New Regex("\d*$")
@@ -635,13 +643,22 @@ Public Class Form
         End If
     End Function
 
-    Private Sub showErr(ByVal errType)
-        Select Case errType
-            Case "opened"
-                MsgBox("Photoshop est en mode saisie sur un layer !")
-                End
-        End Select
-    End Sub
+    Private Function isExcludeDirectory(ByVal dirName As String)
+        Dim ExcludeDirectories As Array
+        Dim ExcludeDirectory As String
+
+        If Me.ExcludeDirectories.Text <> "" Then
+            ExcludeDirectories = Split(Me.ExcludeDirectories.Text, ";")
+            For Each ExcludeDirectory In ExcludeDirectories
+                If ExcludeDirectory = dirName Then
+                    Return True
+                End If
+            Next
+            Return False
+        Else
+            Return False
+        End If
+    End Function
 
     Private Sub Install_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Install.Click
         If isSetup() Then
@@ -707,5 +724,17 @@ Public Class Form
 
     Private Sub ExportLayerComps_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles ExportLayerComps.MouseHover
         ToolTip1.Show("Export layercomps if checked, else it will save each layers", ExportLayerComps)
+    End Sub
+
+    Private Sub ExcludeDirectories_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExcludeDirectories.TextChanged
+        Dim newKey As RegistryKey
+        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        If Trim(Me.ExcludeDirectories.Text) <> "" Then
+            newKey.SetValue("ExcludeDirectories", Me.ExcludeDirectories.Text, RegistryValueKind.String)
+        Else
+            Me.ExcludeDirectories.Text = "+ Elements"
+            newKey.SetValue("ExcludeDirectories", "+ Elements", RegistryValueKind.String)
+        End If
+        newKey.Close()
     End Sub
 End Class
