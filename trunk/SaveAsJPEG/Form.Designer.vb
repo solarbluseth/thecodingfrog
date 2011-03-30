@@ -41,10 +41,14 @@ Partial Class Form
         Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
         Me.Label2 = New System.Windows.Forms.Label
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox
+        Me.Label3 = New System.Windows.Forms.Label
+        Me.ExcludeDirectories = New System.Windows.Forms.TextBox
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         CType(Me.NamedExportQuality, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'Install
@@ -63,7 +67,7 @@ Partial Class Form
         Me.GroupBox1.Controls.Add(Me.AutoArchive)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 141)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(260, 77)
+        Me.GroupBox1.Size = New System.Drawing.Size(260, 74)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Archive"
@@ -169,9 +173,9 @@ Partial Class Form
         Me.GroupBox3.Controls.Add(Me.ExportLayerComps)
         Me.GroupBox3.Controls.Add(Me.NamedExportQuality)
         Me.GroupBox3.Controls.Add(Me.Label2)
-        Me.GroupBox3.Location = New System.Drawing.Point(12, 231)
+        Me.GroupBox3.Location = New System.Drawing.Point(12, 283)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(259, 54)
+        Me.GroupBox3.Size = New System.Drawing.Size(260, 54)
         Me.GroupBox3.TabIndex = 3
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Export LayerComps/Layers by name"
@@ -208,14 +212,43 @@ Partial Class Form
         'ToolTip1
         '
         '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.Label3)
+        Me.GroupBox4.Controls.Add(Me.ExcludeDirectories)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 222)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(260, 55)
+        Me.GroupBox4.TabIndex = 5
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Exclude"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(7, 24)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(57, 13)
+        Me.Label3.TabIndex = 6
+        Me.Label3.Text = "Directories"
+        Me.ToolTip1.SetToolTip(Me.Label3, "List of directories seperated by comma")
+        '
+        'ExcludeDirectories
+        '
+        Me.ExcludeDirectories.Location = New System.Drawing.Point(75, 21)
+        Me.ExcludeDirectories.Name = "ExcludeDirectories"
+        Me.ExcludeDirectories.Size = New System.Drawing.Size(178, 20)
+        Me.ExcludeDirectories.TabIndex = 5
+        '
         'Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 299)
+        Me.ClientSize = New System.Drawing.Size(284, 350)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
+        Me.Controls.Add(Me.GroupBox4)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form"
         Me.Text = "SaveAsJPEG"
@@ -226,6 +259,8 @@ Partial Class Form
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
         CType(Me.NamedExportQuality, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox4.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -250,4 +285,7 @@ Partial Class Form
     End Sub
     Friend WithEvents ExportLayerComps As System.Windows.Forms.CheckBox
     Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
+    Friend WithEvents GroupBox4 As System.Windows.Forms.GroupBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents ExcludeDirectories As System.Windows.Forms.TextBox
 End Class
