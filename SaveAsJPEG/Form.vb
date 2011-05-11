@@ -21,7 +21,7 @@ Public Class Form
     Private strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
     Private strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
 
-    Private appRef As Photoshop.Application = New Photoshop.Application()
+    Private appRef As Photoshop.Application
     Private docRef As Photoshop.Document
     Private openDoc As Boolean = True
     Private stayOpen As Boolean = False
@@ -469,7 +469,7 @@ Public Class Form
         End Select
 
 
-
+        appRef = New Photoshop.Application()
         Try
             If appRef.Documents.Count > 0 Then
                 For i = 1 To appRef.Documents.Count
@@ -590,7 +590,7 @@ Public Class Form
                     For Each fi In afi
                         If RegexObj2.IsMatch(fi.Name) Then
                             'MsgBox(fi.Name)
-                            If isOldFileVersion(fi.Name, currentVersion) Then
+                            If isOldFileVersion(fi.Name, currentVersion) And Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
                                 Try
                                     File.Copy(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name, True)
                                 Catch ex As Exception
@@ -648,7 +648,7 @@ Public Class Form
         Dim ExcludeDirectory As String
 
         If Me.ExcludeDirectories.Text <> "" Then
-            ExcludeDirectories = Split(Me.ExcludeDirectories.Text, ";")
+            ExcludeDirectories = Split(Me.ExcludeDirectories.Text & ";" & me.ArchiveDirectory.Text, ";")
             For Each ExcludeDirectory In ExcludeDirectories
                 If ExcludeDirectory = dirName Then
                     Return True
