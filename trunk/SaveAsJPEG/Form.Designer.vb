@@ -41,8 +41,8 @@ Partial Class Form
         Me.NamedExportQuality = New System.Windows.Forms.NumericUpDown
         Me.Label2 = New System.Windows.Forms.Label
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.GroupBox4 = New System.Windows.Forms.GroupBox
         Me.Label3 = New System.Windows.Forms.Label
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox
         Me.ExcludeDirectories = New System.Windows.Forms.TextBox
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -212,17 +212,6 @@ Partial Class Form
         'ToolTip1
         '
         '
-        'GroupBox4
-        '
-        Me.GroupBox4.Controls.Add(Me.Label3)
-        Me.GroupBox4.Controls.Add(Me.ExcludeDirectories)
-        Me.GroupBox4.Location = New System.Drawing.Point(12, 222)
-        Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(260, 55)
-        Me.GroupBox4.TabIndex = 5
-        Me.GroupBox4.TabStop = False
-        Me.GroupBox4.Text = "Exclude"
-        '
         'Label3
         '
         Me.Label3.AutoSize = True
@@ -232,6 +221,17 @@ Partial Class Form
         Me.Label3.TabIndex = 6
         Me.Label3.Text = "Directories"
         Me.ToolTip1.SetToolTip(Me.Label3, "List of directories seperated by comma")
+        '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.Label3)
+        Me.GroupBox4.Controls.Add(Me.ExcludeDirectories)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 222)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(260, 55)
+        Me.GroupBox4.TabIndex = 5
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Excluded from auto archiving"
         '
         'ExcludeDirectories
         '
