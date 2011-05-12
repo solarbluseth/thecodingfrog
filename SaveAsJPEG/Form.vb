@@ -20,6 +20,7 @@ Public Class Form
     Private strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
     Private strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
     Private strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
+    Private strRootCS55 As String = "\\Photoshop.Image.13\\shell\\Save as JPEG 100%\\command"
 
     Private appRef As Photoshop.Application
     Private docRef As Photoshop.Document
@@ -114,7 +115,7 @@ Public Class Form
     End Sub
 
     Private Function isSetup() As Boolean
-        If (isVersionInstalled("CS3") Or isVersionInstalled("CS4") Or isVersionInstalled("CS5")) Then
+        If (isVersionInstalled("CS3") Or isVersionInstalled("CS4") Or isVersionInstalled("CS5") Or isVersionInstalled("CS55")) Then
             Return True
         Else
             Return False
@@ -128,6 +129,7 @@ Public Class Form
             Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10")
             Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11")
             Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12")
+            Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13")
         End Select
 
         If (key Is Nothing) Then
@@ -166,6 +168,13 @@ Public Class Form
 
                     End Try
 
+                Case "CS55"
+                    Try
+                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13\\shell\\Save as JPEG")
+                    Catch ex As Exception
+
+                    End Try
+
             End Select
 
             Try
@@ -183,6 +192,7 @@ Public Class Form
                 Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
                 Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
                 Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13\\shell\\Save as JPEG 100% (by index)\\command\")
             End Select
             If (key Is Nothing) Then
                 Return False
@@ -215,6 +225,11 @@ Public Class Form
             Me.LabelCS5.Text = FOUND
         Else
             Me.LabelCS5.Text = NOT_FOUND
+        End If
+        If (hasVersion("CS55")) Then
+            Me.LabelCS55.Text = FOUND
+        Else
+            Me.LabelCS55.Text = NOT_FOUND
         End If
     End Sub
 
@@ -665,10 +680,12 @@ Public Class Form
             If hasVersion("CS3") Then RegUninstall("10")
             If hasVersion("CS4") Then RegUninstall("11")
             If hasVersion("CS5") Then RegUninstall("12")
+            If hasVersion("CS55") Then RegUninstall("13")
         Else
             If hasVersion("CS3") Then RegInstall("10")
             If hasVersion("CS4") Then RegInstall("11")
             If hasVersion("CS5") Then RegInstall("12")
+            If hasVersion("CS55") Then RegInstall("13")
         End If
     End Sub
 
