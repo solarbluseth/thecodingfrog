@@ -30,6 +30,8 @@ Partial Class Form
         Me.ArchiveDirectory = New System.Windows.Forms.TextBox
         Me.AutoArchive = New System.Windows.Forms.CheckBox
         Me.GroupBox2 = New System.Windows.Forms.GroupBox
+        Me.LabelCS55 = New System.Windows.Forms.Label
+        Me.CS55 = New System.Windows.Forms.Label
         Me.LabelCS5 = New System.Windows.Forms.Label
         Me.LabelCS4 = New System.Windows.Forms.Label
         Me.LabelCS3 = New System.Windows.Forms.Label
@@ -53,7 +55,7 @@ Partial Class Form
         '
         'Install
         '
-        Me.Install.Location = New System.Drawing.Point(6, 94)
+        Me.Install.Location = New System.Drawing.Point(6, 119)
         Me.Install.Name = "Install"
         Me.Install.Size = New System.Drawing.Size(247, 23)
         Me.Install.TabIndex = 0
@@ -65,7 +67,7 @@ Partial Class Form
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Controls.Add(Me.ArchiveDirectory)
         Me.GroupBox1.Controls.Add(Me.AutoArchive)
-        Me.GroupBox1.Location = New System.Drawing.Point(12, 141)
+        Me.GroupBox1.Location = New System.Drawing.Point(12, 166)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(260, 74)
         Me.GroupBox1.TabIndex = 1
@@ -100,6 +102,8 @@ Partial Class Form
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.LabelCS55)
+        Me.GroupBox2.Controls.Add(Me.CS55)
         Me.GroupBox2.Controls.Add(Me.LabelCS5)
         Me.GroupBox2.Controls.Add(Me.LabelCS4)
         Me.GroupBox2.Controls.Add(Me.LabelCS3)
@@ -109,15 +113,33 @@ Partial Class Form
         Me.GroupBox2.Controls.Add(Me.Install)
         Me.GroupBox2.Location = New System.Drawing.Point(12, 12)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(260, 123)
+        Me.GroupBox2.Size = New System.Drawing.Size(260, 148)
         Me.GroupBox2.TabIndex = 2
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Install"
         '
+        'LabelCS55
+        '
+        Me.LabelCS55.AutoSize = True
+        Me.LabelCS55.Location = New System.Drawing.Point(103, 90)
+        Me.LabelCS55.Name = "LabelCS55"
+        Me.LabelCS55.Size = New System.Drawing.Size(54, 13)
+        Me.LabelCS55.TabIndex = 8
+        Me.LabelCS55.Text = "Not found"
+        '
+        'CS55
+        '
+        Me.CS55.AutoSize = True
+        Me.CS55.Location = New System.Drawing.Point(8, 90)
+        Me.CS55.Name = "CS55"
+        Me.CS55.Size = New System.Drawing.Size(99, 13)
+        Me.CS55.TabIndex = 7
+        Me.CS55.Text = "Photoshop CS5.5 : "
+        '
         'LabelCS5
         '
         Me.LabelCS5.AutoSize = True
-        Me.LabelCS5.Location = New System.Drawing.Point(93, 68)
+        Me.LabelCS5.Location = New System.Drawing.Point(102, 68)
         Me.LabelCS5.Name = "LabelCS5"
         Me.LabelCS5.Size = New System.Drawing.Size(54, 13)
         Me.LabelCS5.TabIndex = 6
@@ -126,7 +148,7 @@ Partial Class Form
         'LabelCS4
         '
         Me.LabelCS4.AutoSize = True
-        Me.LabelCS4.Location = New System.Drawing.Point(93, 44)
+        Me.LabelCS4.Location = New System.Drawing.Point(102, 44)
         Me.LabelCS4.Name = "LabelCS4"
         Me.LabelCS4.Size = New System.Drawing.Size(54, 13)
         Me.LabelCS4.TabIndex = 5
@@ -135,7 +157,7 @@ Partial Class Form
         'LabelCS3
         '
         Me.LabelCS3.AutoSize = True
-        Me.LabelCS3.Location = New System.Drawing.Point(93, 20)
+        Me.LabelCS3.Location = New System.Drawing.Point(102, 20)
         Me.LabelCS3.Name = "LabelCS3"
         Me.LabelCS3.Size = New System.Drawing.Size(54, 13)
         Me.LabelCS3.TabIndex = 4
@@ -146,34 +168,34 @@ Partial Class Form
         Me.CS5.AutoSize = True
         Me.CS5.Location = New System.Drawing.Point(7, 68)
         Me.CS5.Name = "CS5"
-        Me.CS5.Size = New System.Drawing.Size(90, 13)
+        Me.CS5.Size = New System.Drawing.Size(99, 13)
         Me.CS5.TabIndex = 3
-        Me.CS5.Text = "Photoshop CS5 : "
+        Me.CS5.Text = "Photoshop CS5    : "
         '
         'CS4
         '
         Me.CS4.AutoSize = True
         Me.CS4.Location = New System.Drawing.Point(7, 44)
         Me.CS4.Name = "CS4"
-        Me.CS4.Size = New System.Drawing.Size(90, 13)
+        Me.CS4.Size = New System.Drawing.Size(99, 13)
         Me.CS4.TabIndex = 2
-        Me.CS4.Text = "Photoshop CS4 : "
+        Me.CS4.Text = "Photoshop CS4    : "
         '
         'CS3
         '
         Me.CS3.AutoSize = True
         Me.CS3.Location = New System.Drawing.Point(7, 20)
         Me.CS3.Name = "CS3"
-        Me.CS3.Size = New System.Drawing.Size(90, 13)
+        Me.CS3.Size = New System.Drawing.Size(99, 13)
         Me.CS3.TabIndex = 1
-        Me.CS3.Text = "Photoshop CS3 : "
+        Me.CS3.Text = "Photoshop CS3    : "
         '
         'GroupBox3
         '
         Me.GroupBox3.Controls.Add(Me.ExportLayerComps)
         Me.GroupBox3.Controls.Add(Me.NamedExportQuality)
         Me.GroupBox3.Controls.Add(Me.Label2)
-        Me.GroupBox3.Location = New System.Drawing.Point(12, 283)
+        Me.GroupBox3.Location = New System.Drawing.Point(12, 308)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(260, 54)
         Me.GroupBox3.TabIndex = 3
@@ -226,7 +248,7 @@ Partial Class Form
         '
         Me.GroupBox4.Controls.Add(Me.Label3)
         Me.GroupBox4.Controls.Add(Me.ExcludeDirectories)
-        Me.GroupBox4.Location = New System.Drawing.Point(12, 222)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 247)
         Me.GroupBox4.Name = "GroupBox4"
         Me.GroupBox4.Size = New System.Drawing.Size(260, 55)
         Me.GroupBox4.TabIndex = 5
@@ -244,7 +266,8 @@ Partial Class Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 350)
+        Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.ClientSize = New System.Drawing.Size(284, 374)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -288,4 +311,6 @@ Partial Class Form
     Friend WithEvents GroupBox4 As System.Windows.Forms.GroupBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents ExcludeDirectories As System.Windows.Forms.TextBox
+    Friend WithEvents LabelCS55 As System.Windows.Forms.Label
+    Friend WithEvents CS55 As System.Windows.Forms.Label
 End Class

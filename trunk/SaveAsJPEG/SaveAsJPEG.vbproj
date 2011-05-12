@@ -74,6 +74,7 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompileDate.vb" />
     <Compile Include="Form.Designer.vb">
       <DependentUpon>Form.vb</DependentUpon>
     </Compile>
@@ -165,10 +166,11 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"
 "C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)SaveAsJPEG.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll</PostBuildEvent>
+    <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
