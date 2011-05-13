@@ -7,9 +7,9 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{18BD3755-F848-42D4-B0C3-B143B888B32C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>SaveAsJPEG.Form</StartupObject>
-    <RootNamespace>SaveAsJPEG</RootNamespace>
-    <AssemblyName>SaveAsJPEG</AssemblyName>
+    <StartupObject>PSTools.Form</StartupObject>
+    <RootNamespace>PSTools</RootNamespace>
+    <AssemblyName>PSTools</AssemblyName>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <ApplicationIcon>Resources\photoshop.ico</ApplicationIcon>
     <FileUpgradeFlags>
@@ -40,7 +40,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>SaveAsJPEG.xml</DocumentationFile>
+    <DocumentationFile>PSTools.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DefineConstants>
     </DefineConstants>
@@ -51,7 +51,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>SaveAsJPEG.xml</DocumentationFile>
+    <DocumentationFile>PSTools.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -165,12 +165,12 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"
-"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)SaveAsJPEG.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll</PostBuildEvent>
+"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll</PostBuildEvent>
     <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

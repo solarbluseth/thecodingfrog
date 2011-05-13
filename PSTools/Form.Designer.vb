@@ -46,6 +46,7 @@ Partial Class Form
         Me.Label3 = New System.Windows.Forms.Label
         Me.GroupBox4 = New System.Windows.Forms.GroupBox
         Me.ExcludeDirectories = New System.Windows.Forms.TextBox
+        Me.LabelCompiled = New System.Windows.Forms.Label
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -262,12 +263,23 @@ Partial Class Form
         Me.ExcludeDirectories.Size = New System.Drawing.Size(178, 20)
         Me.ExcludeDirectories.TabIndex = 5
         '
+        'LabelCompiled
+        '
+        Me.LabelCompiled.AutoSize = True
+        Me.LabelCompiled.Enabled = False
+        Me.LabelCompiled.Location = New System.Drawing.Point(13, 374)
+        Me.LabelCompiled.Name = "LabelCompiled"
+        Me.LabelCompiled.Size = New System.Drawing.Size(39, 13)
+        Me.LabelCompiled.TabIndex = 6
+        Me.LabelCompiled.Text = "Label4"
+        '
         'Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.ClientSize = New System.Drawing.Size(284, 374)
+        Me.ClientSize = New System.Drawing.Size(284, 399)
+        Me.Controls.Add(Me.LabelCompiled)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -285,6 +297,7 @@ Partial Class Form
         Me.GroupBox4.ResumeLayout(False)
         Me.GroupBox4.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents Install As System.Windows.Forms.Button
@@ -313,4 +326,5 @@ Partial Class Form
     Friend WithEvents ExcludeDirectories As System.Windows.Forms.TextBox
     Friend WithEvents LabelCS55 As System.Windows.Forms.Label
     Friend WithEvents CS55 As System.Windows.Forms.Label
+    Friend WithEvents LabelCompiled As System.Windows.Forms.Label
 End Class
