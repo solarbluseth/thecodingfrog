@@ -45,7 +45,8 @@ Public Class Form
 
         hwnd = FindWindow(vbNullString, strTitle)
 
-        Me.Text = System.Reflection.Assembly.GetExecutingAssembly.GetName().Name.ToString() & " v" & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Major.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Minor.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Build.ToString()
+        Me.Text = System.Reflection.Assembly.GetExecutingAssembly.GetName().Name.ToString()
+        Me.LabelCompiled.Text = "V " & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Major.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Minor.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Build.ToString() & ", Compiled " & CompileDate.BuildDate.ToString()
 
         loadConf()
         If isSetup() Then
