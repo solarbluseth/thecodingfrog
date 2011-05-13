@@ -22,6 +22,8 @@ Public Class Form
     Private strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
     Private strRootCS55 As String = "\\Photoshop.Image.13\\shell\\Save as JPEG 100%\\command"
 
+    'Private Versions(,) As String = New String(,) {{"CS3", "10"}, {"CS4", "11"}, {"CS5", "12"}, {"CS55", "13"}}
+
     Private appRef As Photoshop.Application
     Private docRef As Photoshop.Document
     Private openDoc As Boolean = True
