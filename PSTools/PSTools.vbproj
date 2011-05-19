@@ -122,16 +122,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="Photoshop">
-      <Guid>{E891EE9A-D0AE-4CB4-8871-F92C0109F18E}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Resources\photoshop.ico" />
     <None Include="app.config" />
     <None Include="Resources\save_as_2.ico" />
@@ -155,6 +145,16 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Photoshop">
+      <Guid>{E891EE9A-D0AE-4CB4-8871-F92C0109F18E}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -165,7 +165,8 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"
-"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll</PostBuildEvent>
+"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll
+copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
     <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>

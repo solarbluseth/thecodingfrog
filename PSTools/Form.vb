@@ -20,9 +20,9 @@ Public Class Form
     Private strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
     Private strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
     Private strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
-    Private strRootCS55 As String = "\\Photoshop.Image.13\\shell\\Save as JPEG 100%\\command"
+    Private strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
 
-    'Private Versions(,) As String = New String(,) {{"CS3", "10"}, {"CS4", "11"}, {"CS5", "12"}, {"CS55", "13"}}
+    'Private Versions(,) As String = New String(,) {{"CS3", "10"}, {"CS4", "11"}, {"CS5", "12"}, {"CS55", "55"}}
 
     Private appRef As Photoshop.Application
     Private docRef As Photoshop.Document
@@ -132,7 +132,7 @@ Public Class Form
             Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10")
             Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11")
             Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12")
-            Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13")
+            Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55")
         End Select
 
         If (key Is Nothing) Then
@@ -173,7 +173,7 @@ Public Class Form
 
                 Case "CS55"
                     Try
-                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13\\shell\\Save as JPEG")
+                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG")
                     Catch ex As Exception
 
                     End Try
@@ -195,7 +195,7 @@ Public Class Form
                 Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
                 Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
                 Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
-                Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.13\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG 100% (by index)\\command\")
             End Select
             If (key Is Nothing) Then
                 Return False
@@ -448,7 +448,6 @@ Public Class Form
     End Sub
 
     Private Sub ProcessFile()
-        
         Dim isNamedLayerComp As Boolean = False
 
         Dim jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
@@ -485,7 +484,6 @@ Public Class Form
                 isNamedLayerComp = False
                 jpgSaveOptions.Quality = CInt(args(1))
         End Select
-
 
         appRef = New Photoshop.Application()
         Try
@@ -683,12 +681,12 @@ Public Class Form
             If hasVersion("CS3") Then RegUninstall("10")
             If hasVersion("CS4") Then RegUninstall("11")
             If hasVersion("CS5") Then RegUninstall("12")
-            If hasVersion("CS55") Then RegUninstall("13")
+            If hasVersion("CS55") Then RegUninstall("55")
         Else
             If hasVersion("CS3") Then RegInstall("10")
             If hasVersion("CS4") Then RegInstall("11")
             If hasVersion("CS5") Then RegInstall("12")
-            If hasVersion("CS55") Then RegInstall("13")
+            If hasVersion("CS55") Then RegInstall("55")
         End If
     End Sub
 
