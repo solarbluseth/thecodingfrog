@@ -3,6 +3,8 @@
     Private __bankcode As String
     Private __imagecode As String
     Private __url As String
+    Private __isValidCode As Boolean = False
+
 
     Public Sub Parse(ByVal __name As String)
         Dim __mc As MatchCollection
@@ -21,8 +23,11 @@
             __cc = __gc.Item(3).Captures
             __imagecode = __cc(0).Value
 
+            __isValidCode = True
+
             Call setURL()
         Else
+            __isValidCode = False
             __bank = vbNullString
             __imagecode = vbNullString
         End If
@@ -79,6 +84,12 @@
     Public ReadOnly Property isValidURL()
         Get
             Return (__url <> vbNullString And __imagecode <> vbNullString)
+        End Get
+    End Property
+
+    Public ReadOnly Property isValidCode()
+        Get
+            Return __isValidCode
         End Get
     End Property
 
