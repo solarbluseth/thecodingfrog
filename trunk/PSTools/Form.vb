@@ -75,6 +75,7 @@ Public Class Form
                 Select Case __args(1).ToLower
                     Case "-so" : ExportSmartObjects()
                     Case "-r" : ExportImagesRights()
+                    Case "-w" : CleanLayersName()
                 End Select
             ElseIf __num = 3 Then
                 ' hide the app
@@ -276,13 +277,13 @@ Public Class Form
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
@@ -364,6 +365,17 @@ Public Class Form
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.Clean
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Clean")
+            __newKey.SetValue("MUIVerb", "Clean Layers Name", RegistryValueKind.String)
+            '__newKey.SetValue("Icon", "shell32.dll,238", RegistryValueKind.String)
+            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Clean\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-w"" ""%1""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.Config
@@ -894,13 +906,13 @@ finish:
     Private Sub ProcessExportSmartObjects(ByVal obj)
         'Dim __LayerRef
         Dim __Layer As Object
-        Dim __isVisible As Boolean
+        'Dim __isVisible As Boolean
         Dim __j As Integer
 
         For __j = 1 To obj.count
             __Layer = obj.Item(__j)
-            __isVisible = __Layer.visible
-            __appRef.ActiveDocument.ActiveLayer = __Layer
+            '__isVisible = __Layer.visible
+            '__appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 ProcessExportSmartObjects(__Layer.Layers)
@@ -928,7 +940,7 @@ finish:
                     End If
                 End If
             End If
-            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
     End Sub
 
@@ -975,7 +987,7 @@ finish:
     Private Function ProcessExportImagesRights(ByVal __ActiveDocument)
         Dim __Layers
         Dim __Layer As Object
-        Dim __isVisible As Boolean
+        'Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
         Dim __soType As String
@@ -986,8 +998,8 @@ finish:
 
         For __j = 1 To __Layers.count
             __Layer = __Layers.Item(__j)
-            __isVisible = __Layer.visible
-            __appRef.ActiveDocument.ActiveLayer = __Layer
+            '__isVisible = __Layer.visible
+            '__appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 ProcessExportImagesRights(__Layer)
@@ -1023,8 +1035,67 @@ finish:
                     End If
                 End If
             End If
-            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessExportImagesRights = True
+    End Function
+
+    Private Sub CleanLayersName()
+        Call OpenDocument()
+        Call ProcessCleanLayersName(__docRef, 1)
+        __docRef.Save()
+        If Not __stayOpen Then __docRef.Close(2)
+        End
+    End Sub
+
+    Private Function ProcessCleanLayersName(ByVal __ActiveDocument, ByVal __idx)
+        Dim __Layers
+        Dim __Layer As Object
+        'Dim __isVisible As Boolean
+        Dim __j As Integer
+        Dim __ir As ImageRight
+        Dim __soType As String
+
+        __ir = New ImageRight()
+
+        __Layers = __ActiveDocument.Layers
+
+        For __j = 1 To __Layers.count
+            __Layer = __Layers.Item(__j)
+            '__isVisible = __Layer.visible
+            '__appRef.ActiveDocument.ActiveLayer = __Layer
+            'set oLayer = oLayerRef.ActiveLayer
+            If __Layer.typename = "LayerSet" Then
+                __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)*\s", "")
+                ProcessCleanLayersName(__Layer, __idx + 1)
+            ElseIf __Layer.typename = "ArtLayer" Then
+                __ir.Parse(__Layer.Name)
+                If __ir.isValidCode Then
+                    'MessageBox.Show(__Layer.Name)
+                    __Layer.Name = "#" & Regex.Replace(__Layer.Name, "#", "")
+                End If
+                If __Layer.Kind = 17 Then
+                    __soType = getSmartObjectType(__appRef)
+                    If __soType = ".psd" Then
+
+                        Dim __opn
+                        __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
+
+                        Dim __desc4
+                        __desc4 = New Photoshop.ActionDescriptor()
+
+                        Try
+                            __appRef.ExecuteAction(__opn, __desc4, 3)
+                        Catch ex As InvalidOperationException
+                            MessageBox.Show(ex.Message)
+                        End Try
+                        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
+                        __appRef.ActiveDocument.Close(1)
+                    End If
+                End If
+            End If
+            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+        Next
+        ProcessCleanLayersName = True
     End Function
 End Class
