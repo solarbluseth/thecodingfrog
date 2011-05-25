@@ -8,10 +8,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("SaveAsJPEG")> 
+<Assembly: AssemblyTitle("PSTools")> 
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("SaveAsJPEG")> 
+<Assembly: AssemblyProduct("PSTools")> 
 <Assembly: AssemblyCopyright("Copyright ©  2010")> 
 <Assembly: AssemblyTrademark("")> 
 
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.307.0")> 
+<Assembly: AssemblyVersion("1.0.479.0")> 
 <Assembly: AssemblyFileVersion("1.0.111.0")> 

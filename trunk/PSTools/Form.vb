@@ -10,60 +10,81 @@ Public Class Form
     Const SW_SHOWNORMAL = 1
     Const SW_NORMAL = 1
     Const SW_SHOWMINIMIZED = 2
-    Private args As String()
-    Private conf_loaded As Boolean = False
-    Private doExportLayerComps As Boolean = False
-    Private isJPEG As Boolean = True
+    Private __args As String()
+    Private __confLoaded As Boolean = False
+    Private __doExportLayerComps As Boolean = False
+    Private __isJPEG As Boolean = True
+    Private __imageType As String
 
     Const FOUND = "Found"
     Const NOT_FOUND = "Not found"
-    Private strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
-    Private strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
-    Private strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
-    Private strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
+    Private __strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
+    Private __strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
+    Private __strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
+    Private __strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
 
-    'Private Versions(,) As String = New String(,) {{"CS3", "10"}, {"CS4", "11"}, {"CS5", "12"}, {"CS55", "55"}}
-
-    Private appRef As Photoshop.Application
-    Private docRef As Photoshop.Document
-    Private openDoc As Boolean = True
-    Private stayOpen As Boolean = False
+    Private __appRef As Photoshop.Application
+    Private __docRef As Photoshop.Document
+    Private __openDoc As Boolean = True
+    Private __stayOpen As Boolean = False
     Private i As Integer
+
+    'Public Enum Versions
+    '    CS3 = 10
+    '    CS4 = 11
+    '    CS5 = 12
+    '    CS55 = 55
+    'End Enum
 
     Public Sub New()
 
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
 
-        Dim strTitle As String
-        Dim rtnLen As Long
-        Dim hwnd As Int32
+        Dim __strTitle As String
+        Dim __rtnLen As Long
+        Dim __hwnd As Int32
 
-        strTitle = Space(256)
-        rtnLen = GetConsoleTitle(strTitle, 256)
-        If rtnLen > 0 Then
-            strTitle = Strings.Left$(strTitle, rtnLen)
+        __strTitle = Space(256)
+        __rtnLen = GetConsoleTitle(__strTitle, 256)
+        If __rtnLen > 0 Then
+            __strTitle = Strings.Left$(__strTitle, __rtnLen)
         End If
 
-        hwnd = FindWindow(vbNullString, strTitle)
+        __hwnd = FindWindow(vbNullString, __strTitle)
 
         Me.Text = System.Reflection.Assembly.GetExecutingAssembly.GetName().Name.ToString()
         Me.LabelCompiled.Text = "V " & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Major.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Minor.ToString() & "." & System.Reflection.Assembly.GetExecutingAssembly.GetName().Version.Build.ToString() & ", Compiled " & CompileDate.BuildDate.ToString()
 
         loadConf()
         If isSetup() Then
-            args = Environment.GetCommandLineArgs()
-            Dim num As Integer = UBound(args)
-            If num < 2 Then
-                ShowWindow(hwnd, SW_SHOWNORMAL)
-                Setup()
-            Else
+            __args = Environment.GetCommandLineArgs()
+            Dim __num As Integer = UBound(__args)
+            'MessageBox.Show(args(1))
+            If __num = 1 Then
+                Select Case __args(1).ToLower
+                    Case "-c" : ShowWindow(__hwnd, SW_SHOWNORMAL)
+                        Setup()
+                End Select
+            ElseIf __num = 2 Then
+                ShowWindow(__hwnd, SW_HIDE)
+                Me.Visible = False
+                Me.ShowInTaskbar = False
+                Me.WindowState = FormWindowState.Minimized
+
+                Select Case __args(1).ToLower
+                    Case "-so" : ExportSmartObjects()
+                    Case "-r" : ExportImagesRights()
+                End Select
+            ElseIf __num = 3 Then
                 ' hide the app
-                ShowWindow(hwnd, SW_HIDE)
+                ShowWindow(__hwnd, SW_HIDE)
                 Me.Visible = False
                 Me.ShowInTaskbar = False
                 Me.WindowState = FormWindowState.Minimized
                 ProcessFile()
+            Else
+                Setup()
             End If
         Else
             Setup()
@@ -72,47 +93,47 @@ Public Class Form
 
     Private Sub loadConf()
         Try
-            Dim key As RegistryKey
-            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
-            If key.GetValue("AutoArchive") = 1 Then
+            Dim __key As RegistryKey
+            __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            If __key.GetValue("AutoArchive") = 1 Then
                 Me.AutoArchive.Checked = True
             Else
                 Me.AutoArchive.Checked = False
             End If
 
-            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
-            If key.GetValue("ArchiveDirectory") <> "" Then
-                Me.ArchiveDirectory.Text = key.GetValue("ArchiveDirectory")
+            __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            If __key.GetValue("ArchiveDirectory") <> "" Then
+                Me.ArchiveDirectory.Text = __key.GetValue("ArchiveDirectory")
             Else
                 Me.ArchiveDirectory.Text = "Archives"
             End If
 
-            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
-            If key.GetValue("ExcludeDirectories") <> "" Then
-                Me.ExcludeDirectories.Text = key.GetValue("ExcludeDirectories")
+            __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            If __key.GetValue("ExcludeDirectories") <> "" Then
+                Me.ExcludeDirectories.Text = __key.GetValue("ExcludeDirectories")
             Else
                 Me.ExcludeDirectories.Text = "+ Elements"
             End If
 
-            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
             'MessageBox.Show(">>> " & key.GetValue("NamedExportQuality"))
-            If key.GetValue("NamedExportQuality") <> "" Then
-                Me.NamedExportQuality.Value = CInt(key.GetValue("NamedExportQuality"))
+            If __key.GetValue("NamedExportQuality") <> "" Then
+                Me.NamedExportQuality.Value = CInt(__key.GetValue("NamedExportQuality"))
             Else
                 Me.NamedExportQuality.Value = 6
             End If
 
-            key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
+            __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
             'MessageBox.Show(">>> " & key.GetValue("ExportLayerComps"))
-            If key.GetValue("ExportLayerComps") = 1 Then
+            If __key.GetValue("ExportLayerComps") = 1 Then
                 Me.ExportLayerComps.Checked = True
-                doExportLayerComps = True
+                __doExportLayerComps = True
             Else
                 Me.ExportLayerComps.Checked = False
-                doExportLayerComps = False
+                __doExportLayerComps = False
             End If
 
-            conf_loaded = True
+            __confLoaded = True
         Catch e As Exception
         End Try
     End Sub
@@ -125,55 +146,61 @@ Public Class Form
         End If
     End Function
 
-    Private Function hasVersion(ByVal version As String) As Boolean
-        Dim key As RegistryKey
+    Private Function hasVersion(ByVal __version As String) As Boolean
+        'Dim Version As Versions
+        Dim __key As RegistryKey
 
-        Select Case version
-            Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10")
-            Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11")
-            Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12")
-            Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55")
+        'For Each Version In [Enum].GetValues(GetType(Versions))
+        'key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image." & Version.ToString)
+        'Next
+
+
+        Select Case __version
+            Case "CS3" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10")
+            Case "CS4" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11")
+            Case "CS5" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12")
+            Case "CS55" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55")
         End Select
 
-        If (key Is Nothing) Then
+        If (__key Is Nothing) Then
             Return False
         Else
             Return True
         End If
     End Function
 
-    Private Function isVersionInstalled(ByVal version As String) As Boolean
-        Dim key As RegistryKey
-        Dim os = Environment.OSVersion
-        Dim res As Object
+    Private Function isVersionInstalled(ByVal __version As String) As Boolean
+        Dim __key As RegistryKey
+        Dim __os = Environment.OSVersion
+        Dim __res As Object
 
-        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+        If __os.Version.Major >= 6 And __os.Version.Minor >= 1 Then
             'MessageBox.Show(version)
-            Select Case version
+            Select Case __version
                 Case "CS3"
                     Try
-                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG")
+                        __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG")
                     Catch ex As Exception
 
                     End Try
 
                 Case "CS4"
                     Try
-                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG")
+                        __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG")
                     Catch ex As Exception
 
                     End Try
 
                 Case "CS5"
                     Try
-                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG")
+                        __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG")
                     Catch ex As Exception
 
                     End Try
 
                 Case "CS55"
                     Try
-                        key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG")
+                        __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG")
                     Catch ex As Exception
 
                     End Try
@@ -181,8 +208,8 @@ Public Class Form
             End Select
 
             Try
-                res = key.GetValue("SubCommands")
-                If (res.ToString <> String.Empty) Then
+                __res = __key.GetValue("SubCommands")
+                If (__res.ToString <> String.Empty) Then
                     Return True
                 Else
                     Return False
@@ -191,13 +218,13 @@ Public Class Form
                 Return False
             End Try
         Else
-            Select Case version
-                Case "CS3" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
-                Case "CS4" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
-                Case "CS5" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
-                Case "CS55" : key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG 100% (by index)\\command\")
+            Select Case __version
+                Case "CS3" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.10\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS4" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.11\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS5" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.12\\shell\\Save as JPEG 100% (by index)\\command\")
+                Case "CS55" : __key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image.55\\shell\\Save as JPEG 100% (by index)\\command\")
             End Select
-            If (key Is Nothing) Then
+            If (__key Is Nothing) Then
                 Return False
             Else
                 Return True
@@ -205,7 +232,7 @@ Public Class Form
         End If
 
 
-        
+
     End Function
 
     Private Sub Setup()
@@ -214,11 +241,13 @@ Public Class Form
         Else
             Me.Install.Text = "Install"
         End If
+
         If (hasVersion("CS3")) Then
             Me.LabelCS3.Text = FOUND
         Else
             Me.LabelCS3.Text = NOT_FOUND
         End If
+
         If (hasVersion("CS4")) Then
             Me.LabelCS4.Text = FOUND
         Else
@@ -236,131 +265,190 @@ Public Class Form
         End If
     End Sub
 
-    Private Sub RegInstall(version as String)
+    Private Sub RegInstall(ByVal version As String)
 
-        Dim os = Environment.OSVersion
-        Dim newKey As RegistryKey
+        Dim __os = Environment.OSVersion
+        Dim __newKey As RegistryKey
 
-        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+        If __os.Version.Major >= 6 And __os.Version.Minor >= 1 Then
 
             ' Save as JPEG
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
-            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
-            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
-            newKey.SetValue("MUIVerb", "Save as...", RegistryValueKind.String)
-            newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
 
 
             ' SaveAsJPEG.100
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
-            newKey.SetValue("MUIVerb", "JPEG 100% (by index)", RegistryValueKind.String)
-            newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As JPEG 100% (by index)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
 
             ' SaveAsJPEG.60
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
-            newKey.SetValue("MUIVerb", "JPEG 60% (by index)", RegistryValueKind.String)
-            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As JPEG 60% (by index)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
 
             ' SaveAsJPEG.ByName
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
-            newKey.SetValue("MUIVerb", "JPEG 100% (by name)", RegistryValueKind.String)
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As JPEG 100% (by name)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.Close()
+            __newKey.Close()
 
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.Png
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As PNG (by index)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png""", RegistryValueKind.String)
+            __newKey.Close()
 
             ' SaveAsJPEG.Gif
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif")
-            newKey.SetValue("MUIVerb", "GIF", RegistryValueKind.String)
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As GIF (by index)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            newKey.Close()
+            __newKey.Close()
 
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.ImagesRights
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ImagesRights")
+            __newKey.SetValue("MUIVerb", "List Images Rights", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,54", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ImagesRights\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-r"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.SO
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO")
+            __newKey.SetValue("MUIVerb", "Export Smart Objects", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,132", RegistryValueKind.String)
+            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
 
             ' SaveAsJPEG.Config
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
-            newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
-            newKey.SetValue("Icon", "shell32.dll,21", RegistryValueKind.String)
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
+            __newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,21", RegistryValueKind.String)
             'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
-            newKey.Close()
+            __newKey.Close()
 
-            newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
+            __newKey.Close()
         Else
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG List Images Rights\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-r"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Export Smart Objects\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG (by name)\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
+            __newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-            newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
-            newKey.Close()
 
-            newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\\command")
-            newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """", RegistryValueKind.String)
-            newKey.Close()
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by name)\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG List Images Rights\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-r"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Export Smart Objects\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
+            __newKey.Close()
+
+
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
+            __newKey.Close()
         End If
         Setup()
 
@@ -368,9 +456,9 @@ Public Class Form
 
     Private Sub RegUninstall(ByVal version As String)
         'MessageBox.Show(version)
-        Dim os = Environment.OSVersion
+        Dim __os = Environment.OSVersion
 
-        If os.Version.Major >= 6 And os.Version.Minor >= 1 Then
+        If __os.Version.Major >= 6 And __os.Version.Minor >= 1 Then
             Try
                 Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             Catch e As Exception
@@ -403,12 +491,22 @@ Public Class Form
             End Try
 
             Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png")
+            Catch e As Exception
+            End Try
+
+            Try
                 Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif")
             Catch e As Exception
             End Try
 
             Try
                 Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Assets")
             Catch e As Exception
             End Try
         Else
@@ -432,132 +530,124 @@ Public Class Form
 
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (by name)\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG config\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG (by name)\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by name)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\")
         End If
-        
+
         Setup()
     End Sub
 
     Private Sub ProcessFile()
-        Dim isNamedLayerComp As Boolean = False
+        Dim __isNamedLayerComp As Boolean = False
 
-        Dim jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
-        jpgSaveOptions.EmbedColorProfile = False
-        jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
-        jpgSaveOptions.Matte = 1 ' psNoMatte 
+        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
+        __jpgSaveOptions.EmbedColorProfile = False
+        __jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
+        __jpgSaveOptions.Matte = 1 ' psNoMatte 
 
-        Dim gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        Dim __gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
         'gifExportOptionsSaveForWeb.MatteColor = 255
-        gifExportOptionsSaveForWeb.Format = 3
-        gifExportOptionsSaveForWeb.ColorReduction = 1
-        gifExportOptionsSaveForWeb.Colors = 256
-        gifExportOptionsSaveForWeb.Dither = 3
-        gifExportOptionsSaveForWeb.DitherAmount = 100
-        gifExportOptionsSaveForWeb.Quality = 100
-        gifExportOptionsSaveForWeb.Transparency = True
-        gifExportOptionsSaveForWeb.TransparencyAmount = 100
-        gifExportOptionsSaveForWeb.TransparencyDither = 2
-        gifExportOptionsSaveForWeb.IncludeProfile = False
-        gifExportOptionsSaveForWeb.Lossy = 0
-        gifExportOptionsSaveForWeb.WebSnap = 0
+        __gifExportOptionsSaveForWeb.Format = 3
+        __gifExportOptionsSaveForWeb.ColorReduction = 1
+        __gifExportOptionsSaveForWeb.Colors = 256
+        __gifExportOptionsSaveForWeb.Dither = 3
+        __gifExportOptionsSaveForWeb.DitherAmount = 100
+        __gifExportOptionsSaveForWeb.Quality = 100
+        __gifExportOptionsSaveForWeb.Transparency = True
+        __gifExportOptionsSaveForWeb.TransparencyAmount = 100
+        __gifExportOptionsSaveForWeb.TransparencyDither = 2
+        __gifExportOptionsSaveForWeb.IncludeProfile = False
+        __gifExportOptionsSaveForWeb.Lossy = 0
+        __gifExportOptionsSaveForWeb.WebSnap = 0
 
-        Select Case args(3)
+        Dim __pngExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        __pngExportOptionsSaveForWeb.Format = 13
+        __pngExportOptionsSaveForWeb.PNG8 = False
+        __pngExportOptionsSaveForWeb.Transparency = True
+
+        Select Case __args(3)
             Case "name"
-                isNamedLayerComp = True
-                jpgSaveOptions.Quality = CInt(Me.NamedExportQuality.Value)
+                __isNamedLayerComp = True
+                __jpgSaveOptions.Quality = CInt(Me.NamedExportQuality.Value)
+                __imageType = "JPG"
             Case "index"
-                isNamedLayerComp = False
-                jpgSaveOptions.Quality = CInt(args(1))
+                __isNamedLayerComp = False
+                __jpgSaveOptions.Quality = CInt(__args(1))
+                __imageType = "JPG"
+            Case "png"
+                __isNamedLayerComp = False
+                __imageType = "PNG"
             Case "gif"
-                isNamedLayerComp = False
-                isJPEG = False
+                __isNamedLayerComp = False
+                __isJPEG = False
+                __imageType = "GIF"
             Case Else
-                isNamedLayerComp = False
-                jpgSaveOptions.Quality = CInt(args(1))
+                __isNamedLayerComp = False
+                __jpgSaveOptions.Quality = CInt(__args(1))
+                __imageType = "JPG"
         End Select
 
-        appRef = New Photoshop.Application()
-        Try
-            If appRef.Documents.Count > 0 Then
-                For i = 1 To appRef.Documents.Count
-                    If args(2) = appRef.Documents.Item(i).FullName Then
-                        appRef.ActiveDocument = appRef.Documents.Item(i)
-                        docRef = appRef.ActiveDocument
-                        openDoc = False
-                        stayOpen = True
-                    End If
-                Next
-            End If
-        Catch ex As Exception
-            MessageBox.Show(ex.Message)
-        End Try
+        Call OpenDocument()
 
+        Dim __compsCount As Integer
+        Dim __compsIndex As Integer
+        Dim __compRef As Photoshop.LayerComp
+        Dim __duppedDocument As Photoshop.Document
+        Dim __fileNameBody As String
 
-        If openDoc Then
-            Try
-                docRef = appRef.Open(args(2))
-            Catch ex As Exception
-                MessageBox.Show(ex.Message)
-            End Try
-        End If
-
-        Dim compsCount As Integer
-        Dim compsIndex As Integer
-        Dim compRef As Photoshop.LayerComp
-        Dim duppedDocument As Photoshop.Document
-        Dim fileNameBody As String
-
-        compsCount = docRef.LayerComps.Count
-
+        __compsCount = __docRef.LayerComps.Count
 
         ' Exporting layercomps by index or name
-        If doExportLayerComps Then
-            If compsCount <= 1 Then
+        If __doExportLayerComps Then
+            If __compsCount <= 1 Then
                 'Set textItemRef = appRef.ActiveDocument.Layers(1) 
 
                 'textItemRef.TextItem.Contents = Args.Item(1) 
 
                 'outFileName = Args.Item(1)
-                If isJPEG Then
-                    docRef.SaveAs(args(2), jpgSaveOptions, True)
+                If __isJPEG Then
+                    __docRef.SaveAs(__args(2), __jpgSaveOptions, True)
                 Else
-                    fileNameBody = docRef.Name.Substring(0, docRef.Name.LastIndexOf(".")) & ".gif"
-                    docRef.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
+                    __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".gif"
+                    __docRef.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
                 End If
 
             Else
                 'msgbox("comps!")
-                For compsIndex = 1 To compsCount
+                For __compsIndex = 1 To __compsCount
                     'MsgBox(docRef.LayerComps.Count)
                     'End
-                    compRef = docRef.LayerComps.Item(compsIndex)
+                    __compRef = __docRef.LayerComps.Item(__compsIndex)
                     'if (exportInfo.selectionOnly && !compRef.selected) continue; // selected only
-                    compRef.Apply()
-                    duppedDocument = docRef.Duplicate()
+                    __compRef.Apply()
+                    __duppedDocument = __docRef.Duplicate()
                     'msgbox(compRef.Name)
-                    If Not isNamedLayerComp Then
-                        fileNameBody = docRef.Name.Substring(0, docRef.Name.LastIndexOf(".")) & "." & compsIndex
+                    If Not __isNamedLayerComp Then
+                        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex
                     Else
-                        fileNameBody = compRef.Name
+                        __fileNameBody = __compRef.Name
                     End If
                     'msgbox(fileNameBody)
-                    If isJPEG Then
-                        fileNameBody = fileNameBody & ".jpg"
-                        duppedDocument.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
+                    If __imageType = "JPG" Then
+                        __fileNameBody = __fileNameBody & ".jpg"
+                        __duppedDocument.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
+                    ElseIf __imageType = "PNG" Then
+                        __fileNameBody = __fileNameBody & ".png"
+                        __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
                     Else
-                        fileNameBody = fileNameBody & ".gif"
-                        duppedDocument.Export(docRef.Path & fileNameBody, 2, gifExportOptionsSaveForWeb)
+                        __fileNameBody = __fileNameBody & ".gif"
+                        __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
                     End If
-                    duppedDocument.Close(2)
+                    __duppedDocument.Close(2)
                     'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
                     'fileNameBody += "_" + compRef.name;
                     'if (null != compRef.comment)    fileNameBody += "_" + compRef.comment;
@@ -566,90 +656,101 @@ Public Class Form
                     'saveFile(duppedDocument, fileNameBody, exportInfo);
                     'duppedDocument.close(SaveOptions.DONOTSAVECHANGES);
                 Next
-                compRef = docRef.LayerComps.Item(1)
-                compRef.Apply()
+                __compRef = __docRef.LayerComps.Item(1)
+                __compRef.Apply()
             End If
 
             'MsgBox(Me.AutoArchive.Checked)
-            Dim di As DirectoryInfo
-            di = New DirectoryInfo(docRef.Path)
+            Dim __di As DirectoryInfo
+            __di = New DirectoryInfo(__docRef.Path)
 
             'MsgBox(di.Name)
-            If Me.AutoArchive.Checked And Not isExcludeDirectory(di.Name) Then
+            If Me.AutoArchive.Checked And Not isExcludeDirectory(__di.Name) Then
 
                 'Dim di As DirectoryInfo
-                Dim afi() As FileInfo
-                Dim fi As FileInfo
+                Dim __afi() As FileInfo
+                Dim __fi As FileInfo
 
                 'MsgBox(Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\"))
-                If Not Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
-                    Directory.CreateDirectory(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
+                If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                    Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
                 End If
 
                 'di = New DirectoryInfo(docRef.Path)
-                Dim currentFileName As String = docRef.Name.Substring(0, docRef.Name.LastIndexOf("."))
+                Dim __currentFileName As String = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf("."))
 
-                Dim RegexObj As Regex = New Regex("\d*$")
-                Dim myMatches As Match
-                Dim currentVersion
-                Dim cleanFileName As String
-                If RegexObj.IsMatch(currentFileName) Then
-                    myMatches = RegexObj.Match(currentFileName)
-                    currentVersion = myMatches.Value
-                    cleanFileName = RegexObj.Replace(currentFileName, "")
-                    cleanFileName = cleanFileName.Replace("+", "\+")
-                    cleanFileName = cleanFileName.Replace(" ", "\s")
+                Dim __RegexObj As Regex = New Regex("\d*$")
+                Dim __myMatches As Match
+                Dim __currentVersion
+                Dim __cleanFileName As String
+
+                If __RegexObj.IsMatch(__currentFileName) Then
+                    __myMatches = __RegexObj.Match(__currentFileName)
+                    __currentVersion = __myMatches.Value
+
+                    If __currentVersion.length < 1 Then
+                        GoTo finish
+                    End If
+
+                    __cleanFileName = __RegexObj.Replace(__currentFileName, "")
+                    __cleanFileName = __cleanFileName.Replace("+", "\+")
+                    __cleanFileName = __cleanFileName.Replace(" ", "\s")
                     'MsgBox(cleanFileName)
-                    Dim RegexObj2 As Regex = New Regex("^" & cleanFileName & "(\d+|\.)")
+                    Dim __RegexObj2 As Regex = New Regex("^" & __cleanFileName & "(\d+|\.)")
 
-                    afi = di.GetFiles("*.*")
-                    For Each fi In afi
-                        If RegexObj2.IsMatch(fi.Name) Then
-                            'MsgBox(fi.Name)
-                            If isOldFileVersion(fi.Name, currentVersion) And Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                    __afi = __di.GetFiles("*.*")
+                    For Each __fi In __afi
+                        If __RegexObj2.IsMatch(__fi.Name) Then
+                            If isOldFileVersion(__fi.Name, __currentVersion) And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                                'MsgBox(fi.Name)
                                 Try
-                                    File.Copy(docRef.Path & fi.Name, docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & fi.Name, True)
+                                    File.Copy(__docRef.Path & __fi.Name, __docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & __fi.Name, True)
                                 Catch ex As Exception
                                     MessageBox.Show(ex.Message)
                                 Finally
-                                    File.Delete(docRef.Path & fi.Name)
+                                    File.Delete(__docRef.Path & __fi.Name)
                                 End Try
 
                             End If
                         End If
                     Next
                 End If
+
+
             End If
         Else 'Exporting each layers by name
-            Dim oLayer
-            For compsIndex = 1 To docRef.Layers.Count()
-                oLayer = docRef.Layers.Item(compsIndex)
+            Dim __Layer
+            For __compsIndex = 1 To __docRef.Layers.Count()
+                __Layer = __docRef.Layers.Item(__compsIndex)
                 'isVisible = oLayer.visible
-                appRef.ActiveDocument.ActiveLayer = oLayer
+                __appRef.ActiveDocument.ActiveLayer = __Layer
                 'oLayer.Apply()
                 'duppedDocument = docRef.Duplicate()
                 'msgbox(compRef.Name)
-                fileNameBody = oLayer.Name & ".jpg"
+                __fileNameBody = __Layer.Name & ".jpg"
                 'msgbox(fileNameBody)
-                docRef.SaveAs(docRef.Path & fileNameBody, jpgSaveOptions, True)
-                appRef.ActiveDocument.ActiveLayer.visible = False
+                __docRef.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
+                __appRef.ActiveDocument.ActiveLayer.visible = False
                 'duppedDocument.Close(2)
             Next
         End If
 
-        If Not stayOpen Then docRef.Close(2)
+finish:
+        'ExportImagesRights()
+
+        If Not __stayOpen Then __docRef.Close(2)
 
         ' End program
         End
     End Sub
 
     Private Function isOldFileVersion(ByVal filename As String, ByVal version As String) As String
-        Dim newFileName As String = filename.Substring(0, filename.LastIndexOf("."))
+        Dim __newFileName As String = filename.Substring(0, filename.LastIndexOf("."))
         'MsgBox(newFileName)
-        Dim RegexObj As Regex = New Regex("(\d+)\.*\d*$")
-        If RegexObj.IsMatch(newFileName) Then
-            'MsgBox("> " & RegexObj.Match(newFileName).Groups(1).Value)
-            If CInt(RegexObj.Match(newFileName).Groups(1).Value) < CInt(version) Then
+        Dim __RegexObj As Regex = New Regex("(\d+)\.*\d*$")
+        If __RegexObj.IsMatch(__newFileName) Then
+            'MsgBox("> " & RegexObj.Match(newFileName).Groups(1).Value & ":" & version)
+            If CInt(__RegexObj.Match(__newFileName).Groups(1).Value) < CInt(version) Then
                 Return True
             Else
                 Return False
@@ -660,13 +761,13 @@ Public Class Form
     End Function
 
     Private Function isExcludeDirectory(ByVal dirName As String)
-        Dim ExcludeDirectories As Array
-        Dim ExcludeDirectory As String
+        Dim __ExcludeDirectories As Array
+        Dim __ExcludeDirectory As String
 
         If Me.ExcludeDirectories.Text <> "" Then
-            ExcludeDirectories = Split(Me.ExcludeDirectories.Text & ";" & me.ArchiveDirectory.Text, ";")
-            For Each ExcludeDirectory In ExcludeDirectories
-                If ExcludeDirectory = dirName Then
+            __ExcludeDirectories = Split(Me.ExcludeDirectories.Text & ";" & Me.ArchiveDirectory.Text, ";")
+            For Each __ExcludeDirectory In __ExcludeDirectories
+                If __ExcludeDirectory = dirName Then
                     Return True
                 End If
             Next
@@ -691,49 +792,49 @@ Public Class Form
     End Sub
 
     Private Sub AutoArchive_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AutoArchive.CheckedChanged
-        Dim newKey As RegistryKey
-        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        Dim __newKey As RegistryKey
+        __newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
         If Me.AutoArchive.Checked Then
-            newKey.SetValue("AutoArchive", "1", RegistryValueKind.String)
+            __newKey.SetValue("AutoArchive", "1", RegistryValueKind.String)
         Else
-            newKey.SetValue("AutoArchive", "0", RegistryValueKind.String)
+            __newKey.SetValue("AutoArchive", "0", RegistryValueKind.String)
         End If
-        newKey.Close()
+        __newKey.Close()
     End Sub
 
     Private Sub ArchiveDirectory_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ArchiveDirectory.TextChanged
-        Dim newKey As RegistryKey
-        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        Dim __newKey As RegistryKey
+        __newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
         If Trim(Me.ArchiveDirectory.Text) <> "" Then
-            newKey.SetValue("ArchiveDirectory", Me.ArchiveDirectory.Text, RegistryValueKind.String)
+            __newKey.SetValue("ArchiveDirectory", Me.ArchiveDirectory.Text, RegistryValueKind.String)
         Else
             Me.ArchiveDirectory.Text = "Archives"
-            newKey.SetValue("ArchiveDirectory", "Archives", RegistryValueKind.String)
+            __newKey.SetValue("ArchiveDirectory", "Archives", RegistryValueKind.String)
         End If
-        newKey.Close()
+        __newKey.Close()
     End Sub
 
     Private Sub NamedExportQuality_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NamedExportQuality.ValueChanged
-        Dim newKey As RegistryKey
-        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
-        If conf_loaded Then
+        Dim __newKey As RegistryKey
+        __newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        If __confLoaded Then
             'MessageBox.Show(Me.NamedExportQuality.Value.ToString())
-            newKey.SetValue("NamedExportQuality", Me.NamedExportQuality.Value, RegistryValueKind.String)
+            __newKey.SetValue("NamedExportQuality", Me.NamedExportQuality.Value, RegistryValueKind.String)
         End If
-        newKey.Close()
+        __newKey.Close()
     End Sub
 
     Private Sub ExportLayerComps_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExportLayerComps.CheckedChanged
-        Dim newKey As RegistryKey
-        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        Dim __newKey As RegistryKey
+        __newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
         If Me.ExportLayerComps.Checked Then
-            newKey.SetValue("ExportLayerComps", "1", RegistryValueKind.String)
-            doExportLayerComps = True
+            __newKey.SetValue("ExportLayerComps", "1", RegistryValueKind.String)
+            __doExportLayerComps = True
         Else
-            newKey.SetValue("ExportLayerComps", "0", RegistryValueKind.String)
-            doExportLayerComps = False
+            __newKey.SetValue("ExportLayerComps", "0", RegistryValueKind.String)
+            __doExportLayerComps = False
         End If
-        newKey.Close()
+        __newKey.Close()
     End Sub
 
     Private Sub ToolTip1_Popup(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PopupEventArgs) Handles ToolTip1.Popup
@@ -745,14 +846,185 @@ Public Class Form
     End Sub
 
     Private Sub ExcludeDirectories_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExcludeDirectories.TextChanged
-        Dim newKey As RegistryKey
-        newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
+        Dim __newKey As RegistryKey
+        __newKey = Registry.CurrentUser.CreateSubKey("Software\\SaveAsJPEG")
         If Trim(Me.ExcludeDirectories.Text) <> "" Then
-            newKey.SetValue("ExcludeDirectories", Me.ExcludeDirectories.Text, RegistryValueKind.String)
+            __newKey.SetValue("ExcludeDirectories", Me.ExcludeDirectories.Text, RegistryValueKind.String)
         Else
             Me.ExcludeDirectories.Text = "+ Elements"
-            newKey.SetValue("ExcludeDirectories", "+ Elements", RegistryValueKind.String)
+            __newKey.SetValue("ExcludeDirectories", "+ Elements", RegistryValueKind.String)
         End If
-        newKey.Close()
+        __newKey.Close()
     End Sub
+
+    Private Sub OpenDocument()
+        __appRef = New Photoshop.Application()
+        Try
+            If __appRef.Documents.Count > 0 Then
+                For i = 1 To __appRef.Documents.Count
+                    If __args(2) = __appRef.Documents.Item(i).FullName Then
+                        __appRef.ActiveDocument = __appRef.Documents.Item(i)
+                        __docRef = __appRef.ActiveDocument
+                        __openDoc = False
+                        __stayOpen = True
+                    End If
+                Next
+            End If
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+        End Try
+
+
+        If __openDoc Then
+            Try
+                __docRef = __appRef.Open(__args(2))
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+            End Try
+        End If
+    End Sub
+
+    Private Sub ExportSmartObjects()
+        Call OpenDocument()
+        Call ProcessExportSmartObjects(__docRef.Layers)
+        If Not __stayOpen Then __docRef.Close(2)
+        End
+    End Sub
+
+    Private Sub ProcessExportSmartObjects(ByVal obj)
+        'Dim __LayerRef
+        Dim __Layer As Object
+        Dim __isVisible As Boolean
+        Dim __j As Integer
+
+        For __j = 1 To obj.count
+            __Layer = obj.Item(__j)
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
+            'set oLayer = oLayerRef.ActiveLayer
+            If __Layer.typename = "LayerSet" Then
+                ProcessExportSmartObjects(__Layer.Layers)
+            ElseIf __Layer.typename = "ArtLayer" Then
+                If __Layer.Kind = 17 Then
+
+                    Dim __idplacedLayerExportContents
+                    __idplacedLayerExportContents = __appRef.StringIDToTypeID("placedLayerExportContents")
+
+
+                    Dim __desc4
+                    __desc4 = New Photoshop.ActionDescriptor()
+
+                    Dim __idnull
+                    __idnull = __appRef.CharIDToTypeID("null")
+
+                    If Not Directory.Exists(__docRef.Path & "+ Elements\") Then
+                        Directory.CreateDirectory(__docRef.Path & "+ Elements\")
+                    End If
+
+                    Dim __soType = getSmartObjectType(__appRef)
+                    If __soType <> "" Then
+                        Call __desc4.putPath(__idnull, __docRef.Path & "+ Elements\" & wipeName(__Layer.Name) & __soType)
+                        Call __appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, 3)
+                    End If
+                End If
+            End If
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+        Next
+    End Sub
+
+    Function getSmartObjectType(ByVal appRef)
+        Dim __aRef As Photoshop.ActionReference = New Photoshop.ActionReference()
+        Call __aRef.PutEnumerated(appRef.charIDToTypeID("Lyr "), appRef.charIDToTypeID("Ordn"), appRef.charIDToTypeID("Trgt"))
+        Dim __desc = appRef.ExecuteActionGet(__aRef)
+        If __desc.hasKey(appRef.stringIDToTypeID("smartObject")) Then
+            __desc = appRef.ExecuteActionGet(__aRef).GetObjectValue(appRef.stringIDToTypeID("smartObject")).GetEnumerationValue(appRef.stringIDToTypeID("placed"))
+            Select Case appRef.typeIDToStringID(__desc)
+                Case "vectorData"
+                    getSmartObjectType = ".ai"
+                Case "rasterizeContent"
+                    getSmartObjectType = ".psd"
+                Case Else
+                    getSmartObjectType = ""
+            End Select
+        Else
+            getSmartObjectType = ""
+        End If
+    End Function
+
+    Function wipeName(ByVal value)
+        value = Regex.Replace(value, "(\+)+\s", "", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+
+        value = Regex.Replace(value, "\s(copy)\s(\d)*", "", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+
+        value = Regex.Replace(value, "(vector)\s*|^v:", "", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+
+        value = Regex.Replace(value, ":", "", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+
+        value = Regex.Replace(value, "\s", "_", RegexOptions.Multiline And RegexOptions.IgnoreCase)
+
+        wipeName = value
+    End Function
+
+    Private Sub ExportImagesRights()
+        Call OpenDocument()
+        Call ProcessExportImagesRights(__docRef)
+        If Not __stayOpen Then __docRef.Close(2)
+        End
+    End Sub
+
+    Private Function ProcessExportImagesRights(ByVal __ActiveDocument)
+        Dim __Layers
+        Dim __Layer As Object
+        Dim __isVisible As Boolean
+        Dim __j As Integer
+        Dim __ir As ImageRight
+        Dim __soType As String
+
+        __ir = New ImageRight()
+
+        __Layers = __ActiveDocument.Layers
+
+        For __j = 1 To __Layers.count
+            __Layer = __Layers.Item(__j)
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
+            'set oLayer = oLayerRef.ActiveLayer
+            If __Layer.typename = "LayerSet" Then
+                ProcessExportImagesRights(__Layer)
+            ElseIf __Layer.typename = "ArtLayer" Then
+                'MessageBox.Show(__Layer.Name)
+                If __Layer.Kind = 1 Then
+                    __ir.Parse(__Layer.Name)
+                    If __ir.isValidURL Then
+                        __ir.CreateLink(__docRef.Path)
+                    End If
+                ElseIf __Layer.Kind = 17 Then
+                    __ir.Parse(__Layer.Name)
+                    If __ir.Code <> vbNullString Then
+                        If __ir.isValidURL Then __ir.CreateLink(__docRef.Path)
+                    Else
+                        __soType = getSmartObjectType(__appRef)
+                        If __soType = ".psd" Then
+
+                            Dim __opn
+                            __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
+
+                            Dim __desc4
+                            __desc4 = New Photoshop.ActionDescriptor()
+
+                            Try
+                                __appRef.ExecuteAction(__opn, __desc4, 3)
+                            Catch ex As InvalidOperationException
+                                MessageBox.Show(ex.Message)
+                            End Try
+                            ProcessExportImagesRights(__appRef.ActiveDocument)
+                            __appRef.ActiveDocument.Close(2)
+                        End If
+                    End If
+                End If
+            End If
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+        Next
+        ProcessExportImagesRights = True
+    End Function
 End Class
