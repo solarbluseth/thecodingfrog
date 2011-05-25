@@ -18,10 +18,10 @@ Public Class Form
 
     Const FOUND = "Found"
     Const NOT_FOUND = "Not found"
-    Private __strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
-    Private __strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
-    Private __strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
-    Private __strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
+    'Private __strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
+    'Private __strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
+    'Private __strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
+    'Private __strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
 
     Private __appRef As Photoshop.Application
     Private __docRef As Photoshop.Document
