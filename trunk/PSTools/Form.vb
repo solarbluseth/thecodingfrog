@@ -1049,7 +1049,7 @@ finish:
 
         __compsCount = __docRef.LayerComps.Count
         If __compsCount > 0 Then
-            __compRef = __docRef.LayerComps.Item(0)
+            __compRef = __docRef.LayerComps.Item(1)
             __compRef.Apply()
         End If
         __docRef.Save()
