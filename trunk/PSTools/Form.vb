@@ -906,13 +906,13 @@ finish:
     Private Sub ProcessExportSmartObjects(ByVal obj)
         'Dim __LayerRef
         Dim __Layer As Object
-        'Dim __isVisible As Boolean
+        Dim __isVisible As Boolean
         Dim __j As Integer
 
         For __j = 1 To obj.count
             __Layer = obj.Item(__j)
-            '__isVisible = __Layer.visible
-            '__appRef.ActiveDocument.ActiveLayer = __Layer
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 ProcessExportSmartObjects(__Layer.Layers)
@@ -940,7 +940,7 @@ finish:
                     End If
                 End If
             End If
-            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
     End Sub
 
@@ -987,7 +987,7 @@ finish:
     Private Function ProcessExportImagesRights(ByVal __ActiveDocument)
         Dim __Layers
         Dim __Layer As Object
-        'Dim __isVisible As Boolean
+        Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
         Dim __soType As String
@@ -998,8 +998,8 @@ finish:
 
         For __j = 1 To __Layers.count
             __Layer = __Layers.Item(__j)
-            '__isVisible = __Layer.visible
-            '__appRef.ActiveDocument.ActiveLayer = __Layer
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 ProcessExportImagesRights(__Layer)
@@ -1035,14 +1035,23 @@ finish:
                     End If
                 End If
             End If
-            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessExportImagesRights = True
     End Function
 
     Private Sub CleanLayersName()
+        Dim __compsCount As Integer
+        Dim __compRef As Photoshop.LayerComp
+
         Call OpenDocument()
         Call ProcessCleanLayersName(__docRef, 1)
+
+        __compsCount = __docRef.LayerComps.Count
+        If __compsCount > 0 Then
+            __compRef = __docRef.LayerComps.Item(0)
+            __compRef.Apply()
+        End If
         __docRef.Save()
         If Not __stayOpen Then __docRef.Close(2)
         End
@@ -1051,7 +1060,7 @@ finish:
     Private Function ProcessCleanLayersName(ByVal __ActiveDocument, ByVal __idx)
         Dim __Layers
         Dim __Layer As Object
-        'Dim __isVisible As Boolean
+        Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
         Dim __soType As String
@@ -1062,8 +1071,8 @@ finish:
 
         For __j = 1 To __Layers.count
             __Layer = __Layers.Item(__j)
-            '__isVisible = __Layer.visible
-            '__appRef.ActiveDocument.ActiveLayer = __Layer
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)*\s", "")
@@ -1094,7 +1103,7 @@ finish:
                     End If
                 End If
             End If
-            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessCleanLayersName = True
     End Function
