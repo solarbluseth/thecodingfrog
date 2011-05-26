@@ -201,11 +201,13 @@ Partial Class Form
         Me.GroupBox3.Size = New System.Drawing.Size(260, 54)
         Me.GroupBox3.TabIndex = 3
         Me.GroupBox3.TabStop = False
-        Me.GroupBox3.Text = "Export LayerComps/Layers by name"
+        Me.GroupBox3.Text = "Export LayerComps By Name"
         '
         'ExportLayerComps
         '
         Me.ExportLayerComps.AutoSize = True
+        Me.ExportLayerComps.Checked = True
+        Me.ExportLayerComps.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ExportLayerComps.Location = New System.Drawing.Point(149, 21)
         Me.ExportLayerComps.Name = "ExportLayerComps"
         Me.ExportLayerComps.Size = New System.Drawing.Size(84, 17)
