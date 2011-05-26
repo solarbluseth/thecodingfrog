@@ -12,7 +12,7 @@ Public Class Form
     Const SW_SHOWMINIMIZED = 2
     Private __args As String()
     Private __confLoaded As Boolean = False
-    Private __doExportLayerComps As Boolean = False
+    Private __doExportLayerComps As Boolean = True
     Private __isJPEG As Boolean = True
     Private __imageType As String
 
@@ -393,31 +393,35 @@ Public Class Form
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
-            __newKey.Close()
+            '__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\\command")
+            '__newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            '__newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
-            __newKey.Close()
+            '__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\\command")
+            '__newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            '__newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png""", RegistryValueKind.String)
-            __newKey.Close()
+            '__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\\command")
+            '__newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png""", RegistryValueKind.String)
+            '__newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
-            __newKey.Close()
+            '__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\\command")
+            '__newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
+            '__newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG List Images Rights\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-r"" ""%1""", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Export Smart Objects\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            '__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG Export Smart Objects\\command")
+            '__newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
+            '__newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG Clean Layers Name\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-w"" ""%1""", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG config\\command")
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG Config\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
             __newKey.Close()
 
@@ -444,7 +448,11 @@ Public Class Form
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-so"" ""%1""", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\\command")
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Clean Layers Name\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-w"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Config\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
             __newKey.Close()
 
@@ -458,7 +466,7 @@ Public Class Form
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\\command")
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG Config\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-c""", RegistryValueKind.String)
             __newKey.Close()
         End If
@@ -513,12 +521,22 @@ Public Class Form
             End Try
 
             Try
-                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ImagesRights")
             Catch e As Exception
             End Try
 
             Try
-                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Assets")
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Clean")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             Catch e As Exception
             End Try
         Else
@@ -545,14 +563,20 @@ Public Class Form
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG config\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG List Images Rights\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG Export Smart Objects\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG Clean Layers Name\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG Config\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 60% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG 100% (by name)\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG config\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG List Images Rights\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Export Smart Objects\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Clean Layers Name\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG Config\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 100%\")
             Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG 60%\")
-            Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG config\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG Config\")
         End If
 
         Setup()
@@ -595,6 +619,7 @@ Public Class Form
                 __isNamedLayerComp = False
                 __jpgSaveOptions.Quality = CInt(__args(1))
                 __imageType = "JPG"
+                __doExportLayerComps = True 'force using this mode
             Case "png"
                 __isNamedLayerComp = False
                 __imageType = "PNG"
@@ -857,7 +882,7 @@ finish:
     End Sub
 
     Private Sub ExportLayerComps_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles ExportLayerComps.MouseHover
-        ToolTip1.Show("Export layercomps if checked, else it will save each layers", ExportLayerComps)
+        ToolTip1.Show("Export Layer Comps if checked, else it will save each layers", ExportLayerComps)
     End Sub
 
     Private Sub ExcludeDirectories_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExcludeDirectories.TextChanged
