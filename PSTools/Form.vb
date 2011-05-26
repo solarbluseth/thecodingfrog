@@ -749,7 +749,10 @@ Public Class Form
 
 finish:
         'ExportImagesRights()
-
+        If __compsCount > 0 Then
+            __compRef = __docRef.LayerComps.Item(1)
+            __compRef.Apply()
+        End If
         If Not __stayOpen Then __docRef.Close(2)
 
         ' End program
@@ -1071,39 +1074,40 @@ finish:
 
         For __j = 1 To __Layers.count
             __Layer = __Layers.Item(__j)
-            __isVisible = __Layer.visible
-            __appRef.ActiveDocument.ActiveLayer = __Layer
+            '__isVisible = __Layer.visible
+            '__appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)*\s", "")
                 ProcessCleanLayersName(__Layer, __idx + 1)
             ElseIf __Layer.typename = "ArtLayer" Then
+                'MessageBox.Show(__Layer.Kind)
                 __ir.Parse(__Layer.Name)
                 If __ir.isValidCode Then
                     'MessageBox.Show(__Layer.Name)
                     __Layer.Name = "#" & Regex.Replace(__Layer.Name, "#", "")
                 End If
-                If __Layer.Kind = 17 Then
-                    __soType = getSmartObjectType(__appRef)
-                    If __soType = ".psd" Then
+                'If __Layer.Kind = 17 Then
+                '    __soType = getSmartObjectType(__appRef)
+                '    If __soType = ".psd" Then
+                '        'MessageBox.Show(__Layer.Name)
+                '        Dim __opn
+                '        __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
 
-                        Dim __opn
-                        __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
+                '        Dim __desc4
+                '        __desc4 = New Photoshop.ActionDescriptor()
 
-                        Dim __desc4
-                        __desc4 = New Photoshop.ActionDescriptor()
-
-                        Try
-                            __appRef.ExecuteAction(__opn, __desc4, 3)
-                        Catch ex As InvalidOperationException
-                            MessageBox.Show(ex.Message)
-                        End Try
-                        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
-                        __appRef.ActiveDocument.Close(1)
-                    End If
-                End If
+                '        Try
+                '            __appRef.ExecuteAction(__opn, __desc4, 3)
+                '        Catch ex As InvalidOperationException
+                '            MessageBox.Show(ex.Message)
+                '        End Try
+                '        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
+                '        __appRef.ActiveDocument.Close(1)
+                '    End If
+                'End If
             End If
-            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessCleanLayersName = True
     End Function
