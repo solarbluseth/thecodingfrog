@@ -1091,7 +1091,7 @@ finish:
         Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
-        Dim __soType As String
+        'Dim __soType As String
 
         __ir = New ImageRight()
 
@@ -1099,11 +1099,11 @@ finish:
 
         For __j = 1 To __Layers.count
             __Layer = __Layers.Item(__j)
-            '__isVisible = __Layer.visible
-            '__appRef.ActiveDocument.ActiveLayer = __Layer
+            __isVisible = __Layer.visible
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
-                __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)*\s", "")
+                __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)+\s*", "")
                 ProcessCleanLayersName(__Layer, __idx + 1)
             ElseIf __Layer.typename = "ArtLayer" Then
                 'MessageBox.Show(__Layer.Kind)
@@ -1132,7 +1132,7 @@ finish:
                 '    End If
                 'End If
             End If
-            '__appRef.ActiveDocument.ActiveLayer.visible = __isVisible
+            __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessCleanLayersName = True
     End Function

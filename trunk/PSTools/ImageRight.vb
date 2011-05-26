@@ -41,6 +41,12 @@
                 __bank = "iStockPhoto"
             Case "CO" : __url = "www.corbisimages.com/stock-photo/rights-managed/{0}/e/?tab=details&caller=search"
                 __bank = "Corbis Images"
+            Case "GO" : __url = "www.graphicobsession.com/recherche.php?LibRecherche={0}"
+                __bank = "GraphicObsession"
+            Case "PA" : __url = "www.photoalto.fr/recherche?idsearch=4vxi&bs_string={0}&searchWithin=0"
+                __bank = "PhotoAlto"
+            Case "SX" : __url = "http://www.sxc.hu/photo/{0}"
+                __bank = "stock.xchng"
             Case "FK" : __url = vbNullString
                 __bank = vbNullString
             Case Else
