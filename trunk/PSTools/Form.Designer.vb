@@ -201,7 +201,7 @@ Partial Class Form
         Me.GroupBox3.Size = New System.Drawing.Size(260, 54)
         Me.GroupBox3.TabIndex = 3
         Me.GroupBox3.TabStop = False
-        Me.GroupBox3.Text = "Export LayerComps By Name"
+        Me.GroupBox3.Text = "Export By Name"
         '
         'ExportLayerComps
         '
