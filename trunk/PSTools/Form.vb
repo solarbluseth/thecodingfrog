@@ -585,12 +585,12 @@ Public Class Form
     Private Sub ProcessFile()
         Dim __isNamedLayerComp As Boolean = False
 
-        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions
+        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions()
         __jpgSaveOptions.EmbedColorProfile = False
         __jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
         __jpgSaveOptions.Matte = 1 ' psNoMatte 
 
-        Dim __gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        Dim __gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb()
         'gifExportOptionsSaveForWeb.MatteColor = 255
         __gifExportOptionsSaveForWeb.Format = 3
         __gifExportOptionsSaveForWeb.ColorReduction = 1
@@ -605,7 +605,7 @@ Public Class Form
         __gifExportOptionsSaveForWeb.Lossy = 0
         __gifExportOptionsSaveForWeb.WebSnap = 0
 
-        Dim __pngExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb
+        Dim __pngExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb()
         __pngExportOptionsSaveForWeb.Format = 13
         __pngExportOptionsSaveForWeb.PNG8 = False
         __pngExportOptionsSaveForWeb.Transparency = True
@@ -898,6 +898,7 @@ finish:
     End Sub
 
     Private Sub OpenDocument()
+
         __appRef = New Photoshop.Application()
         Try
             If __appRef.Documents.Count > 0 Then
@@ -913,7 +914,6 @@ finish:
         Catch ex As Exception
             MessageBox.Show(ex.Message)
         End Try
-
 
         If __openDoc Then
             Try
