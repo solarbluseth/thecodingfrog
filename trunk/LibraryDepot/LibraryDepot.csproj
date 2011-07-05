@@ -57,13 +57,14 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="PluginCore, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="PluginCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\FD4\PluginCore\Bin\Debug\PluginCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\PluginCore\Bin\Release\PluginCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="ProjectManager, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ProjectManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ProjectManager\obj\Debug\ProjectManager.dll</HintPath>
+      <HintPath>..\..\..\..\FD4\FlashDevelop\Bin\Debug\Plugins\ProjectManager.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

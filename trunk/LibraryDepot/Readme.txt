@@ -19,7 +19,7 @@ Remember : Use at your own risk
 
 Tested on FlashDevelop versions:
 
-    * 3.3.2 RTM
+    * 4.0 beta
 
 
 Known Bugs/Issues
@@ -29,10 +29,13 @@ Known Bugs/Issues
 
 Version History
 
-    / 1.0.36 - January 6, 2010
+    / 2.0.42 - July 5, 2011
+      * Update to v2 for FlashDevelop 4
+      
+    / 1.0.36 - January 6, 2011
       * change timer to FileSystemWatcher to update menu
 
-    / 1.0.27 - January 5, 2010
+    / 1.0.27 - January 5, 2011
       + add filter for library files, only swc, zip files show up in treemenu
       + add filters for zip extract
       + dialog at first run to select depot path

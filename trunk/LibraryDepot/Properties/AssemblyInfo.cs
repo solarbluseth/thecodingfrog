@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 // you compile.
 
 [assembly: AssemblyTitle("LibraryDepot")]
-[assembly: AssemblyDescription("Library Depot utility Plugin For FlashDevelop 3")]
+[assembly: AssemblyDescription("Library Depot utility Plugin For FlashDevelop 4")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Agence Interactive")]
 [assembly: AssemblyProduct("LibraryDepot")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 // You can specify all values by your own or you can build default build and revision
 // numbers with the '*' character (the default):
 
-[assembly: AssemblyVersion("1.0.36.0")]
+[assembly: AssemblyVersion("2.0.42.0")]
 
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.
