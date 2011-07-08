@@ -475,7 +475,12 @@ namespace LibraryDepot
 				__directoryFilter = @"src";
 				__fastZip.ExtractZip(__file, GetPath(), FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
 
-				if (settingObject.SrcPath.Replace("/", "").Replace("\\", "").ToLower() != "src")
+				//MessageBox.Show(GetPath() + "/classes/");
+				if (Directory.Exists(GetPath() + "/classes/"))
+				{
+					Directory.Move(GetPath() + "/src/", GetPath() + "/classes/");
+				}
+				else if (settingObject.SrcPath.Replace("/", "").Replace("\\", "").ToLower() != "src")
 				{
 					Directory.Move(GetPath() + "/src/", GetPath() + settingObject.SrcPath);
 				}
@@ -483,7 +488,15 @@ namespace LibraryDepot
 			else
 			{
 				__directoryFilter = null;
-				__fastZip.ExtractZip(__file, GetPath() + settingObject.SrcPath, FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
+				//MessageBox.Show(Directory.Exists(GetPath() + "/classes/").ToString()); 
+				if (Directory.Exists(GetPath() + "/classes/"))
+				{
+					__fastZip.ExtractZip(__file, GetPath() + "/classes/", FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
+				}
+				else
+				{
+					__fastZip.ExtractZip(__file, GetPath() + settingObject.SrcPath, FastZip.Overwrite.Prompt, OverwritePrompt, __fileFilter, __directoryFilter, true);
+				}
 			}
 			
 
