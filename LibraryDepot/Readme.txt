@@ -29,6 +29,9 @@ Known Bugs/Issues
 
 Version History
 
+    / 2.0.47 - July 8, 2011
+      * copy sources to /classes/ if dir exists but no /src/
+      
     / 2.0.42 - July 5, 2011
       * Update to v2 for FlashDevelop 4
       
