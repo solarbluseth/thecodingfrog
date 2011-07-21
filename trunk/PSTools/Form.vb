@@ -16,6 +16,7 @@ Public Class Form
     Private __isJPEG As Boolean = True
     Private __imageType As String
 
+    Const NS = "http://www.smartobjectlinks.com/1.0/"
     Const FOUND = "Found"
     Const NOT_FOUND = "Not found"
     'Private __strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
@@ -968,6 +969,7 @@ finish:
                     End If
                 End If
             End If
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
     End Sub
@@ -1063,6 +1065,7 @@ finish:
                     End If
                 End If
             End If
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessExportImagesRights = True
@@ -1091,6 +1094,8 @@ finish:
         Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
+        Dim __xmlDoc As String
+        
         'Dim __soType As String
 
         __ir = New ImageRight()
@@ -1112,26 +1117,34 @@ finish:
                     'MessageBox.Show(__Layer.Name)
                     __Layer.Name = "#" & Regex.Replace(__Layer.Name, "#", "")
                 End If
-                'If __Layer.Kind = 17 Then
-                '    __soType = getSmartObjectType(__appRef)
-                '    If __soType = ".psd" Then
-                '        'MessageBox.Show(__Layer.Name)
-                '        Dim __opn
-                '        __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
+                If __Layer.Kind = 17 Then
+                    Try
+                        __xmlDoc = __Layer.XMPMetadata.RawData
+                        If __xmlDoc <> "" Then
+                            __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)+\s*", "")
+                        End If
+                    Catch ex As Exception
+                    End Try
+                    '    __soType = getSmartObjectType(__appRef)
+                    '    If __soType = ".psd" Then
+                    '        'MessageBox.Show(__Layer.Name)
+                    '        Dim __opn
+                    '        __opn = __appRef.StringIDToTypeID("placedLayerEditContents")
 
-                '        Dim __desc4
-                '        __desc4 = New Photoshop.ActionDescriptor()
+                    '        Dim __desc4
+                    '        __desc4 = New Photoshop.ActionDescriptor()
 
-                '        Try
-                '            __appRef.ExecuteAction(__opn, __desc4, 3)
-                '        Catch ex As InvalidOperationException
-                '            MessageBox.Show(ex.Message)
-                '        End Try
-                '        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
-                '        __appRef.ActiveDocument.Close(1)
-                '    End If
-                'End If
+                    '        Try
+                    '            __appRef.ExecuteAction(__opn, __desc4, 3)
+                    '        Catch ex As InvalidOperationException
+                    '            MessageBox.Show(ex.Message)
+                    '        End Try
+                    '        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
+                    '        __appRef.ActiveDocument.Close(1)
+                    '    End If
+                End If
             End If
+            __appRef.ActiveDocument.ActiveLayer = __Layer
             __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
         ProcessCleanLayersName = True
