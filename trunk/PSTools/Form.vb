@@ -946,7 +946,7 @@ finish:
             If __Layer.typename = "LayerSet" Then
                 ProcessExportSmartObjects(__Layer.Layers)
             ElseIf __Layer.typename = "ArtLayer" Then
-                If __Layer.Kind = 17 Then
+                If __Layer.Kind = Photoshop.PsLayerKind.psSmartObjectLayer Then
 
                     Dim __idplacedLayerExportContents
                     __idplacedLayerExportContents = __appRef.StringIDToTypeID("placedLayerExportContents")
@@ -1040,7 +1040,7 @@ finish:
                     If __ir.isValidURL Then
                         __ir.CreateLink(__docRef.Path)
                     End If
-                ElseIf __Layer.Kind = 17 Then
+                ElseIf __Layer.Kind = Photoshop.PsLayerKind.psSmartObjectLayer Then
                     __ir.Parse(__Layer.Name)
                     If __ir.Code <> vbNullString Then
                         If __ir.isValidURL Then __ir.CreateLink(__docRef.Path)
@@ -1088,14 +1088,16 @@ finish:
         End
     End Sub
 
-    Private Function ProcessCleanLayersName(ByVal __ActiveDocument, ByVal __idx)
+    Private Function ProcessCleanLayersName(ByVal __ActiveDocument, ByVal __idx) As String
         Dim __Layers
         Dim __Layer As Object
         Dim __isVisible As Boolean
         Dim __j As Integer
         Dim __ir As ImageRight
         Dim __xmlDoc As String
-        
+        Dim __FistLayerText As String = ""
+        Dim __reg As New Regex("Group\s*\d*", RegexOptions.IgnoreCase)
+
         'Dim __soType As String
 
         __ir = New ImageRight()
@@ -1109,7 +1111,10 @@ finish:
             'set oLayer = oLayerRef.ActiveLayer
             If __Layer.typename = "LayerSet" Then
                 __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)+\s*", "")
-                ProcessCleanLayersName(__Layer, __idx + 1)
+                Dim __NewLayerName = ProcessCleanLayersName(__Layer, __idx + 1)
+                If __NewLayerName <> "" And __reg.IsMatch(__Layer.name) Then
+                    __Layer.name = New String("+", __idx) + " " + __NewLayerName
+                End If
             ElseIf __Layer.typename = "ArtLayer" Then
                 'MessageBox.Show(__Layer.Kind)
                 __ir.Parse(__Layer.Name)
@@ -1117,7 +1122,7 @@ finish:
                     'MessageBox.Show(__Layer.Name)
                     __Layer.Name = "#" & Regex.Replace(__Layer.Name, "#", "")
                 End If
-                If __Layer.Kind = 17 Then
+                If __Layer.Kind = Photoshop.PsLayerKind.psSmartObjectLayer Then 'SMARTOBJECT
                     Try
                         __xmlDoc = __Layer.XMPMetadata.RawData
                         If __xmlDoc <> "" Then
@@ -1142,11 +1147,15 @@ finish:
                     '        ProcessCleanLayersName(__appRef.ActiveDocument, 1)
                     '        __appRef.ActiveDocument.Close(1)
                     '    End If
+                ElseIf __Layer.kind = Photoshop.PsLayerKind.psTextLayer Then
+                    If __FistLayerText = "" Then
+                        __FistLayerText = __Layer.name
+                    End If
                 End If
             End If
             __appRef.ActiveDocument.ActiveLayer = __Layer
             __appRef.ActiveDocument.ActiveLayer.visible = __isVisible
         Next
-        ProcessCleanLayersName = True
+        ProcessCleanLayersName = __FistLayerText
     End Function
 End Class
