@@ -37,6 +37,17 @@ Public Class Form
     '    CS55 = 55
     'End Enum
 
+    Public Enum Colors
+        NONE
+        RED
+        ORANGE
+        YELLOW
+        GREEN
+        BLUE
+        VIOLET
+        GRAY
+    End Enum
+
     Public Sub New()
 
         ' This call is required by the Windows Form Designer.
@@ -1089,7 +1100,7 @@ finish:
     End Sub
 
     Private Function ProcessCleanLayersName(ByVal __ActiveDocument, ByVal __idx) As String
-        Dim __Layers
+        Dim __Layers As Photoshop.Layers
         Dim __Layer As Object
         Dim __isVisible As Boolean
         Dim __j As Integer
@@ -1104,7 +1115,7 @@ finish:
 
         __Layers = __ActiveDocument.Layers
 
-        For __j = 1 To __Layers.count
+        For __j = 1 To __Layers.Count
             __Layer = __Layers.Item(__j)
             __isVisible = __Layer.visible
             __appRef.ActiveDocument.ActiveLayer = __Layer
@@ -1127,6 +1138,7 @@ finish:
                         __xmlDoc = __Layer.XMPMetadata.RawData
                         If __xmlDoc <> "" Then
                             __Layer.Name = New String("+", __idx) & " " & Regex.Replace(__Layer.Name, "(\+)+\s*", "")
+                            ChangeLayerColour(Colors.VIOLET)
                         End If
                     Catch ex As Exception
                     End Try
@@ -1158,4 +1170,39 @@ finish:
         Next
         ProcessCleanLayersName = __FistLayerText
     End Function
+
+    Private Sub ChangeLayerColour(ByVal colour As Colors)
+        Dim __colour As String
+
+        Select Case colour
+            Case Colors.RED
+                __colour = "Rd  "
+            Case Colors.ORANGE
+                __colour = "Orng"
+            Case Colors.YELLOW
+                __colour = "Ylw "
+            Case Colors.GREEN
+                __colour = "Grn "
+            Case Colors.BLUE
+                __colour = "Bl  "
+            Case Colors.VIOLET
+                __colour = "Vlt "
+            Case Colors.GRAY
+                __colour = "Gry "
+            Case Colors.NONE
+                __colour = "None"
+            Case Else
+                __colour = "None"
+        End Select
+
+        Dim desc = New Photoshop.ActionDescriptor()
+        Dim ref = New Photoshop.ActionReference()
+        ref.putEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"))
+        desc.putReference(__appRef.CharIDToTypeID("null"), ref)
+
+        Dim desc2 = New Photoshop.ActionDescriptor()
+        desc2.putEnumerated(__appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID(__colour))
+        desc.putObject(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Lyr "), desc2)
+        __appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), desc, 3)
+    End Sub
 End Class
