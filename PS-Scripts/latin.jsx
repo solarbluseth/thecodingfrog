@@ -57,15 +57,18 @@ if (app.activeDocument.activeLayer.isBackgroundLayer == false && app.activeDocum
 		paragraph = textArray[rand];
 	}
 	
+	if (layerRef.textItem.kind == TextType.POINTTEXT)
+		layerRef.textItem.kind = TextType.PARAGRAPHTEXT;
+	
 	if (layerRef.textItem.contents.length == 0)
 	{
 		layerRef.textItem.antiAliasMethod = AntiAlias.NONE;
 		layerRef.textItem.font = "ArialMT";
 		layerRef.textItem.size = 11;
 		layerRef.textItem.color = textColor;
-		layerRef.textItem.hyphenation = false;
 	}
 	
+	layerRef.textItem.hyphenation = false;
 	layerRef.textItem.contents = paragraph;
 	
 	layerRef.textItem.width = Math.round(layerRef.textItem.width);
