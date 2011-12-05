@@ -125,7 +125,7 @@ Public Class Form
             If __key.GetValue("ExcludeDirectories") <> "" Then
                 Me.ExcludeDirectories.Text = __key.GetValue("ExcludeDirectories")
             Else
-                Me.ExcludeDirectories.Text = "+ Elements"
+                Me.ExcludeDirectories.Text = ""
             End If
 
             __key = Registry.CurrentUser.OpenSubKey("Software\\SaveAsJPEG\\")
@@ -721,9 +721,9 @@ Public Class Form
                 Dim __fi As FileInfo
 
                 'MsgBox(Directory.Exists(docRef.Path & "\" & Me.ArchiveDirectory.Text & "\"))
-                If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
-                    Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
-                End If
+                'If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                'Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
+                'End If
 
                 'di = New DirectoryInfo(docRef.Path)
                 Dim __currentFileName As String = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf("."))
@@ -752,6 +752,9 @@ Public Class Form
                         If __RegexObj2.IsMatch(__fi.Name) Then
                             If isOldFileVersion(__fi.Name, __currentVersion) And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
                                 'MsgBox(fi.Name)
+                                If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                                    Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
+                                End If
                                 Try
                                     File.Copy(__docRef.Path & __fi.Name, __docRef.Path & "\" & Me.ArchiveDirectory.Text & "\" & __fi.Name, True)
                                 Catch ex As Exception
@@ -903,8 +906,8 @@ finish:
         If Trim(Me.ExcludeDirectories.Text) <> "" Then
             __newKey.SetValue("ExcludeDirectories", Me.ExcludeDirectories.Text, RegistryValueKind.String)
         Else
-            Me.ExcludeDirectories.Text = "+ Elements"
-            __newKey.SetValue("ExcludeDirectories", "+ Elements", RegistryValueKind.String)
+            Me.ExcludeDirectories.Text = ""
+            __newKey.SetValue("ExcludeDirectories", "", RegistryValueKind.String)
         End If
         __newKey.Close()
     End Sub
@@ -963,7 +966,7 @@ finish:
                     __idplacedLayerExportContents = __appRef.StringIDToTypeID("placedLayerExportContents")
 
 
-                    Dim __desc4
+                    Dim __desc4 As Photoshop.ActionDescriptor
                     __desc4 = New Photoshop.ActionDescriptor()
 
                     Dim __idnull
@@ -976,7 +979,7 @@ finish:
                     Dim __soType = getSmartObjectType(__appRef)
                     If __soType <> "" Then
                         Call __desc4.putPath(__idnull, __docRef.Path & "+ Elements\" & wipeName(__Layer.Name) & __soType)
-                        Call __appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, 3)
+                        Call __appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs)
                     End If
                 End If
             End If
@@ -1066,7 +1069,7 @@ finish:
                             __desc4 = New Photoshop.ActionDescriptor()
 
                             Try
-                                __appRef.ExecuteAction(__opn, __desc4, 3)
+                                __appRef.ExecuteAction(__opn, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs)
                             Catch ex As InvalidOperationException
                                 MessageBox.Show(ex.Message)
                             End Try
@@ -1173,6 +1176,9 @@ finish:
 
     Private Sub ChangeLayerColour(ByVal colour As Colors)
         Dim __colour As String
+        Dim __desc As Photoshop.ActionDescriptor
+        Dim __ref As Photoshop.ActionReference
+        Dim __desc2 As Photoshop.ActionDescriptor
 
         Select Case colour
             Case Colors.RED
@@ -1195,14 +1201,14 @@ finish:
                 __colour = "None"
         End Select
 
-        Dim desc = New Photoshop.ActionDescriptor()
-        Dim ref = New Photoshop.ActionReference()
-        ref.putEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"))
-        desc.putReference(__appRef.CharIDToTypeID("null"), ref)
+        __desc = New Photoshop.ActionDescriptor()
+        __ref = New Photoshop.ActionReference()
+        __ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"))
+        __desc.PutReference(__appRef.CharIDToTypeID("null"), __ref)
 
-        Dim desc2 = New Photoshop.ActionDescriptor()
-        desc2.putEnumerated(__appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID(__colour))
-        desc.putObject(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Lyr "), desc2)
-        __appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), desc, 3)
+        __desc2 = New Photoshop.ActionDescriptor()
+        __desc2.PutEnumerated(__appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID(__colour))
+        __desc.PutObject(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Lyr "), __desc2)
+        __appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs)
     End Sub
 End Class
