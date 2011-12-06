@@ -13,7 +13,6 @@ Public Class Form
     Private __args As String()
     Private __confLoaded As Boolean = False
     Private __doExportLayerComps As Boolean = True
-    Private __isJPEG As Boolean = True
     Private __imageType As String
 
     Const NS = "http://www.smartobjectlinks.com/1.0/"
@@ -89,7 +88,7 @@ Public Class Form
                     Case "-r" : ExportImagesRights()
                     Case "-w" : CleanLayersName()
                 End Select
-            ElseIf __num = 3 Then
+            ElseIf __num = 4 Then
                 ' hide the app
                 ShowWindow(__hwnd, SW_HIDE)
                 Me.Visible = False
@@ -289,19 +288,19 @@ Public Class Form
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.Png;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
 
@@ -312,7 +311,7 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.100\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""jpg"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.60
@@ -322,7 +321,7 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.60\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""index""", RegistryValueKind.String)
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""7"" ""%1"" ""jpg"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.ByName
@@ -333,18 +332,29 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""name""", RegistryValueKind.String)
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""jpg"" ""name""", RegistryValueKind.String)
             __newKey.Close()
 
-            ' SaveAsJPEG.Png
-            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png")
+            ' SaveAsJPEG.PngIndex
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngIndex")
             __newKey.SetValue("MUIVerb", "Save Layer Comps As PNG (by index)", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
             __newKey.Close()
 
-            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png""", RegistryValueKind.String)
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngIndex\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.PngName
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngName")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As PNG (by name)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngName\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""png"" ""name""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.Gif
@@ -355,7 +365,7 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif""", RegistryValueKind.String)
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""gif"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.ImagesRights
@@ -523,7 +533,12 @@ Public Class Form
             End Try
 
             Try
-                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Png")
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngIndex")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngName")
             Catch e As Exception
             End Try
 
@@ -623,26 +638,28 @@ Public Class Form
         __pngExportOptionsSaveForWeb.Transparency = True
 
         Select Case __args(3)
-            Case "name"
-                __isNamedLayerComp = True
-                __jpgSaveOptions.Quality = CInt(Me.NamedExportQuality.Value)
-                __imageType = "JPG"
-            Case "index"
-                __isNamedLayerComp = False
+            Case "jpg"
                 __jpgSaveOptions.Quality = CInt(__args(1))
                 __imageType = "JPG"
                 __doExportLayerComps = True 'force using this mode
             Case "png"
-                __isNamedLayerComp = False
                 __imageType = "PNG"
+                __doExportLayerComps = True
             Case "gif"
-                __isNamedLayerComp = False
-                __isJPEG = False
                 __imageType = "GIF"
             Case Else
-                __isNamedLayerComp = False
                 __jpgSaveOptions.Quality = CInt(__args(1))
                 __imageType = "JPG"
+        End Select
+        'MessageBox.Show(__imageType)
+
+        Select Case __args(4)
+            Case "name"
+                __isNamedLayerComp = True
+            Case "index"
+                __isNamedLayerComp = False
+            Case Else
+                __isNamedLayerComp = False
         End Select
 
         Call OpenDocument()
@@ -663,8 +680,11 @@ Public Class Form
                 'textItemRef.TextItem.Contents = Args.Item(1) 
 
                 'outFileName = Args.Item(1)
-                If __isJPEG Then
+                If __imageType = "JPG" Then
                     __docRef.SaveAs(__args(2), __jpgSaveOptions, True)
+                ElseIf __imageType = "PNG" Then
+                    __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".png"
+                    __docRef.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
                 Else
                     __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".gif"
                     __docRef.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
