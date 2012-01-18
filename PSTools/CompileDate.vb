@@ -1,3 +1,3 @@
 Public Class CompileDate
-	Public Shared BuildDate as Date = new Date(2011, 12, 6, 10, 2, 48)
+	Public Shared BuildDate as Date = new Date(2012, 1, 18, 15, 7, 13)
 End Class

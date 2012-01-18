@@ -770,8 +770,9 @@ Public Class Form
                     __afi = __di.GetFiles("*.*")
                     For Each __fi In __afi
                         If __RegexObj2.IsMatch(__fi.Name) Then
-                            If isOldFileVersion(__fi.Name, __currentVersion) And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
-                                'MsgBox(fi.Name)
+                            'MsgBox(__fi.Name)
+                            If isOldFileVersion(__fi.Name, __currentVersion) Then 'And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
+                                'MsgBox(__fi.Name)
                                 If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
                                     Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
                                 End If
