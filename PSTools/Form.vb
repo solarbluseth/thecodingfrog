@@ -748,7 +748,8 @@ Public Class Form
                 'di = New DirectoryInfo(docRef.Path)
                 Dim __currentFileName As String = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf("."))
 
-                Dim __RegexObj As Regex = New Regex("\d*$")
+                'Dim __RegexObj As Regex = New Regex("\d*$")
+                Dim __RegexObj As Regex = New Regex("(\d*)\.*\d*$")
                 Dim __myMatches As Match
                 Dim __currentVersion
                 Dim __cleanFileName As String
@@ -764,10 +765,11 @@ Public Class Form
                     __cleanFileName = __RegexObj.Replace(__currentFileName, "")
                     __cleanFileName = __cleanFileName.Replace("+", "\+")
                     __cleanFileName = __cleanFileName.Replace(" ", "\s")
-                    'MsgBox(cleanFileName)
+                    'MsgBox(__cleanFileName)
                     Dim __RegexObj2 As Regex = New Regex("^" & __cleanFileName & "(\d+|\.)")
 
                     __afi = __di.GetFiles("*.*")
+                    'MsgBox(__currentVersion)
                     For Each __fi In __afi
                         If __RegexObj2.IsMatch(__fi.Name) Then
                             'MsgBox(__fi.Name)
@@ -822,11 +824,12 @@ finish:
 
     Private Function isOldFileVersion(ByVal filename As String, ByVal version As String) As String
         Dim __newFileName As String = filename.Substring(0, filename.LastIndexOf("."))
-        'MsgBox(newFileName)
-        Dim __RegexObj As Regex = New Regex("(\d+)\.*\d*$")
+        Dim __version = version.Split(".")
+        'MsgBox(__newFileName)
+        Dim __RegexObj As Regex = New Regex("(\d*)(\.*\d*)*$")
         If __RegexObj.IsMatch(__newFileName) Then
-            'MsgBox("> " & RegexObj.Match(newFileName).Groups(1).Value & ":" & version)
-            If CInt(__RegexObj.Match(__newFileName).Groups(1).Value) < CInt(version) Then
+            'MsgBox("> " & __RegexObj.Match(__newFileName).Groups(1).Value & ":" & version)
+            If CInt(__RegexObj.Match(__newFileName).Groups(1).Value) < CInt(__version(0)) Then
                 Return True
             Else
                 Return False
