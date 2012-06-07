@@ -71,8 +71,8 @@ if (app.activeDocument.activeLayer.isBackgroundLayer == false && app.activeDocum
 	layerRef.textItem.hyphenation = false;
 	layerRef.textItem.contents = paragraph;
 	
-	layerRef.textItem.width = Math.round(layerRef.textItem.width);
-	layerRef.textItem.height = Math.round(layerRef.textItem.height);
+	//layerRef.textItem.width = Math.round(layerRef.textItem.width);
+	//layerRef.textItem.height = Math.round(layerRef.textItem.height);
 	layerRef.textItem.position = Array(Math.round(layerRef.textItem.position[0]), Math.round(layerRef.textItem.position[1]));
 	//alert(layerRef.textItem.position);
 }
