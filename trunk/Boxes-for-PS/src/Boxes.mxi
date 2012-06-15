@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<macromedia-extension
+	 name="Boxes"
+	 version="0.1"
+	 type=""
+	 requires-restart="true"
+	 locked="false"
+	 pkgtype="mxp">
+
+	<author name="Jean-Louis PERSAT @TheCodingFrog" />
+
+	<products>
+		<product name="Photoshop64" version="12" primary="true" />
+	</products>
+
+	<update  />
+
+	<description>
+	<![CDATA[
+		This is a Script Panel for drawing rectangles and round rectangles
+	]]>
+	</description>
+
+	<ui-access>
+	</ui-access>
+
+	<license-agreement>
+	<![CDATA[
+	Legal stuff...
+	]]>
+	</license-agreement>
+
+	<files>
+		<file source="Boxes.swf" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="Boxes.jsx" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="lt.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="rt.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="rb.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="lb.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="lock.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+	</files>
+
+	<signatures>
+		<signature name="Boxes" extensiontype="1" signed="true" certificateType="2" />
+	</signatures>
+
+</macromedia-extension>

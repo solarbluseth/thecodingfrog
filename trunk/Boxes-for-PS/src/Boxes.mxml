@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+*************************************************************************
+	ADOBE SYSTEMS INCORPORATED
+	 Copyright 2008 Adobe Systems Incorporated
+	 All Rights Reserved.
+
+	NOTICE:  Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the Adobe license agreement accompanying
+	it.  If you have received this file from a source other than Adobe, then
+	your use, modification, or distribution of it requires the prior written
+	permission of Adobe.
+**************************************************************************
+
+	Name:			Boxes.mxml
+	Author:			xxxxx
+	Description:	xxxxx
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
+		<mx:Script>
+		<![CDATA[
+			import flash.events.MouseEvent;
+			import mx.events.FlexEvent;
+			import flash.events.KeyboardEvent;
+			import mx.controls.Alert;
+			import com.adobe.csxs.core.CSXSInterface;
+			import com.adobe.csxs.events.*;
+			import mx.events.ColorPickerEvent;
+			import mx.events.SliderEvent;
+			import mx.events.NumericStepperEvent;
+			import flash.net.navigateToURL;
+			import flash.net.URLRequest;
+			
+			private var isWidthOk:Boolean = false;
+			private var isHeightOk:Boolean = false;
+			private var __width:int = 0;
+			private var __height:int = 0;
+			private var __x:int = 0;
+			private var __y:int = 0;
+			private var __opacity:int = 100;
+			private var xmlMenu:XML = XML(<Menu><MenuItem Id="item_1" Label="Made by Jean-Louis PERSAT / @TheCodingFrog"/></Menu>);
+		
+			private var __color:String = "000000";
+			
+			public function init():void{
+				CSXSInterface.getInstance().setPanelMenu(xmlMenu);
+				CSXSInterface.instance.addEventListener(MenuClickEvent.FLYOUT_MENU_CLICK, menuClickHandler);
+  
+				boxWidth.addEventListener(KeyboardEvent.KEY_UP, checkWidth);
+				boxHeight.addEventListener(KeyboardEvent.KEY_UP, checkHeight);
+				boxXPos.addEventListener(KeyboardEvent.KEY_UP, checkXPos);
+				boxYPos.addEventListener(KeyboardEvent.KEY_UP, checkYPos);
+				boxColor.addEventListener(ColorPickerEvent.CHANGE, setColor);
+				boxOpacity.addEventListener(SliderEvent.CHANGE, slide);
+				
+				boxLTCorner.addEventListener(NumericStepperEvent.CHANGE, changeLT);
+				
+				boxLockCorners.addEventListener(MouseEvent.CLICK, lockCorners);
+				
+				boxOpacity.value = 100;
+				boxOpacity.showDataTip = false;
+				CSXSInterface.instance.evalScript("PhotoshopPersistent");
+			}
+			
+			public function menuClickHandler(event:MenuClickEvent):void
+		  {
+			  switch (event.menuName) //you can also use the menuId
+			  {
+				 case "Item 1":
+				 	navigateToURL(new URLRequest("http://twitter.com/TheCodingFrog"));
+				 break;
+				 default:
+				 //trace("clicked " + event.menuName);
+			  }
+		   }
+			
+			private function changeLT(e:NumericStepperEvent):void
+			{
+				if (boxLockCorners.selected)
+				{
+					boxRTCorner.value = boxLTCorner.value;
+					boxRBCorner.value = boxLTCorner.value;
+					boxLBCorner.value = boxLTCorner.value;
+				}
+			}
+			
+			private function lockCorners(e:MouseEvent):void
+			{
+				if (e.currentTarget.selected)
+				{
+					boxRTCorner.value = boxLTCorner.value;
+					boxRTCorner.enabled = false;
+					boxRBCorner.value = boxLTCorner.value;
+					boxRBCorner.enabled = false;
+					boxLBCorner.value = boxLTCorner.value;
+					boxLBCorner.enabled = false;
+				}
+				else
+				{
+					boxRTCorner.enabled = true;
+					boxRBCorner.enabled = true;
+					boxLBCorner.enabled = true;
+				}
+				
+			}
+			
+			private function setColor(e:ColorPickerEvent):void
+			{
+				var __col:String = e.currentTarget.selectedColor.toString(16);
+				var temp_color:String = "";
+				
+				if (__col.length < 6)
+				{
+					var __zero:int = 6 - __col.length;
+					for (var i:int = 0; i < __zero; i++)
+					{
+						temp_color += "0";
+	                }
+					temp_color += __col;
+					__col = temp_color 
+				}
+				__color = __col;
+			}
+			
+			private function slide(e:SliderEvent):void
+			{
+				txtOpacity.text = e.currentTarget.value.toString() + "%";
+				__opacity = e.currentTarget.value;
+			}
+			
+			private function checkXPos(e:KeyboardEvent):void
+			{
+				if (!isNaN(e.currentTarget.text))
+				{
+					__x = e.currentTarget.text;
+				}
+				else
+				{
+					__x = 0;
+				}
+			}
+			
+			private function checkYPos(e:KeyboardEvent):void
+			{
+				if (!isNaN(e.currentTarget.text))
+				{
+					__y = e.currentTarget.text;
+				}
+				else
+				{
+					__y = 0;
+				}
+			}
+			
+			private function checkWidth(e:KeyboardEvent):void
+			{
+				if (!isNaN(e.currentTarget.text))
+				{
+					if (Math.ceil(e.currentTarget.text) > 0)
+					{
+						isWidthOk = true;
+						__width = Math.ceil(e.currentTarget.text);
+						if (isHeightOk)
+							enableButton();
+						else
+							disableButton();
+					}
+					else
+					{
+						__width = 0;
+						disableButton();
+					}
+				}
+				else
+				{
+					e.currentTarget.text = "";
+					__width = 0;
+					disableButton();
+				}
+			}
+			
+			private function checkHeight(e:KeyboardEvent):void
+			{
+				if (!isNaN(e.currentTarget.text))
+				{
+					if (Math.ceil(e.currentTarget.text) > 0)
+					{
+						isHeightOk = true;
+						__height = Math.ceil(e.currentTarget.text);
+						if (isWidthOk)
+							enableButton();
+						else
+							disableButton();
+					}
+					else
+					{
+						__height = 0;
+						disableButton();
+					}
+				}
+				else
+				{
+					e.currentTarget.text = "";
+					__height = 0;
+					disableButton();
+				}
+			}
+			
+			private function enableButton():void
+			{
+				BtnCreateBox.enabled = true;
+				BtnCreateBox.addEventListener(MouseEvent.CLICK, doDrawBox);
+			}
+			
+			private function disableButton():void
+			{
+				BtnCreateBox.enabled = false;
+				BtnCreateBox.removeEventListener(MouseEvent.CLICK, doDrawBox);
+			}
+			
+			private function doDrawBox(e:MouseEvent):void
+			{
+				CSXSInterface.instance.evalScript("DrawBox", __width.toString(), __height.toString(), __x.toString(), __y.toString(), boxLTCorner.value.toString(), boxRTCorner.value.toString(), boxLBCorner.value.toString(), boxRBCorner.value.toString(), __color, __opacity.toString());
+			}
+
+			
+		]]>
+	</mx:Script>
+	<mx:Label text="Width" x="14" y="12" color="#000000"/>
+	<mx:TextInput width="50" id="boxWidth" x="14" y="28" borderStyle="solid" cornerRadius="5" alpha="1.0" borderThickness="0"/>
+	<mx:Label text="x" x="68" y="30" color="#666666" alpha="1.0" textAlign="center" width="22.5" height="18"/>
+	<mx:Label text="Height" x="93.5" y="12" color="#000000"/>
+	<mx:TextInput width="50" id="boxHeight" x="93.5" y="28" borderStyle="solid" cornerRadius="5" borderThickness="0"/>
+	
+	<mx:Label text="X" x="14" y="52" color="#000000"/>
+	<mx:TextInput width="50" id="boxXPos" x="14" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0"/>
+	<mx:Label text="Y" x="92.5" y="52" color="#000000"/>
+	<mx:TextInput width="50" id="boxYPos" x="93.5" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0"/>
+	
+	<mx:Label text="Border radius" x="14" y="93.5" color="#000000"/>
+	<mx:NumericStepper x="34" y="113" width="41.5" height="22" id="boxLTCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="1" value="0"/>
+	<mx:NumericStepper x="102" y="114" width="41.5" height="22" id="boxRTCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="1" value="0"/>
+	<mx:NumericStepper x="34" y="143" width="41.5" height="22" id="boxLBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="1" value="0"/>
+	<mx:NumericStepper x="102" y="143" width="41.5" height="22" id="boxRBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="1" value="0"/>
+	<mx:CheckBox x="151" y="129" id="boxLockCorners"/>
+	
+	<mx:Label text="Color" x="14" y="168" color="#000000"/>
+	<mx:ColorPicker x="15.75" y="188" width="127.75" height="34" id="boxColor" selectedColor="#000000"/>
+	
+	<mx:Label text="Opacity" x="14" y="226" color="#000000"/>
+	<mx:Label text="100%" x="94" y="226" color="#888888" textAlign="right" width="49.5" id="txtOpacity"/>
+	<mx:HSlider x="14" y="241" width="129.5" minimum="0" maximum="100" snapInterval="1" id="boxOpacity" liveDragging="true"/>
+	
+	<mx:Button y="272" label="Create box" height="22" id="BtnCreateBox" enabled="false" width="129.5" x="15.75" themeColor="#000000"/>
+	
+	
+	<mx:Image x="169" y="134" source="lock.png" height="33" width="30" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="16" y="118" source="lt.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="16" y="148" source="lb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="83" y="148" source="rb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="83" y="119" source="rt.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
+</mx:Application>
