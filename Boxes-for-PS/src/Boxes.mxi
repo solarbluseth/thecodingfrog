@@ -11,6 +11,7 @@
 
 	<products>
 		<product name="Photoshop64" version="12" primary="true" />
+		<product name="Photoshop32" version="12" primary="true" />
 	</products>
 
 	<update  />
@@ -26,18 +27,18 @@
 
 	<license-agreement>
 	<![CDATA[
-	Legal stuff...
+		Legal stuff...
 	]]>
 	</license-agreement>
 
 	<files>
-		<file source="Boxes.swf" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="Boxes.jsx" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="lt.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="rt.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="rb.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="lb.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
-		<file source="lock.png" destination="$photoshop/Plug-ins/Panels/Boxes/"/>
+		<file source="Boxes.swf" destination="$panels/Boxes/"/>
+		<file source="Boxes.jsx" destination="$panels/Boxes/"/>
+		<file source="lt.png" destination="$panels/Boxes/"/>
+		<file source="rt.png" destination="$panels/Boxes/"/>
+		<file source="rb.png" destination="$panels/Boxes/"/>
+		<file source="lb.png" destination="$panels/Boxes/"/>
+		<file source="lock.png" destination="$panels/Boxes/"/>
 	</files>
 
 	<signatures>
