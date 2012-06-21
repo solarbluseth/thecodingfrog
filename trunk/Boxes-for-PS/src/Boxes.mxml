@@ -16,58 +16,231 @@
 	Author:			xxxxx
 	Description:	xxxxx
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" initialize="init()" creationComplete="complete()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
 		<mx:Script>
 		<![CDATA[
+			import com.adobe.csxs.types.SyncRequestResult;
 			import flash.events.MouseEvent;
 			import mx.events.FlexEvent;
 			import flash.events.KeyboardEvent;
 			import mx.controls.Alert;
 			import com.adobe.csxs.core.CSXSInterface;
+			import com.adobe.csxs.types.*;
 			import com.adobe.csxs.events.*;
+			import com.adobe.csxs.external.*;
+			import com.adobe.csxs.external.resources.*;
 			import mx.events.ColorPickerEvent;
 			import mx.events.SliderEvent;
 			import mx.events.NumericStepperEvent;
-			import flash.net.navigateToURL;
-			import flash.net.URLRequest;
+			//import flash.net.navigateToURL;
+			//import flash.net.URLRequest;
 			
 			private var isWidthOk:Boolean = false;
 			private var isHeightOk:Boolean = false;
 			private var __width:int = 0;
 			private var __height:int = 0;
-			private var __x:int = 0;
-			private var __y:int = 0;
+			private var __x:int = -1;
+			private var __y:int = -1;
 			private var __opacity:int = 100;
 			private var xmlMenu:XML = XML(<Menu><MenuItem Id="item_1" Label="Made by Jean-Louis PERSAT / @TheCodingFrog"/></Menu>);
-		
+			/* private var hostMajorVersion:Number = -1;
+			private var hostFixVersion:Number = -1;
+			public var hostMinorVersion:Number = -1;
+			private const photoshopCS4Version:Number = 11; */
+			
 			private var __color:String = "000000";
 			
-			public function init():void{
-				CSXSInterface.getInstance().setPanelMenu(xmlMenu);
-				CSXSInterface.instance.addEventListener(MenuClickEvent.FLYOUT_MENU_CLICK, menuClickHandler);
-  
-				boxWidth.addEventListener(KeyboardEvent.KEY_UP, checkWidth);
-				boxHeight.addEventListener(KeyboardEvent.KEY_UP, checkHeight);
-				boxXPos.addEventListener(KeyboardEvent.KEY_UP, checkXPos);
-				boxYPos.addEventListener(KeyboardEvent.KEY_UP, checkYPos);
-				boxColor.addEventListener(ColorPickerEvent.CHANGE, setColor);
-				boxOpacity.addEventListener(SliderEvent.CHANGE, slide);
-				
-				boxLTCorner.addEventListener(NumericStepperEvent.CHANGE, changeLT);
-				
-				boxLockCorners.addEventListener(MouseEvent.CLICK, lockCorners);
-				
-				boxOpacity.value = 100;
-				boxOpacity.showDataTip = false;
+			public function init():void
+			{
 				CSXSInterface.instance.evalScript("PhotoshopPersistent");
+				
+				/* var windowGeoData:WindowGeometry = new WindowGeometry(100, 100, 800, 400); 
+				CSXSInterface.instance.requestStateChange(StateChangeEvent.WINDOW_RESIZE, windowGeoData); */
+				this.visible = false;
 			}
 			
-			public function menuClickHandler(event:MenuClickEvent):void
-		  {
+			public function complete():void
+			{
+				
+				//getPSVersion();
+				CSXSInterface.getInstance().setPanelMenu(xmlMenu);
+				CSXSInterface.instance.addEventListener(MenuClickEvent.FLYOUT_MENU_CLICK, menuClickHandler);
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Exch").toString());
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Rset").toString());
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("setd").toString());
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Mk  ").toString());
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Cls ").toString());
+				/*if (hostMajorVersion == photoshopCS4Version)
+                {
+                    ExternalInterface.addCallback("PhotoshopCallback", PhotoshopCallback);
+                }
+                else
+                {*/
+                	ExternalInterface.addCallback("PhotoshopCallback" + CSXSInterface.instance.getExtensionId(), PhotoshopCallback);
+                //}
+				
+				getColor();
+				
+				boxHeight.addEventListener(KeyboardEvent.KEY_UP, checkHeight);
+				//boxHeight.text = readPref("boxHeight");
+				//boxHeight.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP));
+  
+				boxWidth.addEventListener(KeyboardEvent.KEY_UP, checkWidth);
+				//boxWidth.text = readPref("boxWidth");
+				//boxWidth.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP));
+				
+				boxXPos.addEventListener(KeyboardEvent.KEY_UP, checkXPos);
+				/* if (readPref("boxXPos") != "-1")
+				{
+					boxXPos.text = readPref("boxXPos");
+					__x = int(boxXPos.text);
+				}
+				else
+				{
+					boxXPos.text = "";
+				} */
+				
+				boxYPos.addEventListener(KeyboardEvent.KEY_UP, checkYPos);
+				/* if (readPref("boxYPos") != "-1")
+				{
+					boxYPos.text = readPref("boxYPos");
+					__x = int(boxYPos.text);
+				}
+				else
+				{
+					boxYPos.text = "";
+				} */
+				
+				boxColor.addEventListener(ColorPickerEvent.CHANGE, setColor);
+				boxOpacity.addEventListener(SliderEvent.CHANGE, slide);
+				/* if (readPref("boxOpacity") != "")
+				{
+					__opacity = Number(readPref("boxOpacity"));
+					boxOpacity.value = Number(readPref("boxOpacity"));
+				}
+				else
+				{
+					boxOpacity.value = 100;
+				} */
+				
+				/* boxLTCorner.value = Number(readPref("boxLTCorner"));
+				boxRTCorner.value = Number(readPref("boxRTCorner"));
+				boxLBCorner.value = Number(readPref("boxLBCorner"));
+				boxRBCorner.value = Number(readPref("boxRBCorner")); */
+				boxLTCorner.addEventListener(NumericStepperEvent.CHANGE, changeLT);
+				boxRTCorner.addEventListener(NumericStepperEvent.CHANGE, changeNS);
+				boxLBCorner.addEventListener(NumericStepperEvent.CHANGE, changeNS);
+				boxRBCorner.addEventListener(NumericStepperEvent.CHANGE, changeNS);
+				
+				boxLockCorners.addEventListener(MouseEvent.CLICK, lockCorners);
+				//boxLockCorners.selected = Boolean(readPref("boxLockCorners"));
+				//lockCorners(new MouseEvent(MouseEvent.CLICK));
+				
+				boxOpacity.value = __opacity;
+				boxOpacity.showDataTip = false;
+				
+				checkDoc();
+			}
+			
+			private function readPref(__key:String):String
+			{
+				var __val:String = "";
+				var __result:SyncRequestResult = CSXSInterface.instance.retrievePreference(__key);
+				if(SyncRequestResult.COMPLETE == __result.status && __result.data)
+			  	{
+					__val = __result.data as String;
+			  	}
+			  	return __val;
+			}
+			
+			private function getColor():void
+			{
+				var res:SyncRequestResult = CSXSInterface.instance.evalScript("getColor");
+				if (res.status == SyncRequestResult.COMPLETE && res.data)
+				{
+					var __coul:String = res.data.foregroundColor;
+					//boxYPos.text = __coul;
+					//boxColor.colorField = "0x" + __coul;
+					boxColor.selectedColor = uint("0x" + __coul);
+					__color = __coul;
+				}
+			}
+			
+			/* public function getPSVersion():void
+	        {
+	            var _loc_2:String = null;
+	            var _loc_3:Array = null;
+	            var _loc_1:* = CSXSInterface.instance.evalScript("getVersion");
+	            if (SyncRequestResult.COMPLETE == _loc_1.status)
+	            {
+	                _loc_2 = _loc_1.data.version;
+	                _loc_3 = _loc_2.split(".");
+	                if (_loc_3.length >= 1)
+	                {
+	                    hostMajorVersion = Number(_loc_3[0]);
+	                }
+	                if (_loc_3.length >= 2)
+	                {
+	                    hostMinorVersion = Number(_loc_3[1]);
+	                }
+	                if (_loc_3.length >= 3)
+	                {
+	                    hostFixVersion = Number(_loc_3[2]);
+	                }
+	            }
+	            return;
+	        } */
+			
+			public function PhotoshopCallback(param1:Number, param2:Number):void
+	        {
+	            if (param1 == charToInteger("Exch"))
+	            {
+	                getColor();
+	            }
+	            if (param1 == charToInteger("Rset"))
+	            {
+	                getColor();
+	            }
+	            if (param1 == charToInteger("setd"))
+	            {
+	                getColor();
+	            }
+	            if (param1 == charToInteger("Mk  ") || param1 == charToInteger("Cls "))
+	            {
+	                checkDoc();
+	            }
+	        }
+	        
+	        private function checkDoc():void
+	        {
+	        	var res:SyncRequestResult = CSXSInterface.instance.evalScript("hasDoc");
+				if (res.status == SyncRequestResult.COMPLETE && res.data)
+				{
+					var __hasDoc:String = res.data.exists;
+					if (__hasDoc == "true")
+						this.visible = true;
+					else
+						this.visible = false;
+				}
+	        }
+			
+			private function charToInteger(val:String):Number
+	        {
+	            var __int:Number = NaN;
+	            __int = val.charCodeAt(0) << 24;
+	            __int = __int + (val.charCodeAt(1) << 16);
+	            __int = __int + (val.charCodeAt(2) << 8);
+	            __int = __int + val.charCodeAt(3);
+	            return __int;
+	        }
+	        
+			private function menuClickHandler(event:MenuClickEvent):void
+		  	{
 			  switch (event.menuName) //you can also use the menuId
 			  {
 				 case "Item 1":
-				 	navigateToURL(new URLRequest("http://twitter.com/TheCodingFrog"));
+				 	var res:SyncRequestResult = CSXSInterface.instance.launchBrowser("http://twitter.com/TheCodingFrog");
+				 	//navigateToURL(new URLRequest("http://twitter.com/TheCodingFrog"));
 				 break;
 				 default:
 				 //trace("clicked " + event.menuName);
@@ -82,11 +255,32 @@
 					boxRBCorner.value = boxLTCorner.value;
 					boxLBCorner.value = boxLTCorner.value;
 				}
+				storePreference();
+			}
+			
+			private function changeNS(e:NumericStepperEvent):void
+			{
+				storePreference();
+			}
+			
+			private function storePreference():void
+			{				
+				/* CSXSInterface.instance.storePreference("boxWidth", __width.toString());
+				CSXSInterface.instance.storePreference("boxHeight", __height.toString());
+				CSXSInterface.instance.storePreference("boxXPos", __x.toString());
+				CSXSInterface.instance.storePreference("boxYPos", __y.toString());
+				CSXSInterface.instance.storePreference("boxOpacity", __opacity.toString());
+				
+				CSXSInterface.instance.storePreference("boxLockCorners", boxLockCorners.selected.toString());
+				CSXSInterface.instance.storePreference("boxLTCorner", boxLTCorner.value.toString());
+				CSXSInterface.instance.storePreference("boxRTCorner", boxRTCorner.value.toString());
+				CSXSInterface.instance.storePreference("boxRBCorner", boxRBCorner.value.toString());
+				CSXSInterface.instance.storePreference("boxLBCorner", boxLBCorner.value.toString()); */
 			}
 			
 			private function lockCorners(e:MouseEvent):void
 			{
-				if (e.currentTarget.selected)
+				if (boxLockCorners.selected)
 				{
 					boxRTCorner.value = boxLTCorner.value;
 					boxRTCorner.enabled = false;
@@ -94,6 +288,7 @@
 					boxRBCorner.enabled = false;
 					boxLBCorner.value = boxLTCorner.value;
 					boxLBCorner.enabled = false;
+					storePreference();
 				}
 				else
 				{
@@ -126,6 +321,7 @@
 			{
 				txtOpacity.text = e.currentTarget.value.toString() + "%";
 				__opacity = e.currentTarget.value;
+				storePreference();
 			}
 			
 			private function checkXPos(e:KeyboardEvent):void
@@ -136,8 +332,9 @@
 				}
 				else
 				{
-					__x = 0;
+					__x = -1;
 				}
+				storePreference();
 			}
 			
 			private function checkYPos(e:KeyboardEvent):void
@@ -148,8 +345,9 @@
 				}
 				else
 				{
-					__y = 0;
+					__y = -1;
 				}
+				storePreference();
 			}
 			
 			private function checkWidth(e:KeyboardEvent):void
@@ -161,7 +359,9 @@
 						isWidthOk = true;
 						__width = Math.ceil(e.currentTarget.text);
 						if (isHeightOk)
+						{
 							enableButton();
+						}
 						else
 							disableButton();
 					}
@@ -177,6 +377,7 @@
 					__width = 0;
 					disableButton();
 				}
+				storePreference();
 			}
 			
 			private function checkHeight(e:KeyboardEvent):void
@@ -188,7 +389,9 @@
 						isHeightOk = true;
 						__height = Math.ceil(e.currentTarget.text);
 						if (isWidthOk)
+						{
 							enableButton();
+						}
 						else
 							disableButton();
 					}
@@ -204,6 +407,7 @@
 					__height = 0;
 					disableButton();
 				}
+				storePreference();
 			}
 			
 			private function enableButton():void
