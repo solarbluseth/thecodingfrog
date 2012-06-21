@@ -16,7 +16,7 @@
 	Author:			xxxxx
 	Description:	xxxxx
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" initialize="init()" creationComplete="complete()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
 		<mx:Script>
 		<![CDATA[
 			import com.adobe.csxs.types.SyncRequestResult;
@@ -54,21 +54,18 @@
 			{
 				CSXSInterface.instance.evalScript("PhotoshopPersistent");
 				
-				/* var windowGeoData:WindowGeometry = new WindowGeometry(100, 100, 800, 400); 
-				CSXSInterface.instance.requestStateChange(StateChangeEvent.WINDOW_RESIZE, windowGeoData); */
+				var windowGeoData:WindowGeometry = new WindowGeometry(0, 0, 199, 310); 
+				CSXSInterface.instance.requestStateChange(StateChangeEvent.WINDOW_RESIZE, windowGeoData);
 				this.visible = false;
-			}
-			
-			public function complete():void
-			{
 				
 				//getPSVersion();
 				CSXSInterface.getInstance().setPanelMenu(xmlMenu);
-				CSXSInterface.instance.addEventListener(MenuClickEvent.FLYOUT_MENU_CLICK, menuClickHandler);
+				CSXSInterface.getInstance().addEventListener(MenuClickEvent.FLYOUT_MENU_CLICK, menuClickHandler);
 				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Exch").toString());
 				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Rset").toString());
 				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("setd").toString());
-				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Mk  ").toString());
+				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Opn ").toString());
+                CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Mk  ").toString());
 				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Cls ").toString());
 				/*if (hostMajorVersion == photoshopCS4Version)
                 {
@@ -193,6 +190,7 @@
 			
 			public function PhotoshopCallback(param1:Number, param2:Number):void
 	        {
+	        	//Alert.show("> " + param1 + ":" + charToInteger("Cls "), "boo",Alert.YES|Alert.NO, this);
 	            if (param1 == charToInteger("Exch"))
 	            {
 	                getColor();
@@ -205,23 +203,44 @@
 	            {
 	                getColor();
 	            }
-	            if (param1 == charToInteger("Mk  ") || param1 == charToInteger("Cls "))
+	            if (param1 == charToInteger("Opn "))
 	            {
 	                checkDoc();
+	            }
+	            if (param1 == charToInteger("Mk  "))
+	            {
+	                checkDoc();
+	            }
+	            if (param1 == charToInteger("Cls "))
+	            {
+	            	checkDoc();
 	            }
 	        }
 	        
 	        private function checkDoc():void
 	        {
-	        	var res:SyncRequestResult = CSXSInterface.instance.evalScript("hasDoc");
-				if (res.status == SyncRequestResult.COMPLETE && res.data)
-				{
-					var __hasDoc:String = res.data.exists;
-					if (__hasDoc == "true")
-						this.visible = true;
+	        	//Alert.show("checkDoc", "Test",Alert.YES, this);
+	        	try
+	        	{
+		        	var __res:SyncRequestResult = CSXSInterface.instance.evalScript("hasOpenedDoc");
+					//Alert.show("ok", "Test",Alert.YES, this);
+					if (__res.status == SyncRequestResult.COMPLETE && __res.data)
+					{
+						var __hasDoc:String = __res.data.exists;
+						if (__hasDoc == "true")
+							Application.application.visible = true;
+						else
+							Application.application.visible = false;
+					}
 					else
-						this.visible = false;
-				}
+					{
+						//Alert.show(__res.status.toString(), "Test",Alert.YES, this);
+					}
+	        	}
+	        	catch (e:Error)
+	        	{
+	        		//Alert.show(e.message, "Error",Alert.YES, this);
+	        	}
 	        }
 			
 			private function charToInteger(val:String):Number
