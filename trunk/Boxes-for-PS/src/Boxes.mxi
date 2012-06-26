@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <macromedia-extension
 	 name="Boxes"
-	 version="0.1"
+	 version="1.0"
 	 type=""
 	 requires-restart="true"
 	 locked="false"
@@ -14,7 +14,7 @@
 		<product name="Photoshop32" version="12" primary="true" />
 	</products>
 
-	<update  />
+	<update url="http://jeanlouis.persat.free.fr/ps/Boxes.mxp" />
 
 	<description>
 	<![CDATA[
