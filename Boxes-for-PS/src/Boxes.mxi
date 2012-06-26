@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <macromedia-extension
 	 name="Boxes"
-	 version="1.0"
+	 version="1.0.1"
 	 type=""
 	 requires-restart="true"
 	 locked="false"
@@ -39,6 +39,8 @@
 		<file source="rb.png" destination="$panels/Boxes/"/>
 		<file source="lb.png" destination="$panels/Boxes/"/>
 		<file source="lock.png" destination="$panels/Boxes/"/>
+		<file source="BoxesNormal.png" destination="$panels/Boxes/"/>
+		<file source="BoxesRollover.png" destination="$panels/Boxes/"/>
 	</files>
 
 	<signatures>
