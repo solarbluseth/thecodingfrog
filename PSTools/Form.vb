@@ -288,19 +288,19 @@ Public Class Form
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
 
@@ -333,6 +333,17 @@ Public Class Form
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""jpg"" ""name""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.ByName60
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName60")
+            __newKey.SetValue("MUIVerb", "Save Layer Comps As JPEG 60% (by name)", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
+            'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName60\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""6"" ""%1"" ""jpg"" ""name""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.PngIndex
@@ -533,6 +544,11 @@ Public Class Form
             End Try
 
             Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ByName60")
+            Catch e As Exception
+            End Try
+
+            Try
                 Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.PngIndex")
             Catch e As Exception
             End Try
@@ -588,6 +604,7 @@ Public Class Form
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by index)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 100% (by name)\")
+            Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG 60% (by name)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Png)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG (Gif)\")
             Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG List Images Rights\")
