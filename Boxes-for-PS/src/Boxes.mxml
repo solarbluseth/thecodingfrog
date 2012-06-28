@@ -16,7 +16,7 @@
 	Author:			xxxxx
 	Description:	xxxxx
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="199" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
 		<mx:Script>
 		<![CDATA[
 			import com.adobe.csxs.types.SyncRequestResult;
@@ -49,6 +49,7 @@
 			private const photoshopCS4Version:Number = 11;
 			
 			private var __color:String = "000000";
+			private var __relative:int = 1;
 			
 			public function init():void
 			{
@@ -118,6 +119,8 @@
 					boxYPos.text = "";
 				} */
 				
+				boxRelative.addEventListener(MouseEvent.CLICK, relative);
+				
 				boxColor.addEventListener(ColorPickerEvent.CHANGE, setColor);
 				boxOpacity.addEventListener(SliderEvent.CHANGE, slide);
 				/* if (readPref("boxOpacity") != "")
@@ -158,6 +161,18 @@
 					__val = __result.data as String;
 			  	}
 			  	return __val;
+			}
+			
+			private function relative(e:MouseEvent):void
+			{
+				if (boxRelative.selected)
+				{
+					__relative = 1;
+				}
+				else
+				{
+					__relative = 0;
+				}
 			}
 			
 			private function getColor():void
@@ -453,7 +468,7 @@
 			
 			private function doDrawBox(e:MouseEvent):void
 			{
-				CSXSInterface.instance.evalScript("DrawBox", __width.toString(), __height.toString(), __x.toString(), __y.toString(), boxLTCorner.value.toString(), boxRTCorner.value.toString(), boxLBCorner.value.toString(), boxRBCorner.value.toString(), __color, __opacity.toString());
+				CSXSInterface.instance.evalScript("DrawBox", __width.toString(), __height.toString(), __x.toString(), __y.toString(), __relative.toString(), boxLTCorner.value.toString(), boxRTCorner.value.toString(), boxLBCorner.value.toString(), boxRBCorner.value.toString(), __color, __opacity.toString());
 			}
 
 			
@@ -476,6 +491,7 @@
 	<mx:NumericStepper x="34" y="143" width="41.5" height="22" id="boxLBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
 	<mx:NumericStepper x="102" y="143" width="41.5" height="22" id="boxRBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
 	<mx:CheckBox x="151" y="129" id="boxLockCorners"/>
+	<mx:CheckBox x="151" y="71" id="boxRelative" selected="true"/>
 	
 	<mx:Label text="Color" x="14" y="168" color="#000000"/>
 	<mx:ColorPicker x="15.75" y="188" width="127.75" height="34" id="boxColor" selectedColor="#000000"/>
@@ -488,6 +504,7 @@
 	
 	
 	<mx:Image x="169" y="134" source="lock.png" height="33" width="30" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="169" y="74" source="r.png" height="33" width="30" scaleContent="false" autoLoad="true"/>
 	<mx:Image x="16" y="118" source="lt.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
 	<mx:Image x="16" y="148" source="lb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
 	<mx:Image x="83" y="148" source="rb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
