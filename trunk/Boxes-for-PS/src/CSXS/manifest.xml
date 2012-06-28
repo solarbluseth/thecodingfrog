@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionManifest Version="2.0" ExtensionBundleId="Boxes" ExtensionBundleVersion="1.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Author>Jean-Louis PERSAT</Author>
+    <Contact mailto="jeanlouis.persat@gmail.com"/>
+    <Abstract>
+      <![CDATA[
+      Boxes is a rectangle and round rectangle design panel created by Jean-Louis PERSAT<br />
+      Once Boxes is installed, it can be found at Window > Extensions > Boxes.
+      ]]>
+    </Abstract>
+  <ExtensionList>
+    <Extension Id="Boxes" Version="1.0.1"/>
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <Host Name="PHSP" Version="12.0"/>
+      <Host Name="PHXS" Version="12.0"/>
+    </HostList>
+    <LocaleList>
+      <Locale Code="All"/>
+    </LocaleList>
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="2.0"/>
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <Extension Id="Boxes">
+      <DispatchInfo>
+        <Resources>
+          <SwfPath>./Boxes.swf</SwfPath>
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Boxes</Menu>
+          <Geometry>
+            <Size>
+              <Height>310</Height>
+              <Width>200</Width>
+            </Size> 
+            <MaxSize>
+              <Height>310</Height>
+              <Width>200</Width>
+            </MaxSize>
+          <MinSize>
+              <Height>310</Height> 
+              <Width>200</Width>
+        </MinSize>
+        </Geometry>
+          <Icons>
+            <Icon Type="Normal">./BoxesNormal.png</Icon>
+            <Icon Type="RollOver">./BoxesRollover.png</Icon>
+          </Icons>
+        </UI>
+      </DispatchInfo>
+      <DispatchInfo Host="PHSP">
+        <Resources>
+          <ScriptPath>./Boxes.jsx</ScriptPath>
+        </Resources>
+      </DispatchInfo>
+      <DispatchInfo Host="PHXS">
+        <Resources>
+          <ScriptPath>./Boxes.jsx</ScriptPath>
+        </Resources>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>
