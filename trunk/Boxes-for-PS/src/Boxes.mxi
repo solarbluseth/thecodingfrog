@@ -32,6 +32,7 @@
 	</license-agreement>
 
 	<files>
+		<file source="CSXS/manifest.xml" destination="$panels/Boxes/CSXS/"/>
 		<file source="Boxes.swf" destination="$panels/Boxes/"/>
 		<file source="Boxes.jsx" destination="$panels/Boxes/"/>
 		<file source="lt.png" destination="$panels/Boxes/"/>
