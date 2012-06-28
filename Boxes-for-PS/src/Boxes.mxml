@@ -39,8 +39,8 @@
 			private var isHeightOk:Boolean = false;
 			private var __width:int = 0;
 			private var __height:int = 0;
-			private var __x:int = -1;
-			private var __y:int = -1;
+			private var __x:String = "";
+			private var __y:String = "";
 			private var __opacity:int = 100;
 			private var xmlMenu:XML = XML(<Menu><MenuItem Id="item_1" Label="Made by Jean-Louis PERSAT / @TheCodingFrog"/></Menu>);
 			private var hostMajorVersion:Number = -1;
@@ -370,27 +370,29 @@
 			
 			private function checkXPos(e:KeyboardEvent):void
 			{
-				if (!isNaN(e.currentTarget.text))
+				if (!isNaN(e.currentTarget.text) && e.currentTarget.text.length > 0)
 				{
 					__x = e.currentTarget.text;
 				}
 				else
 				{
-					__x = -1;
+					__x = "";
 				}
+				//Alert.show(__x.toString(), "Test",Alert.YES, this);
 				storePreference();
 			}
 			
 			private function checkYPos(e:KeyboardEvent):void
 			{
-				if (!isNaN(e.currentTarget.text))
+				if (!isNaN(e.currentTarget.text) && e.currentTarget.text.length > 0)
 				{
 					__y = e.currentTarget.text;
 				}
 				else
 				{
-					__y = -1;
+					__y = "";
 				}
+				//Alert.show(__y.toString(), "Test",Alert.YES, this);
 				storePreference();
 			}
 			
@@ -468,7 +470,7 @@
 			
 			private function doDrawBox(e:MouseEvent):void
 			{
-				CSXSInterface.instance.evalScript("DrawBox", __width.toString(), __height.toString(), __x.toString(), __y.toString(), __relative.toString(), boxLTCorner.value.toString(), boxRTCorner.value.toString(), boxLBCorner.value.toString(), boxRBCorner.value.toString(), __color, __opacity.toString());
+				CSXSInterface.instance.evalScript("DrawBox", __width.toString(), __height.toString(), __x, __y, __relative.toString(), boxLTCorner.value.toString(), boxRTCorner.value.toString(), boxLBCorner.value.toString(), boxRBCorner.value.toString(), __color, __opacity.toString());
 			}
 
 			
