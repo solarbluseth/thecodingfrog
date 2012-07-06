@@ -37,15 +37,15 @@
           <Menu>Boxes</Menu>
           <Geometry>
             <Size>
-              <Height>310</Height>
+              <Height>320</Height>
               <Width>200</Width>
             </Size> 
             <MaxSize>
-              <Height>310</Height>
+              <Height>320</Height>
               <Width>200</Width>
             </MaxSize>
           <MinSize>
-              <Height>310</Height> 
+              <Height>320</Height> 
               <Width>200</Width>
         </MinSize>
         </Geometry>

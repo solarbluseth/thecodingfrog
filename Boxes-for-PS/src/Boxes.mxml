@@ -16,7 +16,7 @@
 	Author:			xxxxx
 	Description:	xxxxx
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="310" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="320" creationComplete="init()" horizontalAlign="left" borderColor="#D1D1D1" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#D6D6D6, #D1D1D1]">
 		<mx:Script>
 		<![CDATA[
 			import com.adobe.csxs.types.SyncRequestResult;
@@ -34,6 +34,31 @@
 			import mx.events.NumericStepperEvent;
 			//import flash.net.navigateToURL;
 			//import flash.net.URLRequest;
+			
+			import mx.core.BitmapAsset;
+			[Embed(source="lock.png")]
+            [Bindable]
+			public var __lock:Class;
+			
+			[Embed(source="lt.png")]
+            [Bindable]
+			public var __lt:Class;
+			
+			[Embed(source="rt.png")]
+            [Bindable]
+			public var __rt:Class;
+			
+			[Embed(source="lb.png")]
+            [Bindable]
+			public var __lb:Class;
+			
+			[Embed(source="rb.png")]
+            [Bindable]
+			public var __rb:Class;
+			
+			[Embed(source="r.png")]
+            [Bindable]
+			public var __r:Class;
 			
 			private var isWidthOk:Boolean = false;
 			private var isHeightOk:Boolean = false;
@@ -53,14 +78,27 @@
 			
 			public function init():void
 			{
-				/*var __result:SyncRequestResult;
-				__result = CSXSInterface.instance.getHostEnvironment();
-                 var __hostData:HostEnvironment = __result.data;
-                var __skinInfo:AppSkinInfo = __hostData.appSkinInfo;
-                var __defaultColor:UIColor = __skinInfo.panelBackgroundColor.color.rgb;
-                this.setStyle("backgroundGradientColors", [__defaultColor, __defaultColor]);
-                this.setStyle("fontFamily", __skinInfo.baseFontFamily);
-                this.setStyle("fontSize", __skinInfo.baseFontSize); */
+				imgLock.source = __lock;
+				imgLT.source = __lt;
+				imgRT.source = __rt;
+				imgLB.source = __lb;
+				imgRB.source = __rb;
+				imgRelative.source = __r;
+				
+				var __result:SyncRequestResult;
+				__result = CSXSInterface.getInstance().getHostEnvironment();
+				var __hostData:HostEnvironment;
+				var __skinInfo:AppSkinInfo;
+				var __defaultColor:String;
+				if(SyncRequestResult.COMPLETE == __result.status && __result.data)
+				{
+					__hostData = __result.data as HostEnvironment;
+					__skinInfo = __hostData.appSkinInfo;
+					__defaultColor = __skinInfo.panelBackgroundColor.color.rgb;
+					this.setStyle("fontFamily", __skinInfo.baseFontFamily);
+					this.setStyle("fontSize", __skinInfo.baseFontSize);
+					this.setStyle("backgroundGradientColors", [__defaultColor, __defaultColor]);
+				}
                 
 				CSXSInterface.instance.evalScript("PhotoshopPersistent");
 				
@@ -122,6 +160,9 @@
 				boxRelative.addEventListener(MouseEvent.CLICK, relative);
 				
 				boxColor.addEventListener(ColorPickerEvent.CHANGE, setColor);
+				
+				boxIOpacity.addEventListener(KeyboardEvent.KEY_UP, checkKOpacity);
+				boxIOpacity.addEventListener(NumericStepperEvent.CHANGE, checkOpacity);
 				boxOpacity.addEventListener(SliderEvent.CHANGE, slide);
 				/* if (readPref("boxOpacity") != "")
 				{
@@ -137,6 +178,7 @@
 				boxRTCorner.value = Number(readPref("boxRTCorner"));
 				boxLBCorner.value = Number(readPref("boxLBCorner"));
 				boxRBCorner.value = Number(readPref("boxRBCorner")); */
+				boxLTCorner.addEventListener(KeyboardEvent.KEY_UP, changeKLT);
 				boxLTCorner.addEventListener(NumericStepperEvent.CHANGE, changeLT);
 				boxRTCorner.addEventListener(NumericStepperEvent.CHANGE, changeNS);
 				boxLBCorner.addEventListener(NumericStepperEvent.CHANGE, changeNS);
@@ -147,7 +189,11 @@
 				//lockCorners(new MouseEvent(MouseEvent.CLICK));
 				
 				boxOpacity.value = __opacity;
+				boxIOpacity.value = __opacity;
 				boxOpacity.showDataTip = false;
+				
+				imgRelative.toolTip = "Relative to beneath path"
+				imgLock.toolTip = "All corners to same radius"
 				
 				checkDoc();
 			}
@@ -291,6 +337,11 @@
 			  }
 		   }
 			
+			private function changeKLT(e:KeyboardEvent):void
+			{
+				boxLTCorner.dispatchEvent(new NumericStepperEvent(NumericStepperEvent.CHANGE));
+			}
+			
 			private function changeLT(e:NumericStepperEvent):void
 			{
 				if (boxLockCorners.selected)
@@ -363,8 +414,21 @@
 			
 			private function slide(e:SliderEvent):void
 			{
-				txtOpacity.text = e.currentTarget.value.toString() + "%";
+				boxIOpacity.value = e.currentTarget.value;
 				__opacity = e.currentTarget.value;
+				storePreference();
+			}
+			
+			private function checkKOpacity(e:KeyboardEvent):void
+			{
+				boxIOpacity.dispatchEvent(new NumericStepperEvent(NumericStepperEvent.CHANGE));
+			}
+			
+			private function checkOpacity(e:NumericStepperEvent):void
+			{
+				__opacity = e.currentTarget.value;
+				boxOpacity.value = __opacity;
+				//Alert.show(__x.toString(), "Test",Alert.YES, this);
 				storePreference();
 			}
 			
@@ -477,38 +541,40 @@
 		]]>
 	</mx:Script>
 	<mx:Label text="Width" x="14" y="12" color="#000000"/>
-	<mx:TextInput width="50" id="boxWidth" x="14" y="28" borderStyle="solid" cornerRadius="5" alpha="1.0" borderThickness="0"/>
+	<mx:TextInput width="50" id="boxWidth" x="14" y="28" borderStyle="solid" cornerRadius="5" alpha="1.0" borderThickness="0" styleName="champ"/>
 	<mx:Label text="x" x="68" y="30" color="#666666" alpha="1.0" textAlign="center" width="22.5" height="18"/>
 	<mx:Label text="Height" x="93.5" y="12" color="#000000"/>
-	<mx:TextInput width="50" id="boxHeight" x="93.5" y="28" borderStyle="solid" cornerRadius="5" borderThickness="0" backgroundColor="#FFFFFF"/>
-	
-	<mx:Label text="X" x="14" y="52" color="#000000"/>
-	<mx:TextInput width="50" id="boxXPos" x="14" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0"/>
-	<mx:Label text="Y" x="92.5" y="52" color="#000000"/>
-	<mx:TextInput width="50" id="boxYPos" x="93.5" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0"/>
-	
-	<mx:Label text="Border radius" x="14" y="93.5" color="#000000"/>
-	<mx:NumericStepper x="34" y="113" width="41.5" height="22" id="boxLTCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-	<mx:NumericStepper x="102" y="114" width="41.5" height="22" id="boxRTCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-	<mx:NumericStepper x="34" y="143" width="41.5" height="22" id="boxLBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-	<mx:NumericStepper x="102" y="143" width="41.5" height="22" id="boxRBCorner" borderStyle="solid" cornerRadius="5" borderThickness="0" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-	<mx:CheckBox x="151" y="129" id="boxLockCorners"/>
+	<mx:TextInput width="50" id="boxHeight" x="93.5" y="28" borderStyle="solid" cornerRadius="5" borderThickness="0" backgroundColor="#FFFFFF" styleName="champ"/>
 	<mx:CheckBox x="151" y="71" id="boxRelative" selected="true"/>
 	
+	<mx:Label text="X" x="14" y="52" color="#000000"/>
+	<mx:TextInput width="50" id="boxXPos" x="14" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0" styleName="champ"/>
+	<mx:Label text="Y" x="92.5" y="52" color="#000000"/>
+	<mx:TextInput width="50" id="boxYPos" x="93.5" y="68" borderStyle="solid" cornerRadius="5" borderThickness="0" styleName="champ"/>
+	
+	<mx:Label text="Border radius" x="14" y="93.5" color="#000000"/>
+	<mx:NumericStepper x="34" y="113" width="41.5" id="boxLTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+	<mx:NumericStepper x="102" y="114" width="41.5" id="boxRTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+	<mx:NumericStepper x="34" y="143" width="41.5" id="boxLBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+	<mx:NumericStepper x="102" y="143" width="41.5" id="boxRBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+	<mx:CheckBox x="151" y="129" id="boxLockCorners"/>
+	
 	<mx:Label text="Color" x="14" y="168" color="#000000"/>
-	<mx:ColorPicker x="15.75" y="188" width="127.75" height="34" id="boxColor" selectedColor="#000000"/>
+	<mx:ColorPicker x="14" y="188" width="130" height="34" id="boxColor" selectedColor="#000000"/>
 	
-	<mx:Label text="Opacity" x="14" y="226" color="#000000"/>
-	<mx:Label text="100%" x="94" y="226" color="#888888" textAlign="right" width="49.5" id="txtOpacity"/>
-	<mx:HSlider x="14" y="241" width="129.5" minimum="0" maximum="100" snapInterval="1" id="boxOpacity" liveDragging="true"/>
+	<mx:Label text="Opacity" x="14" y="230" color="#000000"/>
+	<mx:Label text="%" x="148" y="230" color="#888888" textAlign="left" width="26.5" id="txtOpacity"/>
+	<mx:NumericStepper width="50" id="boxIOpacity" x="93.5" y="228" alpha="1.0" enabled="true" stepSize="1" maximum="100" minimum="0" value="100"/>
+	<mx:HSlider x="14" y="250" width="130" minimum="0" maximum="100" snapInterval="1" id="boxOpacity" liveDragging="true"/>
 	
-	<mx:Button y="272" label="Create box" height="22" id="BtnCreateBox" enabled="false" width="129.5" x="15.75" themeColor="#000000"/>
+	<mx:Button y="287" label="Create box" height="22" id="BtnCreateBox" enabled="false" width="129.5" x="15.75" themeColor="#000000"/>
 	
 	
-	<mx:Image x="169" y="134" source="lock.png" height="33" width="30" scaleContent="false" autoLoad="true"/>
-	<mx:Image x="169" y="74" source="r.png" height="33" width="30" scaleContent="false" autoLoad="true"/>
-	<mx:Image x="16" y="118" source="lt.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
-	<mx:Image x="16" y="148" source="lb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
-	<mx:Image x="83" y="148" source="rb.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
-	<mx:Image x="83" y="119" source="rt.png" height="33" width="34" scaleContent="false" autoLoad="true"/>
+	<mx:Image x="169" y="134" height="33" width="30" scaleContent="false" autoLoad="true" id="imgLock"/>
+	<mx:Image x="169" y="74" height="33" width="30" scaleContent="false" autoLoad="true" id="imgRelative"/>
+	<mx:Image x="16" y="118" height="33" width="34" scaleContent="false" autoLoad="true" id="imgLT"/>
+	<mx:Image x="16" y="148" height="33" width="34" scaleContent="false" autoLoad="true" id="imgLB"/>
+	<mx:Image x="83" y="148" height="33" width="34" scaleContent="false" autoLoad="true" id="imgRB"/>
+	<mx:Image x="83" y="119" height="33" width="34" scaleContent="false" autoLoad="true" id="imgRT"/>
+	<mx:Style source="Boxes.css"/>
 </mx:Application>
