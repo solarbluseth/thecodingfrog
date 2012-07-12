@@ -68,10 +68,8 @@
 			private var __y:String = "";
 			private var __opacity:int = 100;
 			private var xmlMenu:XML = XML(<Menu><MenuItem Id="item_1" Label="Made by Jean-Louis PERSAT / @TheCodingFrog"/></Menu>);
-			private var hostMajorVersion:Number = -1;
-			private var hostFixVersion:Number = -1;
-			public var hostMinorVersion:Number = -1;
-			private const photoshopCS4Version:Number = 11;
+			private var __appVersion:String = "12";
+			private var __photoshopCS4Version:String = "11";
 			
 			private var __color:String = "000000";
 			private var __relative:int = 1;
@@ -98,6 +96,7 @@
 					this.setStyle("fontFamily", __skinInfo.baseFontFamily);
 					this.setStyle("fontSize", __skinInfo.baseFontSize);
 					this.setStyle("backgroundGradientColors", [__defaultColor, __defaultColor]);
+					__appVersion = __hostData.appVersion.split(".")[0];
 				}
                 
 				CSXSInterface.instance.evalScript("PhotoshopPersistent");
@@ -116,14 +115,14 @@
                 CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Mk  ").toString());
 				CSXSInterface.instance.evalScript("PhotoshopRegisterEvent", charToInteger("Cls ").toString());
 				
-				/*if (hostMajorVersion == photoshopCS4Version)
+				if (__appVersion == __photoshopCS4Version)
                 {
                     ExternalInterface.addCallback("PhotoshopCallback", PhotoshopCallback);
                 }
                 else
-                {*/
+                {
                 	ExternalInterface.addCallback("PhotoshopCallback" + CSXSInterface.instance.getExtensionId(), PhotoshopCallback);
-                //}
+                }
 				
 				getColor();
 				
@@ -324,17 +323,17 @@
 	            return __int;
 	        }
 	        
-			private function menuClickHandler(event:MenuClickEvent):void
+			private function menuClickHandler(e:MenuClickEvent):void
 		  	{
-			  switch (event.menuName) //you can also use the menuId
-			  {
-				 case "Item 1":
-				 	var res:SyncRequestResult = CSXSInterface.instance.launchBrowser("http://twitter.com/TheCodingFrog");
-				 	//navigateToURL(new URLRequest("http://twitter.com/TheCodingFrog"));
-				 break;
-				 default:
-				 //trace("clicked " + event.menuName);
-			  }
+				switch (e.menuId) //you can also use the menuId
+				{
+					case "item_1":
+						//var res:SyncRequestResult = CSXSInterface.instance.launchBrowser("http://twitter.com/TheCodingFrog");
+				 		navigateToURL(new URLRequest("http://twitter.com/TheCodingFrog"));
+				 		break;
+				 	default:
+				 		//trace("clicked " + event.menuName);
+				}
 		   }
 			
 			private function changeKLT(e:KeyboardEvent):void
