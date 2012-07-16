@@ -277,7 +277,7 @@ Public Class Form
         End If
     End Sub
 
-    Private Sub RegInstall(ByVal version As String)
+    Private Sub RegInstall(ByVal version As String, ByVal illustratorversion As String)
 
         Dim __os = Environment.OSVersion
         Dim __newKey As RegistryKey
@@ -298,6 +298,12 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator." & illustratorversion & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
             __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Config", RegistryValueKind.String)
@@ -507,7 +513,7 @@ Public Class Form
 
     End Sub
 
-    Private Sub RegUninstall(ByVal version As String)
+    Private Sub RegUninstall(ByVal version As String, ByVal illustratorversion As String)
         'MessageBox.Show(version)
         Dim __os = Environment.OSVersion
 
@@ -524,6 +530,11 @@ Public Class Form
 
             Try
                 Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator." & illustratorversion & "\\shell\\Save as JPEG")
             Catch e As Exception
             End Try
 
@@ -748,7 +759,12 @@ Public Class Form
 
             'MsgBox(Me.AutoArchive.Checked)
             Dim __di As DirectoryInfo
-            __di = New DirectoryInfo(__docRef.Path)
+            Try
+                __di = New DirectoryInfo(__docRef.Path)
+            Catch ex As Exception
+                GoTo finish
+            End Try
+
 
             'MsgBox(di.Name)
             If Me.AutoArchive.Checked And Not isExcludeDirectory(__di.Name) Then
@@ -875,15 +891,15 @@ finish:
 
     Private Sub Install_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Install.Click
         If isSetup() Then
-            If hasVersion("CS3") Then RegUninstall("10")
-            If hasVersion("CS4") Then RegUninstall("11")
-            If hasVersion("CS5") Then RegUninstall("12")
-            If hasVersion("CS55") Then RegUninstall("55")
+            If hasVersion("CS3") Then RegUninstall("10", "12")
+            If hasVersion("CS4") Then RegUninstall("11", "13")
+            If hasVersion("CS5") Then RegUninstall("12", "14")
+            If hasVersion("CS55") Then RegUninstall("55", "15.1")
         Else
-            If hasVersion("CS3") Then RegInstall("10")
-            If hasVersion("CS4") Then RegInstall("11")
-            If hasVersion("CS5") Then RegInstall("12")
-            If hasVersion("CS55") Then RegInstall("55")
+            If hasVersion("CS3") Then RegInstall("10", "12")
+            If hasVersion("CS4") Then RegInstall("11", "13")
+            If hasVersion("CS5") Then RegInstall("12", "14")
+            If hasVersion("CS55") Then RegInstall("55", "15.1")
         End If
     End Sub
 
