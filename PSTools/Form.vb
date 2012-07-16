@@ -638,12 +638,22 @@ Public Class Form
     End Sub
 
     Private Sub ProcessFile()
+        'MessageBox.Show("ProcessFile")
         Dim __isNamedLayerComp As Boolean = False
 
-        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions = New Photoshop.JPEGSaveOptions()
-        __jpgSaveOptions.EmbedColorProfile = False
-        __jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
-        __jpgSaveOptions.Matte = 1 ' psNoMatte 
+        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions
+
+        Try
+            __jpgSaveOptions = New Photoshop.JPEGSaveOptions()
+            __jpgSaveOptions.EmbedColorProfile = False
+            __jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
+            __jpgSaveOptions.Matte = 1 ' psNoMatte 
+        Catch ex As Exception
+            Dim __dr As DialogResult = MessageBox.Show("Photoshop is busy with open dialog or something." & vbCrLf & vbCrLf & "Please switch to Photoshop then close open dialogs or leave editing state", "Photoshop not ready", MessageBoxButtons.OK)
+            If __dr.OK Then
+                End
+            End If
+        End Try
 
         Dim __gifExportOptionsSaveForWeb As Photoshop.ExportOptionsSaveForWeb = New Photoshop.ExportOptionsSaveForWeb()
         'gifExportOptionsSaveForWeb.MatteColor = 255
@@ -970,7 +980,7 @@ finish:
     End Sub
 
     Private Sub OpenDocument()
-
+        'MessageBox.Show("OpenDocument")
         __appRef = New Photoshop.Application()
         Try
             If __appRef.Documents.Count > 0 Then
