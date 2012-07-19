@@ -8,10 +8,9 @@
 
 var doc;
 
-var resList = [['1024',1024],
-	['1280',1280]];
+var resList = [['960',960],['1003',1003],['1024',1024],['1280',1280]];
 
-var defaultRes = 0;
+var defaultRes = 1;
 var res = defaultRes;
 
 var rsmList = [['2',2],
