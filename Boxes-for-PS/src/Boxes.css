@@ -1,0 +1,31 @@
+/* CSS file */
+
+ToolTip
+{
+	background-color: #000000;
+	color: #ffffff;
+}
+
+.champ
+{
+	padding-top: 2px;
+	borderStyle: solid;
+	borderThickness: 0;
+	cornerRadius: 5;
+	text-align: right;
+}
+
+
+NumericStepper
+{
+	borderStyle: solid;
+	borderSides: left, top, bottom;
+	borderThickness: 2;
+	borderColor: #ffffff;
+	cornerRadius: 5;
+}
+
+.swatchStyle {
+	swatchWidth: 9;
+	swatchBorderSize: 0;
+}
