@@ -284,6 +284,60 @@ Public Class Form
 
         If __os.Version.Major >= 6 And __os.Version.Minor >= 1 Then
 
+            ' JPEG BASE64
+            __newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.jpg\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("jpegfile\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' GIF BASE64
+            __newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.gif\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("giffile\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' PNG BASE64
+            __newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.png\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.ClassesRoot.CreateSubKey("pngfile\\shell\\Save as JPEG")
+            __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
+            __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.Base64;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.Close()
+
+
+
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Base64")
+            __newKey.SetValue("MUIVerb", "Export Base64 URI", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Base64\\Command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""12"" ""%1"" ""base64"" ""index""", RegistryValueKind.String)
+            __newKey.Close()
+
+
+
+
             ' Save as JPEG
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
@@ -519,6 +573,47 @@ Public Class Form
 
         If __os.Version.Major >= 6 And __os.Version.Minor >= 1 Then
             Try
+                Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.jpg\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("jpegfile\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.gif\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("giffile\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.png\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.ClassesRoot.DeleteSubKeyTree("pngfile\\shell\\Save as JPEG")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Base64")
+            Catch e As Exception
+                'MessageBox.Show (e.Message)
+            End Try
+
+
+
+
+
+
+            Try
                 Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             Catch e As Exception
             End Try
@@ -685,6 +780,9 @@ Public Class Form
                 __doExportLayerComps = True
             Case "gif"
                 __imageType = "GIF"
+            Case "base64"
+                ExportBase64()
+                End
             Case Else
                 __jpgSaveOptions.Quality = CInt(__args(1))
                 __imageType = "JPG"
@@ -1277,5 +1375,32 @@ finish:
         __desc2.PutEnumerated(__appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID("Clr "), __appRef.CharIDToTypeID(__colour))
         __desc.PutObject(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Lyr "), __desc2)
         __appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs)
+    End Sub
+
+    Private Sub ExportBase64()
+        'MessageBox.Show(__args(2))
+        Dim __path As String
+        Dim __fi As FileInfo
+        Dim __fn As String
+        Dim __f As File
+        Dim __ext As String
+
+        If __args(2).LastIndexOf("\") > -1 Then
+            __path = __args(2).Substring(0, __args(2).LastIndexOf("\") + 1)
+        End If
+
+
+        __fi = New FileInfo(__args(2))
+        __fn = __fi.Name.Substring(0, __fi.Name.Length - __fi.Extension.Length)
+        __ext = __fi.Extension.Substring(1)
+        'MessageBox.Show(__ext)
+
+        Dim __bytes As Byte() = File.ReadAllBytes(__args(2))
+
+        Dim __b64String = Convert.ToBase64String(__bytes)
+        Dim __dataUrl As String = "<html><body><img src=""data:image/" & __ext & ";base64," & __b64String & """/></body></html>"
+
+        '__f = New File(__fn & ".txt")
+        __f.WriteAllText(__path & __fn & ".html", __dataUrl)
     End Sub
 End Class
