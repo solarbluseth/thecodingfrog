@@ -87,6 +87,7 @@ Public Class Form
                     Case "-so" : ExportSmartObjects()
                     Case "-r" : ExportImagesRights()
                     Case "-w" : CleanLayersName()
+                    Case "-sc" : SaveScreenSelection()
                 End Select
             ElseIf __num = 4 Then
                 ' hide the app
@@ -342,13 +343,13 @@ Public Class Form
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Screen;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." & version & "\\shell\\Save as JPEG")
             __newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String)
             __newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
-            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
+            __newKey.SetValue("SubCommands", "SaveAsJPEG.100;SaveAsJPEG.60;SaveAsJPEG.ByName;SaveAsJPEG.ByName60;SaveAsJPEG.PngIndex;SaveAsJPEG.PngName;SaveAsJPEG.Gif;SaveAsJPEG.Screen;SaveAsJPEG.ImagesRights;SaveAsJPEG.SO;SaveAsJPEG.Clean;SaveAsJPEG.Config", RegistryValueKind.String)
             __newKey.Close()
 
             __newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\shell\\Save as JPEG")
@@ -469,6 +470,17 @@ Public Class Form
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Clean\\command")
             __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-w"" ""%1""", RegistryValueKind.String)
+            __newKey.Close()
+
+            ' SaveAsJPEG.Screen
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen")
+            __newKey.SetValue("MUIVerb", "Save Screen Selection As JPEG", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
+            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            __newKey.Close()
+
+            __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen\\command")
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-sc"" ""%1""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.Config
@@ -681,6 +693,11 @@ Public Class Form
 
             Try
                 Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Clean")
+            Catch e As Exception
+            End Try
+
+            Try
+                Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen")
             Catch e As Exception
             End Try
 
@@ -1338,6 +1355,44 @@ finish:
         Next
         ProcessCleanLayersName = __FistLayerText
     End Function
+
+    Private Sub SaveScreenSelection()
+        Call OpenDocument()
+        Call ProcessSaveScreenSelection(__docRef)
+        If Not __stayOpen Then __docRef.Close(2)
+        End
+    End Sub
+
+    Private Sub ProcessSaveScreenSelection(ByVal __ActiveDocument)
+        Dim __duppedDocument As Photoshop.Document
+        Dim __selChannel As Photoshop.Channel
+        Dim __SelBounds As Array
+        Dim __jpgSaveOptions As Photoshop.JPEGSaveOptions
+        Dim __fileNameBody
+
+        __duppedDocument = __ActiveDocument.Duplicate()
+        Try
+            __selChannel = __duppedDocument.Channels.Item("screen")
+            'MessageBox.Show(__selChannel.Name)
+            __duppedDocument.Selection.Load(__selChannel)
+            __SelBounds = __duppedDocument.Selection.Bounds
+            __duppedDocument.Crop(__SelBounds)
+
+
+            __jpgSaveOptions = New Photoshop.JPEGSaveOptions()
+            __jpgSaveOptions.EmbedColorProfile = False
+            __jpgSaveOptions.FormatOptions = 1 ' psStandardBaseline 
+            __jpgSaveOptions.Matte = 1 ' psNoMatte 
+            __jpgSaveOptions.Quality = 12
+
+            __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "_screen.jpg"
+            __duppedDocument.SaveAs(__ActiveDocument.Path & __fileNameBody, __jpgSaveOptions, True)
+            __duppedDocument.Close(2)
+
+        Catch ex As Exception
+
+        End Try
+    End Sub
 
     Private Sub ChangeLayerColour(ByVal colour As Colors)
         Dim __colour As String
