@@ -1387,11 +1387,11 @@ finish:
 
             __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "_screen.jpg"
             __duppedDocument.SaveAs(__ActiveDocument.Path & __fileNameBody, __jpgSaveOptions, True)
-            __duppedDocument.Close(2)
 
         Catch ex As Exception
-
+            MessageBox.Show("You have to create a selection named ""screen""", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
         End Try
+        __duppedDocument.Close(2)
     End Sub
 
     Private Sub ChangeLayerColour(ByVal colour As Colors)
