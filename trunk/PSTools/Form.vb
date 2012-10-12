@@ -932,7 +932,7 @@ Public Class Form
                         If __RegexObj2.IsMatch(__fi.Name) Then
                             'MsgBox(__fi.Name)
                             If isOldFileVersion(__fi.Name, __currentVersion) Then 'And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
-                                'MsgBox(__fi.Name)
+                                MsgBox(__fi.Name)
                                 If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
                                     Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
                                 End If
@@ -983,18 +983,23 @@ finish:
     Private Function isOldFileVersion(ByVal filename As String, ByVal version As String) As String
         Dim __newFileName As String = filename.Substring(0, filename.LastIndexOf("."))
         Dim __version = version.Split(".")
-        'MsgBox(__newFileName)
-        Dim __RegexObj As Regex = New Regex("(\d*)(\.*\d*)*$")
-        If __RegexObj.IsMatch(__newFileName) Then
-            'MsgBox("> " & __RegexObj.Match(__newFileName).Groups(1).Value & ":" & version)
-            If CInt(__RegexObj.Match(__newFileName).Groups(1).Value) < CInt(__version(0)) Then
-                Return True
+        'MsgBox(__version(0))
+        Dim __RegexObj As Regex = New Regex("(\d*)(\.*\d*)*(_screen)*$")
+        Try
+            If __RegexObj.IsMatch(__newFileName) Then
+                'MsgBox("> " & __RegexObj.Match(__newFileName).Groups(1).Value & ":" & version)
+                If CInt(__RegexObj.Match(__newFileName).Groups(1).Value) < CInt(__version(0)) Then
+                    Return True
+                Else
+                    Return False
+                End If
             Else
                 Return False
             End If
-        Else
+        Catch ex As Exception
+            'MsgBox(ex.Message)
             Return False
-        End If
+        End Try
     End Function
 
     Private Function isExcludeDirectory(ByVal dirName As String)
