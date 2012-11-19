@@ -932,7 +932,7 @@ Public Class Form
                         If __RegexObj2.IsMatch(__fi.Name) Then
                             'MsgBox(__fi.Name)
                             If isOldFileVersion(__fi.Name, __currentVersion) Then 'And Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
-                                MsgBox(__fi.Name)
+                                'MsgBox(__fi.Name)
                                 If Not Directory.Exists(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\") Then
                                     Directory.CreateDirectory(__docRef.Path & "\" & Me.ArchiveDirectory.Text & "\")
                                 End If
