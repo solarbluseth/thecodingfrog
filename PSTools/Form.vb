@@ -476,7 +476,7 @@ Public Class Form
             ' SaveAsJPEG.Screen
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen")
             __newKey.SetValue("MUIVerb", "Save Screen Selection As JPEG", RegistryValueKind.String)
-            __newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String)
+            __newKey.SetValue("Icon", "shell32.dll,196", RegistryValueKind.String)
             'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
             __newKey.Close()
 
