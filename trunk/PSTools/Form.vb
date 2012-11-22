@@ -27,6 +27,7 @@ Public Class Form
     Private __docRef As Photoshop.Document
     Private __openDoc As Boolean = True
     Private __stayOpen As Boolean = False
+    Private __saveSelection As Boolean = False
     Private i As Integer
 
     'Public Enum Versions
@@ -87,7 +88,7 @@ Public Class Form
                     Case "-so" : ExportSmartObjects()
                     Case "-r" : ExportImagesRights()
                     Case "-w" : CleanLayersName()
-                    Case "-sc" : SaveScreenSelection()
+                    Case "-sc" : ProcessFile()
                 End Select
             ElseIf __num = 4 Then
                 ' hide the app
@@ -480,7 +481,7 @@ Public Class Form
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen\\command")
-            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-sc"" ""%1""", RegistryValueKind.String)
+            __newKey.SetValue("", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """ ""-sc"" ""%1"" ""sc"" ""index""", RegistryValueKind.String)
             __newKey.Close()
 
             ' SaveAsJPEG.Config
@@ -787,6 +788,7 @@ Public Class Form
         __pngExportOptionsSaveForWeb.PNG8 = False
         __pngExportOptionsSaveForWeb.Transparency = True
 
+        'MessageBox.Show(__args(3))
         Select Case __args(3)
             Case "jpg"
                 __jpgSaveOptions.Quality = CInt(__args(1))
@@ -797,6 +799,11 @@ Public Class Form
                 __doExportLayerComps = True
             Case "gif"
                 __imageType = "GIF"
+            Case "sc"
+                __jpgSaveOptions.Quality = 12
+                __imageType = "JPG"
+                __doExportLayerComps = True 'force using this mode
+                __saveSelection = True
             Case "base64"
                 ExportBase64()
                 End
@@ -817,6 +824,8 @@ Public Class Form
 
         Call OpenDocument()
 
+        Dim __selChannel As Photoshop.Channel
+        Dim __SelBounds As Array
         Dim __compsCount As Integer
         Dim __compsIndex As Integer
         Dim __compRef As Photoshop.LayerComp
@@ -833,14 +842,18 @@ Public Class Form
                 'textItemRef.TextItem.Contents = Args.Item(1) 
 
                 'outFileName = Args.Item(1)
-                If __imageType = "JPG" Then
-                    __docRef.SaveAs(__args(2), __jpgSaveOptions, True)
-                ElseIf __imageType = "PNG" Then
-                    __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".png"
-                    __docRef.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
+                If __saveSelection Then ' IF screen selection then save crop
+                    SaveScreenSelection()
                 Else
-                    __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".gif"
-                    __docRef.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
+                    If __imageType = "JPG" Then
+                        __docRef.SaveAs(__args(2), __jpgSaveOptions, True)
+                    ElseIf __imageType = "PNG" Then
+                        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".png"
+                        __docRef.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
+                    Else
+                        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & ".gif"
+                        __docRef.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
+                    End If
                 End If
 
             Else
@@ -852,8 +865,22 @@ Public Class Form
                     'if (exportInfo.selectionOnly && !compRef.selected) continue; // selected only
                     __compRef.Apply()
                     __duppedDocument = __docRef.Duplicate()
+
                     'msgbox(compRef.Name)
-                    If Not __isNamedLayerComp Then
+                    If __saveSelection Then
+                        Try
+                            __selChannel = __duppedDocument.Channels.Item("screen")
+                            'MessageBox.Show(__selChannel.Name)
+                            __duppedDocument.Selection.Load(__selChannel)
+                            __SelBounds = __duppedDocument.Selection.Bounds
+                            __duppedDocument.Crop(__SelBounds)
+                        Catch ex As Exception
+                            MessageBox.Show("You have to create a selection named ""screen""", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                            End
+                        End Try
+
+                        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex & "_screen"
+                    ElseIf Not __isNamedLayerComp Then
                         __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex
                     Else
                         __fileNameBody = __compRef.Name
