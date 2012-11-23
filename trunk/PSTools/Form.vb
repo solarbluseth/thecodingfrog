@@ -435,6 +435,7 @@ Public Class Form
             __newKey.SetValue("MUIVerb", "Save Layer Comps As GIF (by index)", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,301", RegistryValueKind.String)
             'newKey.SetValue("Icon", """" + System.Reflection.Assembly.GetExecutingAssembly.Location + """,0", RegistryValueKind.String)
+            '__newKey.SetValue("CommandFlags", "32", RegistryValueKind.DWord)
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Gif\\command")
@@ -445,6 +446,7 @@ Public Class Form
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ImagesRights")
             __newKey.SetValue("MUIVerb", "List Images Rights", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,54", RegistryValueKind.String)
+            __newKey.SetValue("CommandFlags", "32", RegistryValueKind.DWord)
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.ImagesRights\\command")
@@ -455,7 +457,6 @@ Public Class Form
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO")
             __newKey.SetValue("MUIVerb", "Export Smart Objects", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,132", RegistryValueKind.String)
-            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.SO\\command")
@@ -477,7 +478,7 @@ Public Class Form
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen")
             __newKey.SetValue("MUIVerb", "Save Screen Selection As JPEG", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,196", RegistryValueKind.String)
-            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            __newKey.SetValue("CommandFlags", "32", RegistryValueKind.DWord)
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Screen\\command")
@@ -488,7 +489,7 @@ Public Class Form
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config")
             __newKey.SetValue("MUIVerb", "Configuration", RegistryValueKind.String)
             __newKey.SetValue("Icon", "shell32.dll,21", RegistryValueKind.String)
-            'newKey.SetValue("CommandFlags ", "20", RegistryValueKind.DWord)
+            __newKey.SetValue("CommandFlags", "32", RegistryValueKind.DWord)
             __newKey.Close()
 
             __newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\SaveAsJPEG.Config\\command")
