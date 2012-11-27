@@ -832,6 +832,7 @@ Public Class Form
         Dim __compRef As Photoshop.LayerComp
         Dim __duppedDocument As Photoshop.Document
         Dim __fileNameBody As String
+        Dim __hasSelection As Boolean
 
         __compsCount = __docRef.LayerComps.Count
 
@@ -867,8 +868,20 @@ Public Class Form
                     __compRef.Apply()
                     __duppedDocument = __docRef.Duplicate()
 
+                    __hasSelection = False
+
+
+                    Try
+                        __selChannel = __duppedDocument.Channels.Item("screen")
+                    Catch ex As Exception
+                        __hasSelection = False
+                    Finally
+                        __hasSelection = True
+                    End Try
+
+
                     'msgbox(compRef.Name)
-                    If __saveSelection Then
+                    If __saveSelection Or __hasSelection Then
                         Try
                             __selChannel = __duppedDocument.Channels.Item("screen")
                             'MessageBox.Show(__selChannel.Name)
@@ -881,6 +894,20 @@ Public Class Form
                         End Try
 
                         __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex & "_screen"
+
+                        If __hasSelection Then
+                            __fileNameBody = __fileNameBody & ".jpg"
+                            __duppedDocument.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
+
+                            __duppedDocument.Close(2)
+                            __duppedDocument = __docRef.Duplicate()
+
+                            If Not __isNamedLayerComp Then
+                                __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex
+                            Else
+                                __fileNameBody = __compRef.Name
+                            End If
+                        End If
                     ElseIf Not __isNamedLayerComp Then
                         __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex
                     Else
