@@ -869,37 +869,15 @@ Public Class Form
                     __duppedDocument = __docRef.Duplicate()
 
                     __hasSelection = False
-
-
-                    Try
-                        __selChannel = __duppedDocument.Channels.Item("screen")
-                    Catch ex As Exception
-                        __hasSelection = False
-                    Finally
-                        __hasSelection = True
-                    End Try
+                    __hasSelection = hasScreenSelection(__duppedDocument)
 
 
                     'msgbox(compRef.Name)
                     If __saveSelection Or __hasSelection Then
-                        Try
-                            __selChannel = __duppedDocument.Channels.Item("screen")
-                            'MessageBox.Show(__selChannel.Name)
-                            __duppedDocument.Selection.Load(__selChannel)
-                            __SelBounds = __duppedDocument.Selection.Bounds
-                            __duppedDocument.Crop(__SelBounds)
-                        Catch ex As Exception
-                            MessageBox.Show("You have to create a selection named ""screen""", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                            End
-                        End Try
 
-                        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __compsIndex & "_screen"
+                        SaveScreenSelections(__duppedDocument, __compsIndex, __jpgSaveOptions)
 
                         If __hasSelection Then
-                            __fileNameBody = __fileNameBody & ".jpg"
-                            __duppedDocument.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
-
-                            __duppedDocument.Close(2)
                             __duppedDocument = __docRef.Duplicate()
 
                             If Not __isNamedLayerComp Then
@@ -1033,6 +1011,42 @@ finish:
 
         ' End program
         End
+    End Sub
+
+    Private Function hasScreenSelection(ByVal __doc As Photoshop.Document)
+        Dim __selChannel As Photoshop.Channel
+
+        Try
+            __selChannel = __doc.Channels.Item("screen")
+            hasScreenSelection = True
+        Catch ex As Exception
+            hasScreenSelection = False
+        End Try
+
+    End Function
+
+    Private Sub SaveScreenSelections(ByVal __doc As Photoshop.Document, ByVal __idx As Integer, ByVal __options As Photoshop.JPEGSaveOptions)
+        Dim __selChannel As Photoshop.Channel
+        Dim __SelBounds As Array
+        Dim __fileNameBody As String
+
+        Try
+            __selChannel = __doc.Channels.Item("screen")
+            'MessageBox.Show(__selChannel.Name)
+            __doc.Selection.Load(__selChannel)
+            __SelBounds = __doc.Selection.Bounds
+            __doc.Crop(__SelBounds)
+        Catch ex As Exception
+            MessageBox.Show("You have to create a selection named ""screen""", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            End
+        End Try
+
+        __fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) & "." & __idx & "_screen"
+
+        __fileNameBody = __fileNameBody & ".jpg"
+        __doc.SaveAs(__docRef.Path & __fileNameBody, __options, True)
+
+        __doc.Close(2)
     End Sub
 
     Private Function isOldFileVersion(ByVal filename As String, ByVal version As String) As String
@@ -1220,7 +1234,7 @@ finish:
 
                     Dim __soType = getSmartObjectType(__appRef)
                     If __soType <> "" Then
-                        Call __desc4.putPath(__idnull, __docRef.Path & "+ Elements\" & wipeName(__Layer.Name) & __soType)
+                        Call __desc4.PutPath(__idnull, __docRef.Path & "+ Elements\" & wipeName(__Layer.Name) & __soType)
                         Call __appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs)
                     End If
                 End If
