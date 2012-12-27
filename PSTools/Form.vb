@@ -88,7 +88,6 @@ Public Class Form
                     Case "-so" : ExportSmartObjects()
                     Case "-r" : ExportImagesRights()
                     Case "-w" : CleanLayersName()
-                    Case "-sc" : ProcessFile()
                 End Select
             ElseIf __num = 4 Then
                 ' hide the app
@@ -96,7 +95,10 @@ Public Class Form
                 Me.Visible = False
                 Me.ShowInTaskbar = False
                 Me.WindowState = FormWindowState.Minimized
-                ProcessFile()
+                Select Case __args(1).ToLower
+                    Case "-sc" : ProcessFile("sc")
+                    Case Else : ProcessFile()
+                End Select
             Else
                 Setup()
             End If
@@ -751,7 +753,7 @@ Public Class Form
         Setup()
     End Sub
 
-    Private Sub ProcessFile()
+    Private Sub ProcessFile(Optional ByVal __cmd = "")
         'MessageBox.Show("ProcessFile")
         Dim __isNamedLayerComp As Boolean = False
 
@@ -845,6 +847,7 @@ Public Class Form
 
                 'outFileName = Args.Item(1)
                 If __saveSelection Then ' IF screen selection then save crop
+                    'MsgBox("here")
                     SaveScreenSelection()
                 Else
                     If __imageType = "JPG" Then
@@ -891,16 +894,19 @@ Public Class Form
                     Else
                         __fileNameBody = __compRef.Name
                     End If
-                    'msgbox(fileNameBody)
-                    If __imageType = "JPG" Then
-                        __fileNameBody = __fileNameBody & ".jpg"
-                        __duppedDocument.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
-                    ElseIf __imageType = "PNG" Then
-                        __fileNameBody = __fileNameBody & ".png"
-                        __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
-                    Else
-                        __fileNameBody = __fileNameBody & ".gif"
-                        __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
+                    'MsgBox(__cmd)
+                    If __cmd = "" Then
+                        If __imageType = "JPG" Then
+                            __fileNameBody = __fileNameBody & ".jpg"
+                            __duppedDocument.SaveAs(__docRef.Path & __fileNameBody, __jpgSaveOptions, True)
+                        ElseIf __imageType = "PNG" Then
+                            __fileNameBody = __fileNameBody & ".png"
+                            __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __pngExportOptionsSaveForWeb)
+                        Else
+                            __fileNameBody = __fileNameBody & ".gif"
+                            __duppedDocument.Export(__docRef.Path & __fileNameBody, 2, __gifExportOptionsSaveForWeb)
+                        End If
+
                     End If
                     __duppedDocument.Close(2)
                     'fileNameBody += "_" + zeroSuppress(compsIndex, 4);
