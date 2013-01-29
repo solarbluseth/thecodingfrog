@@ -21,6 +21,12 @@ namespace PSTools
 		public static List<string> IllustratorVersions = new List<string>(){"12", "13", "14", "15.1"};
 		//public decimal IllustratorVersions = {"12", "13", "14", "15.1"};
 
+		/// <summary>
+		/// Determines PSTools is installed.
+		/// </summary>
+		/// <returns>
+		///   <c>true</c> if it is installed; otherwise, <c>false</c>.
+		/// </returns>
 		public bool isInstalled()
 		{
 			__isInstalled = false;
@@ -49,6 +55,11 @@ namespace PSTools
 			return __isInstalled;
 		}
 
+		/// <summary>
+		/// Checks the specified version.
+		/// </summary>
+		/// <param name="__version">Version.</param>
+		/// <returns></returns>
 		public bool check(Versions __version)
 		{
 			__key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image." + (int)__version);
@@ -63,6 +74,12 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Gets the installed versions.
+		/// </summary>
+		/// <value>
+		/// The installed versions.
+		/// </value>
 		public List<int> installedVersions
 		{
 			get { return __versionsInstalled;}

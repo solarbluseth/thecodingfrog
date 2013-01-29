@@ -10,11 +10,18 @@ namespace PSTools
 		private bool __settingsLoaded = false;
 		private Version __version = new Version();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Settings"/> class.
+		/// </summary>
 		public Settings()
 		{
 
 		}
 
+		/// <summary>
+		/// Loads settings
+		/// </summary>
+		/// <param name="__form">Form</param>
 		public void Load(Form __form)
 		{
 			try
@@ -89,6 +96,12 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether [settings loaded].
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [settings loaded]; otherwise, <c>false</c>.
+		/// </value>
 		public bool SettingsLoaded
 		{
 			get
@@ -97,6 +110,12 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether [do export layer comps].
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [do export layer comps]; otherwise, <c>false</c>.
+		/// </value>
 		public bool doExportLayerComps
 		{
 			get
