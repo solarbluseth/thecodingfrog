@@ -1,12 +1,7 @@
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System;
 using System.Text;
 using System.Windows.Forms;
-using System.Collections;
-using System.Data;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 

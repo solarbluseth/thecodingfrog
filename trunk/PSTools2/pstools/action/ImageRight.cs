@@ -1,10 +1,4 @@
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using System;
-using System.Windows.Forms;
-using System.Collections;
-using System.Data;
-using System.Collections.Generic;
 using System.IO;
 
 namespace PSTools
@@ -14,6 +8,8 @@ namespace PSTools
 		private string __bank;
 		private string __bankcode;
 		private string __imagecode;
+		private string __type;
+		private string __aquired;
 		private string __url;
 		private bool __isValidCode = false;
 		
@@ -24,7 +20,7 @@ namespace PSTools
 			GroupCollection __gc;
 			CaptureCollection __cc;
 			
-			__mc = Regex.Matches(__name, "(\\w{2})\\-\\w{2}\\-(DA|€€)\\-(.*)", RegexOptions.Multiline & RegexOptions.IgnoreCase);
+			__mc = Regex.Matches(__name, "(\\w{2})\\-(\\w{2})\\-(DA|€€)\\-(.*)", RegexOptions.Multiline & RegexOptions.IgnoreCase);
 			
 			if (__mc.Count > 0)
 			{
@@ -32,10 +28,16 @@ namespace PSTools
 				__gc = __mc[0].Groups;
 				
 				__cc = __gc[1].Captures;
-				__bankcode = (string) (__cc[0].Value);
-				
+				__bankcode = __cc[0].Value;
+
+				__cc = __gc[2].Captures;
+				__type = __cc[0].Value;
+
 				__cc = __gc[3].Captures;
-				__imagecode = (string) (__cc[0].Value);
+				__aquired = __cc[0].Value;
+				
+				__cc = __gc[4].Captures;
+				__imagecode = __cc[0].Value;
 				
 				__isValidCode = true;
 				
@@ -58,7 +60,7 @@ namespace PSTools
 					__bank = "Getty Images";
 					break;
 				case "IS":
-					__url = "www.istockphoto.com/file_thumbview_approve/{0}";
+					__url = "www.istockphoto.com/file_thumbview_approve/{0}/2/";
 					__bank = "iStockPhoto";
 					break;
 				case "CO":
@@ -97,7 +99,8 @@ namespace PSTools
 			{
 				Directory.CreateDirectory(__path + "+ Rights\\");
 			}
-			__sw = File.CreateText(__path + ("+ Rights\\" + __bank + " " + __imagecode + ".url"));
+			File.Delete(__path + "+ Rights\\" + __bank + "-" + __type + "-" + __aquired + "-" + __imagecode + ".url");
+			__sw = File.CreateText(__path + "+ Rights\\" + __bank + "-" + __type + "-" + __aquired + "-" + __imagecode + ".url");
 			__sw.WriteLine("[InternetShortcut]");
 			__sw.WriteLine("URL=http://" + string.Format(__url, __imagecode));
 			__sw.Close();

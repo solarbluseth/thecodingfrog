@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
@@ -70,10 +68,10 @@ namespace PSTools
 					cleanLayersName(__docRef.Layers, 1);
 					break;
 				case Actions.IMAGE_RIGHTS:
-					exportImagesRights(__docRef);
+					exportImagesRights(__docRef, __docRef.Layers);
 					break;
 				case Actions.EXPORT_SO:
-					exportSmartObjects(__docRef);
+					exportSmartObjects(__docRef, __docRef.Layers);
 					break;
 				case Actions.SAVE_SELECTION:
 					saveToFile(__docRef, __args, true);
@@ -133,46 +131,74 @@ namespace PSTools
 			}
 		}
 
-		private void exportSmartObjects(Photoshop.Document __docRef)
+		private bool exportSmartObjects(Photoshop.Document __docRef, object _layers)
 		{
-			Photoshop.ArtLayers __layers;
-			Photoshop.ArtLayer __layer;
-			bool __isVisible;
+			Photoshop.Layers __layers;
+			Photoshop.ArtLayer __alayer = null;
+			Photoshop.LayerSet __slayer;
+			bool __isArtLayer = false;
+			object __layer;
+			int __j;
+			string __soType;
 
-			__layers = __docRef.ArtLayers;
+			__layers = (Photoshop.Layers)_layers;
 
-			for (int __j = 1; __j <= __layers.Count; __j++)
+			for (__j = 1; __j <= __layers.Count; __j++)
 			{
 				__layer = __layers[__j];
-				__isVisible = __layer.Visible;
-				__appRef.ActiveDocument.ActiveLayer = __layer;
 
-				if (__layer.Kind == Photoshop.PsLayerKind.psSmartObjectLayer)
+				try
 				{
+					__alayer = (Photoshop.ArtLayer)__layer;
+					__isArtLayer = true;
+				}
+				catch
+				{
+					__isArtLayer = false;
+				}
 
-					int __idplacedLayerExportContents;
-					__idplacedLayerExportContents = __appRef.StringIDToTypeID("placedLayerExportContents");
+				if (__isArtLayer) // Everything as Layer goes here
+				{
+					__appRef.ActiveDocument.ActiveLayer = __layer;
 
-
-					Photoshop.ActionDescriptor __desc4;
-					__desc4 = new Photoshop.ActionDescriptor();
-
-					int __idnull;
-					__idnull = __appRef.CharIDToTypeID("null");
-
-					if (!Directory.Exists(__docRef.Path + "+ Assets\\"))
+					if (__alayer.Kind == Photoshop.PsLayerKind.psSmartObjectLayer)
 					{
-						Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
+
+						int __idplacedLayerExportContents;
+						__idplacedLayerExportContents = __appRef.StringIDToTypeID("placedLayerExportContents");
+
+
+						Photoshop.ActionDescriptor __desc4;
+						__desc4 = new Photoshop.ActionDescriptor();
+
+						int __idnull;
+						__idnull = __appRef.CharIDToTypeID("null");
+
+						if (!Directory.Exists(__docRef.Path + "+ Assets\\"))
+						{
+							Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
+						}
+
+						__soType = getSmartObjectType(__appRef);
+						if (__soType != "")
+						{
+							__desc4.PutPath(__idnull, __docRef.Path + "+ Assets\\" + wipeName(__alayer.Name) + __soType);
+							__appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs);
+						}
 					}
+				}
+				else // Everything as LayerSet goes here
+				{
+					__slayer = (Photoshop.LayerSet)__layer;
+					__appRef.ActiveDocument.ActiveLayer = __layer;
 
-					string __soType = getSmartObjectType(__appRef);
-					if (__soType != "")
+					if (__slayer.LayerType == Photoshop.PsLayerType.psLayerSet)
 					{
-						__desc4.PutPath(__idnull, __docRef.Path + "+ Assets\\" + wipeName(__layer.Name) + __soType);
-						__appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs);
+						bool __test = exportSmartObjects(__docRef, __slayer.Layers);
 					}
 				}
 			}
+			return true;
 		}
 
 		private string getSmartObjectType(Photoshop.Application __appRef)
@@ -229,9 +255,98 @@ namespace PSTools
 		}
 
 
-		private bool exportImagesRights(Photoshop.Document __docRef)
+		private bool exportImagesRights(Photoshop.Document __docRef, object _layers)
 		{
-			Photoshop.ArtLayers __layers;
+			Photoshop.Layers __layers;
+			Photoshop.ArtLayer __alayer = null;
+			Photoshop.LayerSet __slayer;
+			bool __isArtLayer = false;
+			object __layer;
+			int __j;
+			string __soType;
+			ImageRight __ir;
+
+			__ir = new ImageRight();
+
+			__layers = (Photoshop.Layers)_layers;
+
+			for (__j = 1; __j <= __layers.Count; __j++)
+			{
+				__layer = __layers[__j];
+
+				try
+				{
+					__alayer = (Photoshop.ArtLayer)__layer;
+					__isArtLayer = true;
+				}
+				catch
+				{
+					__isArtLayer = false;
+				}
+
+				if (__isArtLayer) // Everything as Layer goes here
+				{
+					__appRef.ActiveDocument.ActiveLayer = __layer;
+
+					if (__alayer.Kind == Photoshop.PsLayerKind.psNormalLayer)
+					{
+						__ir.parse(__alayer.Name);
+						if (__ir.isValidURL)
+						{
+							__ir.createLink(__docRef.Path);
+						}
+					}
+					else if (__alayer.Kind == Photoshop.PsLayerKind.psSmartObjectLayer)
+					{
+						__ir.parse(__alayer.Name);
+						if (__ir.Code != null)
+						{
+							if (__ir.isValidURL)
+							{
+								__ir.createLink(__docRef.Path);
+							}
+						}
+						else
+						{
+							__soType = getSmartObjectType(__appRef);
+							if (__soType == ".psd")
+							{
+
+								int __opn;
+								__opn = __appRef.StringIDToTypeID("placedLayerEditContents");
+
+								Photoshop.ActionDescriptor __desc4;
+								__desc4 = new Photoshop.ActionDescriptor();
+
+								try
+								{
+									__appRef.ExecuteAction(__opn, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs);
+								}
+								catch (InvalidOperationException ex)
+								{
+									MessageBox.Show(ex.Message);
+								}
+								bool __test = exportImagesRights(__docRef, __appRef.ActiveDocument.Layers);
+								__appRef.ActiveDocument.Close(2);
+							}
+						}
+					}
+
+					
+				}
+				else // Everything as LayerSet goes here
+				{
+					__slayer = (Photoshop.LayerSet)__layer;
+					__appRef.ActiveDocument.ActiveLayer = __layer;
+
+					if (__slayer.LayerType == Photoshop.PsLayerType.psLayerSet)
+					{
+						bool __test = exportImagesRights(__docRef, __slayer.Layers);
+					}
+				}
+			}
+
+			/*Photoshop.ArtLayers __layers;
 			Photoshop.ArtLayer __layer;
 			bool __isVisible;
 			int __j;
@@ -293,7 +408,7 @@ namespace PSTools
 				}
 				__layer.Visible = __isVisible;
 				__appRef.ActiveDocument.ActiveLayer = __layer;
-			}
+			}*/
 			return true;
 		}
 
