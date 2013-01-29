@@ -71,7 +71,7 @@ namespace PSTools
 			__newKey.Close();
 
 			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Base64\\\\Command");
-			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"12\" \"%1\" \"base64\" \"index\"", RegistryValueKind.String);
+			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"-b64\" \"%1\" \"jpg\" \"index\" \"12\"", RegistryValueKind.String);
 			__newKey.Close();
 		}
 

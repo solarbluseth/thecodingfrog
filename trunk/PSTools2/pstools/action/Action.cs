@@ -13,7 +13,8 @@ namespace PSTools
 			CLEAN = 2,
 			IMAGE_RIGHTS = 3,
 			EXPORT_SO = 4,
-			SAVE_SELECTION = 5
+			SAVE_SELECTION = 5,
+			EXPORT_BASE64 = 6
 		}
 
 		public enum Colors
@@ -75,6 +76,9 @@ namespace PSTools
 					break;
 				case Actions.SAVE_SELECTION:
 					saveToFile(__docRef, __args, true);
+					break;
+				case Actions.EXPORT_BASE64:
+					exportBase64();
 					break;
 			}
 
@@ -980,6 +984,37 @@ namespace PSTools
 				//MsgBox(ex.Message)
 				return false;
 			}
+		}
+
+		private void exportBase64()
+		{
+			//MessageBox.Show(__args(2))
+			string __path = null;
+			FileInfo __fi;
+			string __fn;
+			string __ext;
+
+			string __filepath = __cmdargs[1 + __form.idx];
+			
+			//MessageBox.Show(__filepath);
+			if (__filepath.LastIndexOf("\\") > -1)
+			{
+				__path = __filepath.Substring(0, Convert.ToInt32(__filepath.LastIndexOf("\\") + 1));
+			}
+
+
+			__fi = new FileInfo(__filepath);
+			__fn = __fi.Name.Substring(0, __fi.Name.Length - __fi.Extension.Length);
+			__ext = __fi.Extension.Substring(1);
+			//MessageBox.Show(__ext)
+
+			byte[] __bytes = File.ReadAllBytes(__filepath);
+
+			string __b64String = Convert.ToBase64String(__bytes);
+			string __dataUrl = "<html><body><img src=\"data:image/" + __ext + ";base64," + __b64String + "\"/></body></html>";
+
+			//__f = New File(__fn & ".txt")
+			File.WriteAllText(__path + __fn + ".html", __dataUrl);
 		}
 
 	}	

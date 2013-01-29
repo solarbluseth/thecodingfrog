@@ -43,6 +43,10 @@ namespace PSTools
 						__windowState = Form.SW_HIDE;
 						__action.execute(Action.Actions.SAVE_SELECTION, __args);
 						break;
+					case "-b64":
+						__windowState = Form.SW_HIDE;
+						__action.execute(Action.Actions.EXPORT_BASE64, __args);
+						break;
 					default:
 						__windowState = Form.SW_SHOWNORMAL;
 						break;
