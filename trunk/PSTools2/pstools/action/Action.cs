@@ -349,70 +349,6 @@ namespace PSTools
 					}
 				}
 			}
-
-			/*Photoshop.ArtLayers __layers;
-			Photoshop.ArtLayer __layer;
-			bool __isVisible;
-			int __j;
-			ImageRight __ir;
-			string __soType;
-
-			__ir = new ImageRight();
-			__layers = __docRef.ArtLayers;
-
-			for (__j = 1; __j <= __layers.Count; __j++)
-			{
-				__layer = __layers[__j];
-				__isVisible = __layer.Visible;
-				__docRef.ActiveLayer = __layer;
-
-				//MessageBox.Show(__Layer.Name)
-				if (__layer.Kind == Photoshop.PsLayerKind.psNormalLayer)
-					{
-						__ir.parse(__layer.Name);
-						if (__ir.isValidURL)
-						{
-							__ir.createLink(__docRef.Path);
-						}
-					}
-					else if (__layer.Kind == Photoshop.PsLayerKind.psSmartObjectLayer)
-					{
-						__ir.parse(__layer.Name);
-						if (__ir.Code != null)
-						{
-							if (__ir.isValidURL)
-							{
-								__ir.createLink(__docRef.Path);
-							}
-						}
-						else
-						{
-							__soType = getSmartObjectType(__appRef);
-							if (__soType == ".psd")
-							{
-
-								int __opn;
-								__opn = __appRef.StringIDToTypeID("placedLayerEditContents");
-
-								Photoshop.ActionDescriptor __desc4;
-								__desc4 = new Photoshop.ActionDescriptor();
-
-								try
-								{
-									__appRef.ExecuteAction(__opn, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs);
-								}
-								catch (InvalidOperationException ex)
-								{
-									MessageBox.Show(ex.Message);
-								}
-								exportImagesRights(__appRef.ActiveDocument);
-								__appRef.ActiveDocument.Close(2);
-							}
-						}
-				}
-				__layer.Visible = __isVisible;
-				__appRef.ActiveDocument.ActiveLayer = __layer;
-			}*/
 			return true;
 		}
 
@@ -1013,7 +949,6 @@ namespace PSTools
 			string __b64String = Convert.ToBase64String(__bytes);
 			string __dataUrl = "<html><body><img src=\"data:image/" + __ext + ";base64," + __b64String + "\"/></body></html>";
 
-			//__f = New File(__fn & ".txt")
 			File.WriteAllText(__path + __fn + ".html", __dataUrl);
 		}
 
