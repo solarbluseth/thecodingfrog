@@ -7,12 +7,21 @@ namespace PSTools
 		private Action __action;
 		private Form __formapp;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActionDispatcher"/> class.
+		/// </summary>
+		/// <param name="__form">The __form.</param>
 		public ActionDispatcher(Form __form)
 		{
 			__action = new Action(__form);
 			__formapp = __form;
 		}
-		
+
+		/// <summary>
+		/// Commands the specified __args.
+		/// </summary>
+		/// <param name="__args">Arguments</param>
+		/// <returns></returns>
 		public int command(string[] __args)
 		{
 			//MessageBox.Show(__args[0 + __formapp.idx].ToString());

@@ -42,16 +42,31 @@ namespace PSTools
 		private string[] __cmdargs;
 		private Form __form;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Action"/> class.
+		/// </summary>
+		/// <param name="_form">Form</param>
 		public Action(Form _form)
 		{
 			__form = _form;
 		}
 
+		/// <summary>
+		/// Executes the specified __action.
+		/// </summary>
+		/// <param name="__action">Action</param>
+		/// <param name="__args">Arguments</param>
 		public void execute(Actions __action, string[] __args)
 		{
 			execute(__action, "", __args);
 		}
 
+		/// <summary>
+		/// Executes the specified __action.
+		/// </summary>
+		/// <param name="__action">Action</param>
+		/// <param name="__subcommand">Subcommand</param>
+		/// <param name="__args">Arguments</param>
 		public void execute(Actions __action, string __subcommand, string[] __args)
 		{
 			Photoshop.Document __docRef;
@@ -88,6 +103,10 @@ namespace PSTools
 			Application.Exit();
 		}
 
+		/// <summary>
+		/// Opens the document.
+		/// </summary>
+		/// <returns></returns>
 		private Photoshop.Document openDocument()
 		{
 			Photoshop.Document __docRef = null;
@@ -127,6 +146,10 @@ namespace PSTools
 			return __docRef;
 		}
 
+		/// <summary>
+		/// Closes the document.
+		/// </summary>
+		/// <param name="__docRef">Document refrence</param>
 		private void closeDocument(Photoshop.Document __docRef)
 		{
 			if (!__stayOpen)
@@ -135,6 +158,12 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Exports the smart objects.
+		/// </summary>
+		/// <param name="__docRef">Document refrence</param>
+		/// <param name="_layers">Layers</param>
+		/// <returns></returns>
 		private bool exportSmartObjects(Photoshop.Document __docRef, object _layers)
 		{
 			Photoshop.Layers __layers;
@@ -205,6 +234,11 @@ namespace PSTools
 			return true;
 		}
 
+		/// <summary>
+		/// Gets the type of the smart object.
+		/// </summary>
+		/// <param name="__appRef">Application Reference</param>
+		/// <returns></returns>
 		private string getSmartObjectType(Photoshop.Application __appRef)
 		{
 			string __value;
@@ -238,6 +272,11 @@ namespace PSTools
 			return __value;
 		}
 
+		/// <summary>
+		/// Wipes the name.
+		/// </summary>
+		/// <param name="__name">Name</param>
+		/// <returns></returns>
 		private string wipeName(string __name)
 		{
 			string __value;
@@ -259,6 +298,12 @@ namespace PSTools
 		}
 
 
+		/// <summary>
+		/// Exports the images rights.
+		/// </summary>
+		/// <param name="__docRef">Document</param>
+		/// <param name="_layers">Layers</param>
+		/// <returns></returns>
 		private bool exportImagesRights(Photoshop.Document __docRef, object _layers)
 		{
 			Photoshop.Layers __layers;
@@ -352,6 +397,12 @@ namespace PSTools
 			return true;
 		}
 
+		/// <summary>
+		/// Cleans the name of the layers.
+		/// </summary>
+		/// <param name="_layers">layers</param>
+		/// <param name="__idx">Depth Index</param>
+		/// <returns></returns>
 		private string cleanLayersName(object _layers, int __idx)
 		{
 			string returnValue;
@@ -446,6 +497,10 @@ namespace PSTools
 			return returnValue;
 		}
 
+		/// <summary>
+		/// Changes the layer colour.
+		/// </summary>
+		/// <param name="__col">Color</param>
 		private void ChangeLayerColour(Colors __col)
 		{
 			string __colour;
@@ -496,11 +551,22 @@ namespace PSTools
 		}
 
 
+		/// <summary>
+		/// Saves to file.
+		/// </summary>
+		/// <param name="__docRef">Document</param>
+		/// <param name="__args">Arguments</param>
 		private void saveToFile(Photoshop.Document __docRef, string[] __args)
 		{
 			saveToFile(__docRef, __args, false);
 		}
 
+		/// <summary>
+		/// Saves to file.
+		/// </summary>
+		/// <param name="__docRef">Document</param>
+		/// <param name="__args">Arguments</param>
+		/// <param name="__selectionOnly">if set to <c>true</c> Export Selection Only</param>
 		private void saveToFile(Photoshop.Document __docRef, string[] __args, bool __selectionOnly)
 		{
 			bool __exportLayerComps = false;
@@ -726,11 +792,24 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Saves the screen selection.
+		/// </summary>
+		/// <param name="__docRef">Document Refrence</param>
+		/// <param name="__doc">Document</param>
+		/// <param name="__options">JPEG options</param>
 		private void saveScreenSelection(Photoshop.Document __docRef, Photoshop.Document __doc, Photoshop.JPEGSaveOptions __options)
 		{
 			saveScreenSelection(__docRef, __doc, -1, __options);
 		}
 
+		/// <summary>
+		/// Saves the screen selection.
+		/// </summary>
+		/// <param name="__docRef">Document Refrence</param>
+		/// <param name="__doc">Document</param>
+		/// <param name="__idx">Layer Comp Index</param>
+		/// <param name="__options">JPEG options</param>
 		private void saveScreenSelection(Photoshop.Document __docRef, Photoshop.Document __doc, int __idx, Photoshop.JPEGSaveOptions __options)
 		{
 			Photoshop.Channel __selChannel;
@@ -760,6 +839,10 @@ namespace PSTools
 				__doc.Close(2);
 		}
 
+		/// <summary>
+		/// Archives the files.
+		/// </summary>
+		/// <param name="__docRef">The __doc ref.</param>
 		private void archiveFiles(Photoshop.Document __docRef)
 		{
 			DirectoryInfo __di;
@@ -849,6 +932,13 @@ namespace PSTools
 		finish:{ }
 		}
 
+		/// <summary>
+		/// Determines whether [has screen selection] [the specified __doc].
+		/// </summary>
+		/// <param name="__doc">The __doc.</param>
+		/// <returns>
+		///   <c>true</c> if [has screen selection] [the specified __doc]; otherwise, <c>false</c>.
+		/// </returns>
 		private bool hasScreenSelection(Photoshop.Document __doc)
 		{
 			bool __value;
@@ -867,6 +957,13 @@ namespace PSTools
 			return __value;
 		}
 
+		/// <summary>
+		/// Determines whether [is exclude directory] [the specified __dir name].
+		/// </summary>
+		/// <param name="__dirName">Name of the __dir.</param>
+		/// <returns>
+		///   <c>true</c> if [is exclude directory] [the specified __dir name]; otherwise, <c>false</c>.
+		/// </returns>
 		private bool isExcludeDirectory(string __dirName)
 		{
 			Array __ExcludeDirectories;
@@ -890,6 +987,14 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Determines whether [is old file version] [the specified __filename].
+		/// </summary>
+		/// <param name="__filename">The __filename.</param>
+		/// <param name="_version">The _version.</param>
+		/// <returns>
+		///   <c>true</c> if [is old file version] [the specified __filename]; otherwise, <c>false</c>.
+		/// </returns>
 		private bool isOldFileVersion(string __filename, string _version)
 		{
 			string __newFileName = __filename.Substring(0, __filename.LastIndexOf("."));
@@ -922,6 +1027,9 @@ namespace PSTools
 			}
 		}
 
+		/// <summary>
+		/// Exports image to base64 encoding.
+		/// </summary>
 		private void exportBase64()
 		{
 			//MessageBox.Show(__args(2))

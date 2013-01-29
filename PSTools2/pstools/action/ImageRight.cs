@@ -12,8 +12,12 @@ namespace PSTools
 		private string __aquired;
 		private string __url;
 		private bool __isValidCode = false;
-		
-		
+
+
+		/// <summary>
+		/// Parses the specified Name.
+		/// </summary>
+		/// <param name="__name">Name</param>
 		public void parse(string __name)
 		{
 			MatchCollection __mc;
@@ -50,7 +54,10 @@ namespace PSTools
 				__imagecode = null;
 			}
 		}
-		
+
+		/// <summary>
+		/// Sets the URL.
+		/// </summary>
 		private void setURL()
 		{
 			switch (__bankcode)
@@ -90,7 +97,11 @@ namespace PSTools
 					break;
 			}
 		}
-		
+
+		/// <summary>
+		/// Creates the link.
+		/// </summary>
+		/// <param name="__path">Path</param>
 		public void createLink(string __path)
 		{
 			StreamWriter __sw;
@@ -105,8 +116,14 @@ namespace PSTools
 			__sw.WriteLine("URL=http://" + string.Format(__url, __imagecode));
 			__sw.Close();
 		}
-		
-		
+
+
+		/// <summary>
+		/// Gets the code.
+		/// </summary>
+		/// <value>
+		/// The code.
+		/// </value>
 		public string Code
 		{
 			get
@@ -114,7 +131,13 @@ namespace PSTools
 				return __imagecode;
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets the image bank.
+		/// </summary>
+		/// <value>
+		/// The image bank.
+		/// </value>
 		public string ImageBank
 		{
 			get
@@ -122,7 +145,13 @@ namespace PSTools
 				return __bank;
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets the URL.
+		/// </summary>
+		/// <value>
+		/// The URL.
+		/// </value>
 		public string URL
 		{
 			get
@@ -130,7 +159,13 @@ namespace PSTools
 				return __url;
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is valid URL.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is valid URL; otherwise, <c>false</c>.
+		/// </value>
 		public bool isValidURL
 		{
 			get
@@ -138,7 +173,13 @@ namespace PSTools
 				return (__url != null && __imagecode != null);
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is valid code.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is valid code; otherwise, <c>false</c>.
+		/// </value>
 		public bool isValidCode
 		{
 			get
