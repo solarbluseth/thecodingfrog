@@ -149,38 +149,20 @@ namespace PSTools
 				this.Install.Text = "Install";
 			}
 
-			if (__version.check(Version.Versions.CS3))
+			foreach (Version.Versions __item in Enum.GetValues(typeof(Version.Versions)))
 			{
-				this.LabelCS3.Text = FOUND.ToString();
-			}
-			else
-			{
-				this.LabelCS3.Text = NOT_FOUND.ToString();
-			}
-
-			if (__version.check(Version.Versions.CS4))
-			{
-				this.LabelCS4.Text = FOUND.ToString();
-			}
-			else
-			{
-				this.LabelCS4.Text = NOT_FOUND.ToString();
-			}
-			if (__version.check(Version.Versions.CS5))
-			{
-				this.LabelCS5.Text = FOUND.ToString();
-			}
-			else
-			{
-				this.LabelCS5.Text = NOT_FOUND.ToString();
-			}
-			if (__version.check(Version.Versions.CS55))
-			{
-				this.LabelCS55.Text = FOUND.ToString();
-			}
-			else
-			{
-				this.LabelCS55.Text = NOT_FOUND.ToString();
+				string __name = Enum.GetName(typeof(Version.Versions),__item);
+				//MessageBox.Show(__name);
+				Control[] __ctrl = this.Controls.Find("Label" + __name, true);
+				//__ctrl[0].Text = "test";
+				if (__version.check(__item))
+				{
+					__ctrl[0].Text = FOUND.ToString();
+				}
+				else
+				{
+					__ctrl[0].Text = NOT_FOUND.ToString();
+				}
 			}
 		}
 

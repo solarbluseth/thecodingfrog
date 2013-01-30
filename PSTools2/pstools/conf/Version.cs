@@ -15,14 +15,15 @@ namespace PSTools
 		    CS3 = 10,
 		    CS4 = 11,
 		    CS5 = 12,
-		    CS55 = 55
+			CS55 = 55,
+			CS6 = 60,
 		}
 
-		public static List<string> IllustratorVersions = new List<string>(){"12", "13", "14", "15.1"};
+		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16" };
 		//public decimal IllustratorVersions = {"12", "13", "14", "15.1"};
 
 		/// <summary>
-		/// Determines PSTools is installed.
+		/// Determines if PSTools is installed.
 		/// </summary>
 		/// <returns>
 		///   <c>true</c> if it is installed; otherwise, <c>false</c>.
