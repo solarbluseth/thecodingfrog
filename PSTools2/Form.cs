@@ -26,20 +26,27 @@ namespace PSTools
 					Assembly __assembly = null;
 					try
 					{
-						__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS5.dll");
+						__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS55.dll");
 					}
-					catch(System.IO.FileNotFoundException __e)
+					catch
 					{
-						
 						try
 						{
-							__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS4.dll");
+							__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS5.dll");
 						}
-						catch(System.IO.FileNotFoundException __ex)
+						catch
 						{
-							MessageBox.Show("Can't load any assembly file : Interop.Photoshop<#>.dll");
-							Application.Exit();
-							Process.GetCurrentProcess().Kill();
+
+							try
+							{
+								__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS4.dll");
+							}
+							catch
+							{
+								MessageBox.Show("Can't load any assembly file : Interop.Photoshop<#>.dll");
+								Application.Exit();
+								Process.GetCurrentProcess().Kill();
+							}
 						}
 					}
 					return __assembly;
