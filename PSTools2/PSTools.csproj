@@ -17,7 +17,6 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
@@ -34,6 +33,9 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <Win32Resource>
+    </Win32Resource>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,6 +130,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Icon1.ico" />
+    <None Include="Resources\%24this.Icon.ico" />
     <Content Include="Resources\photoshop.ico" />
     <None Include="app.config" />
     <None Include="Resources\save_as_2.ico" />
@@ -178,7 +182,7 @@ copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
