@@ -257,59 +257,45 @@ namespace PSTools
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.jpg\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("jpegfile\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			// GIF BASE64
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.gif\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("giffile\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			// PNG BASE64
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("ACDSee Pro 4.png\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("pngfile\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Base64");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 		}
 
 		public void uninstallVersion(int __psVersion, string __aiVersion)
@@ -318,129 +304,97 @@ namespace PSTools
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.Image." + __psVersion + "\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." + __psVersion + "\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator.EPS\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.ClassesRoot.DeleteSubKeyTree("Adobe.Illustrator." + __aiVersion + "\\\\shell\\\\PSTools");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.JPEGByIndex100");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.JPEGByIndex60");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.JPEGByName100");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.JPEGByName60");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.PNGByIndex");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.PNGByName");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.GIFByIndex");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.ImagesRights");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.SO");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Clean");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Screen");
 			}
-			catch (Exception)
-			{
-			}
+			catch{}
 
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Config");
 			}
-			catch (Exception)
-			{
-			}
+			catch { }
 		}
 
 	}

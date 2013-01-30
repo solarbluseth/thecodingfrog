@@ -46,7 +46,7 @@
     <NOWARN>1591,660,661</NOWARN>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <ErrorReport>send</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -178,14 +178,14 @@ copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
     <PostBuildEvent>copy $(TargetFileName) "C:\Program Files (x86)\Adobe"
-"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll
+"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools2.zip $(TargetPath) $(projectDir)Interop.Photoshop.dll
 copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
 </Project>
