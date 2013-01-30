@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 
 namespace PSTools
@@ -13,6 +14,42 @@ namespace PSTools
 		[STAThread]
 		static void Main()
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
+			{
+				AssemblyName requestedName = new AssemblyName(e.Name);
+				
+				if (requestedName.Name == "Interop.Photoshop")
+				{
+					// Put code here to load whatever version of the assembly you actually have
+					string __appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+					//MessageBox.Show(__appPath); 
+					Assembly __assembly = null;
+					try
+					{
+						__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS5.dll");
+					}
+					catch(System.IO.FileNotFoundException __e)
+					{
+						
+						try
+						{
+							__assembly = Assembly.LoadFile(__appPath + "\\Interop.Photoshop.CS4.dll");
+						}
+						catch(System.IO.FileNotFoundException __ex)
+						{
+							MessageBox.Show("Can't load any assembly file : Interop.Photoshop<#>.dll");
+							Application.Exit();
+							Process.GetCurrentProcess().Kill();
+						}
+					}
+					return __assembly;
+				}
+				else
+				{
+					return null;
+				}
+			};
+
 			System.Windows.Forms.Application.Run(new Form());
 		}
 		[DllImport("kernel32",EntryPoint="GetConsoleTitleA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
@@ -27,24 +64,10 @@ namespace PSTools
 		public const int SW_NORMAL = 1;
 		public const int SW_SHOWMINIMIZED = 2;
 		private string[] __args;
-		//private bool __confLoaded = false;
-		//private bool __doExportLayerComps = true;
-		//private string __imageType;
 		
 		const string NS = "http://www.smartobjectlinks.com/1.0/";
 		const string FOUND = "Found";
 		const string NOT_FOUND = "Not found";
-		//Private __strRootCS3 As String = "\\Photoshop.Image.10\\shell\\Save as JPEG 100%\\command"
-		//Private __strRootCS4 As String = "\\Photoshop.Image.11\\shell\\Save as JPEG 100%\\command"
-		//Private __strRootCS5 As String = "\\Photoshop.Image.12\\shell\\Save as JPEG 100%\\command"
-		//Private __strRootCS55 As String = "\\Photoshop.Image.55\\shell\\Save as JPEG 100%\\command"
-		
-		/*private Photoshop.Application __appRef;
-		private Photoshop.Document __docRef;
-		private bool __openDoc = true;
-		private bool __stayOpen = false;
-		private bool __saveSelection = false;
-		private int i;*/
 		private Settings __settings = new Settings();
 		private Version __version = new Version();
 		private ActionDispatcher __actionDispatcher;
