@@ -81,13 +81,13 @@ namespace PSTools
 			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." + __psVersion + "\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.ExportAssets;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." + __psVersion + "\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop action...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.ExportAssets;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			__newKey = Registry.ClassesRoot.CreateSubKey("Adobe.Illustrator.EPS\\\\shell\\\\PSTools");
@@ -231,6 +231,16 @@ namespace PSTools
 
 			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Config\\\\command");
 			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"-c\"", RegistryValueKind.String);
+			__newKey.Close();
+
+			// PSTools.ExportAssets
+			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.ExportAssets");
+			__newKey.SetValue("MUIVerb", "Export Assets", RegistryValueKind.String);
+			__newKey.SetValue("Icon", "shell32.dll,196", RegistryValueKind.String);
+			__newKey.Close();
+
+			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.ExportAssets\\\\command");
+			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"-e\" \"%1\"", RegistryValueKind.String);
 			__newKey.Close();
 		}
 
@@ -393,6 +403,12 @@ namespace PSTools
 			try
 			{
 				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Config");
+			}
+			catch { }
+
+			try
+			{
+				Registry.LocalMachine.DeleteSubKeyTree("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.ExportAssets");
 			}
 			catch { }
 		}

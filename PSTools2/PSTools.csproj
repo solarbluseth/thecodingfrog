@@ -49,7 +49,7 @@
     <DefineConstants>
     </DefineConstants>
     <Optimize>true</Optimize>
-    <ErrorReport>send</ErrorReport>
+    <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -158,6 +158,8 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="mscorlib" />
+  </ItemGroup>
+  <ItemGroup>
     <COMReference Include="Photoshop">
       <Guid>{E891EE9A-D0AE-4CB4-8871-F92C0109F18E}</Guid>
       <VersionMajor>1</VersionMajor>
