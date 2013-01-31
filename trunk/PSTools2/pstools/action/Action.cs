@@ -99,7 +99,9 @@ namespace PSTools
 					exportBase64();
 					break;
 				case Actions.EXPORT_ASSETS:
-					exportAssets(__docRef, __docRef.Layers, 1);
+					//exportAssets(__docRef, __docRef.Layers, 1);
+					//exportTest(__docRef, __docRef.Layers);
+					MessageBox.Show("Not yet!");
 					break;
 			}
 
@@ -1066,6 +1068,83 @@ namespace PSTools
 			File.WriteAllText(__path + __fn + ".html", __dataUrl);
 		}
 
+		private void exportTest(Photoshop.Document __docRef, object _layers)
+		{
+			selectAllLayers();
+			hideAllLayers();
+			deselectLayers();
+			exportAssetsRec(__docRef, _layers);
+		}
+
+		private bool exportAssetsRec(Photoshop.Document __docRef, object _layers)
+		{
+			Photoshop.Layers __layers;
+			Photoshop.ArtLayer __alayer = null;
+			Photoshop.LayerSet __slayer;
+			bool __isArtLayer = false;
+			object __layer;
+			int __j;
+
+			__layers = (Photoshop.Layers)_layers;
+			for (__j = 1; __j <= __layers.Count; __j++)
+			{
+				__layer = __layers[__j];
+
+				try
+				{
+					__alayer = (Photoshop.ArtLayer)__layer;
+					__isArtLayer = true;
+				}
+				catch (Exception __e)
+				{
+					__isArtLayer = false;
+				}
+				
+				if (__isArtLayer) // Everything as Layer goes here
+				{
+					__appRef.ActiveDocument.ActiveLayer = __alayer;
+					if (__alayer.Name.IndexOf(".png") > -1)
+					{
+						__alayer.Visible = true;
+					}
+					else
+					{
+						__alayer.Visible = false;
+					}
+
+				}
+				else
+				{
+					try
+					{
+						__slayer = (Photoshop.LayerSet)__layer;
+						__appRef.ActiveDocument.ActiveLayer = __slayer;
+						//__idx = __layers.Index(__layer);
+
+						//MessageBox.Show("> " + __slayer.Name);
+						if (__slayer.LayerType == Photoshop.PsLayerType.psLayerSet)
+						{
+							//MessageBox.Show(__slayer.Name.IndexOf(".png").ToString());
+							if (__slayer.Name.IndexOf(".png") > -1)
+							{
+								__slayer.Visible = true;
+							}
+							else
+							{
+								//MessageBox.Show("sub items");
+								exportAssetsRec(__docRef, __slayer.Layers);
+							}
+						}
+					}
+					catch (Exception __e)
+					{
+						//MessageBox.Show("error>" + __e.Message);
+					}
+				}
+			}
+			return true;
+		}
+
 		private bool exportAssets(Photoshop.Document __docRef, object _layers, int __depth)
 		{
 			//MessageBox.Show("exportAssets");
@@ -1252,15 +1331,22 @@ namespace PSTools
 				Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
 			}
 
-			bool __res = createSO();
+			try
+			{
+				createSO();
+				//MessageBox.Show("End> " + __layer.Name);
+			}
+			catch (Exception __e)
+			{
+				MessageBox.Show("Error: " + __e.Message);
+			}
 			//__appRef.ActiveDocument.Selection.SelectAll();
 
 			//__layer.Rasterize(Photoshop.PsRasterizeType.psEntireLayer);
 			//__layer.Copy(false);
 
-			MessageBox.Show("End> " + __layer.Name);
 			Photoshop.Document __newDoc = __appRef.Documents.Add(1500, 1500, 72.0, __layer.Name, Photoshop.PsDocumentMode.psRGB, Photoshop.PsDocumentFill.psTransparent, null, null, null);
-			__newDoc.Paste(false);
+			/*__newDoc.Paste(false);
 
 			__newDoc.Trim(Photoshop.PsTrimType.psTransparentPixels, true, true, true, true);
 			__newDoc.Export(__docRef.Path + "+ Assets\\" + __layer.Name, 2, __pngExportOptionsSaveForWeb);
@@ -1270,30 +1356,32 @@ namespace PSTools
 				__newDoc.ResizeImage(__newDoc.Width / 2, __newDoc.Width / 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
 				__newDoc.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__layer.Name, "@2x", ""), 2, __pngExportOptionsSaveForWeb);
 			}
-			__newDoc.Close(2);
+			__newDoc.Close(2);*/
 			//MessageBox.Show("End> " + __layer.Name);
 			return true;
 		}
 
-		private bool createSO()
+		private void createSO()
 		{
 			Photoshop.ActionDescriptor __desc = __appRef.ExecuteAction(__appRef.StringIDToTypeID("newPlacedLayer"), null, Photoshop.PsDialogModes.psDisplayNoDialogs);
-
+			
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 			Photoshop.ActionDescriptor __desc2 = new Photoshop.ActionDescriptor();
 			__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
 			__desc2.PutReference(__appRef.CharIDToTypeID("null"), __ref);
 			__appRef.ExecuteAction(__appRef.StringIDToTypeID("rasterizeLayer"), __desc2, Photoshop.PsDialogModes.psDisplayNoDialogs);
 
-			Photoshop.ActionDescriptor __desc3 = new Photoshop.ActionDescriptor(); 
+			
+			Photoshop.ActionDescriptor __desc3 = new Photoshop.ActionDescriptor();
 			Photoshop.ActionReference __ref3 = new Photoshop.ActionReference();
 			__ref3.PutProperty(__appRef.CharIDToTypeID("Chnl"), __appRef.CharIDToTypeID("fsel"));
 			__desc3.PutReference(__appRef.CharIDToTypeID("null"), __ref3);
 			__desc3.PutEnumerated(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Al  "));
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), __desc3, Photoshop.PsDialogModes.psDisplayNoDialogs);
-
+			
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("copy"), null, Photoshop.PsDialogModes.psDisplayNoDialogs);
-			return true;
+				
+			//return true;
 		}
 
 		private void saveAsset(Photoshop.Document __docRef, string __name, int __idx, int __depth, bool __isArtlayer)
