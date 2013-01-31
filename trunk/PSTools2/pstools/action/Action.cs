@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
+using System.Reflection;
 
 namespace PSTools
 {
@@ -12,9 +13,10 @@ namespace PSTools
 			SAVE = 1,
 			CLEAN = 2,
 			IMAGE_RIGHTS = 3,
-			EXPORT_SO = 4,
+			EXPORT_SMARTOBJECTS = 4,
 			SAVE_SELECTION = 5,
-			EXPORT_BASE64 = 6
+			EXPORT_BASE64 = 6,
+			EXPORT_ASSETS = 7
 		}
 
 		public enum Colors
@@ -41,6 +43,7 @@ namespace PSTools
 		private bool __stayOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
+		private int __currentDepth = 1;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Action"/> class.
@@ -86,7 +89,7 @@ namespace PSTools
 				case Actions.IMAGE_RIGHTS:
 					exportImagesRights(__docRef, __docRef.Layers);
 					break;
-				case Actions.EXPORT_SO:
+				case Actions.EXPORT_SMARTOBJECTS:
 					exportSmartObjects(__docRef, __docRef.Layers);
 					break;
 				case Actions.SAVE_SELECTION:
@@ -94,6 +97,9 @@ namespace PSTools
 					break;
 				case Actions.EXPORT_BASE64:
 					exportBase64();
+					break;
+				case Actions.EXPORT_ASSETS:
+					exportAssets(__docRef, __docRef.Layers, 1);
 					break;
 			}
 
@@ -207,15 +213,15 @@ namespace PSTools
 						int __idnull;
 						__idnull = __appRef.CharIDToTypeID("null");
 
-						if (!Directory.Exists(__docRef.Path + "+ Assets\\"))
+						if (!Directory.Exists(__docRef.Path + "+ SmartObjects\\"))
 						{
-							Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
+							Directory.CreateDirectory(__docRef.Path + "+ SmartObjects\\");
 						}
 
 						__soType = getSmartObjectType(__appRef);
 						if (__soType != "")
 						{
-							__desc4.PutPath(__idnull, __docRef.Path + "+ Assets\\" + wipeName(__alayer.Name) + __soType);
+							__desc4.PutPath(__idnull, __docRef.Path + "+ SmartObjects\\" + wipeName(__alayer.Name) + __soType);
 							__appRef.ExecuteAction(__idplacedLayerExportContents, __desc4, Photoshop.PsDialogModes.psDisplayNoDialogs);
 						}
 					}
@@ -1058,6 +1064,282 @@ namespace PSTools
 			string __dataUrl = "<html><body><img src=\"data:image/" + __ext + ";base64," + __b64String + "\"/></body></html>";
 
 			File.WriteAllText(__path + __fn + ".html", __dataUrl);
+		}
+
+		private bool exportAssets(Photoshop.Document __docRef, object _layers, int __depth)
+		{
+			//MessageBox.Show("exportAssets");
+			Photoshop.Layers __layers;
+			Photoshop.ArtLayer __alayer = null;
+			Photoshop.LayerSet __slayer;
+			bool __isArtLayer = false;
+			object __layer;
+			int __j;
+			int __idx = 0;
+			
+
+			__layers = (Photoshop.Layers)_layers;
+			//MessageBox.Show(__layers.Count.ToString());
+			for (__j = 1; __j <= __layers.Count; __j++)
+			{
+				__layer = __layers[__j];
+
+				try
+				{
+					__alayer = (Photoshop.ArtLayer)__layer;
+					__isArtLayer = true;
+				}
+				catch (Exception __e)
+				{
+					//MessageBox.Show(__e.Message); 
+					__isArtLayer = false;
+				}
+				//MessageBox.Show(__isArtLayer.ToString());
+				
+
+				if (__isArtLayer) // Everything as Layer goes here
+				{
+					__appRef.ActiveDocument.ActiveLayer = __layer;
+					__idx = __layers.Index(__alayer);
+
+					//MessageBox.Show("> " + __idx.ToString());
+					//MessageBox.Show(__alayer.Name); 
+					if (__alayer.Name.IndexOf(".png") > -1)
+					{
+						saveAsset(__docRef, __alayer.Name, __idx, __depth, true);
+					}
+					
+				}
+				else // Everything as LayerSet goes here
+				{
+					try
+					{
+						__slayer = (Photoshop.LayerSet)__layer;
+						__appRef.ActiveDocument.ActiveLayer = __layer;
+						__idx = __layers.Index(__layer);
+
+						//MessageBox.Show("> " + __idx.ToString());
+						if (__slayer.LayerType == Photoshop.PsLayerType.psLayerSet)
+						{
+							//MessageBox.Show(__slayer.Name.IndexOf(".png").ToString());
+							if (__slayer.Name.IndexOf(".png") > -1)
+							{
+								saveAsset(__docRef, __slayer.Name, __idx, __depth, false);
+							}
+							else
+							{
+								//MessageBox.Show("sub items");
+								exportAssets(__docRef, __slayer.Layers, __depth + 1);
+							}
+						}
+					}
+					catch (Exception __e)
+					{
+						//MessageBox.Show("error>" + __e.Message);
+					}
+				}
+			}
+			return true;
+		}
+
+		private void saveAsset(Photoshop.Document __docRef, string __name, int __idx, int __depth, bool __isArtlayer)
+		{
+			Photoshop.Document __duppedDocument;
+
+			Photoshop.ExportOptionsSaveForWeb __pngExportOptionsSaveForWeb = new Photoshop.ExportOptionsSaveForWeb();
+			__pngExportOptionsSaveForWeb.Format = Photoshop.PsSaveDocumentType.psPNGSave; // 13;
+			__pngExportOptionsSaveForWeb.PNG8 = false;
+			__pngExportOptionsSaveForWeb.Transparency = true;
+
+			if (!Directory.Exists(__docRef.Path + "+ Assets\\"))
+			{
+				Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
+			}
+
+			//MessageBox.Show(__idx.ToString());
+			__duppedDocument = __docRef.Duplicate(__name, null);
+			selectAllLayers();
+			hideAllLayers();
+			deselectLayers();
+			//showLayer(__idx);
+			if (__isArtlayer)
+			{
+				showArtLayer(__duppedDocument.ArtLayers, __idx, false);
+			}
+			else
+			{
+				__currentDepth = 1;
+				showLayerSet(__duppedDocument.LayerSets, __idx, __depth);
+			}
+			__duppedDocument.Trim(Photoshop.PsTrimType.psTransparentPixels, true, true, true, true);
+			__duppedDocument.Export(__docRef.Path + "+ Assets\\" + __name, 2, __pngExportOptionsSaveForWeb);
+			if (__name.IndexOf("@2x") > -1)
+			{
+				__duppedDocument.Flatten();
+				__duppedDocument.ResizeImage(__duppedDocument.Width / 2, __duppedDocument.Width / 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
+				__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name,"@2x",""), 2, __pngExportOptionsSaveForWeb);
+			}
+			__duppedDocument.Close(2);
+		}
+
+		private void deselectLayers()
+		{
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+
+			__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
+			__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+			__appRef.ExecuteAction(__appRef.StringIDToTypeID("selectNoLayers"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+		}
+
+		private void selectAllLayers()
+		{
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+
+			__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
+			__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+			__appRef.ExecuteAction(__appRef.StringIDToTypeID("selectAllLayers"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+		}
+
+		private bool showArtLayer(Photoshop.ArtLayers _layers, int __idx, bool __forced)
+		{
+			Photoshop.ArtLayers __layers = _layers;
+			Photoshop.ArtLayer __alayer = null;
+			Photoshop.LayerSet __slayer;
+			bool __isArtLayer = true;
+
+			for (int __j = 1; __j <= __layers.Count; __j++)
+			{
+				try
+				{
+					__alayer = (Photoshop.ArtLayer)__layers[__j];
+					__isArtLayer = true;
+				}
+				catch
+				{
+					__isArtLayer = false;
+				}
+
+				if (__isArtLayer)
+				{
+					if (__layers.Index(__alayer) == __idx)
+					{
+						__alayer.Visible = true;
+						break;
+					}
+					else if (__forced)
+					{
+						__alayer.Visible = true;
+					}
+				}
+				else
+				{
+					/*try
+					{
+						__slayer = (Photoshop.LayerSet)__layers[__j];
+						if (__layers.Index(__slayer) == __idx)
+						{
+							__slayer.Visible = true;
+							showLayer(__slayer, __idx, true);
+						}
+						else
+						{
+							showLayer(__slayer, __idx, false);
+						}
+					}
+					catch
+					{
+					}*/
+				}
+			}
+			return true;
+		}
+
+		private bool showLayerSet(Photoshop.LayerSets _layers, int __idx, int __depth)
+		{
+			Photoshop.LayerSets __layers = _layers;
+			Photoshop.LayerSet __slayer = null;
+
+			if (__currentDepth == __depth)
+			{
+				for (int __j = 1; __j <= __layers.Count; __j++)
+				{
+					__slayer = __layers[__j];
+					if (_layers.Index(__slayer) == __idx)
+					{
+						//MessageBox.Show("ok");
+						__slayer.Visible = true;
+						showArtLayer(__slayer.ArtLayers, __idx, true);
+					}
+					else
+					{
+						//showArtLayer(__slayer.ArtLayers, __idx, false);
+					}
+				}
+			}
+			else
+			{
+				__currentDepth++;
+			}
+			return true;
+		}
+
+		/*
+		 * private void showLayer(int __idx)
+		{
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+
+			__ref.PutIndex(__appRef.CharIDToTypeID("Lyr "), __idx);
+			__desc = __appRef.ExecuteActionGet(__ref);
+			int __id = __desc.GetInteger(__appRef.StringIDToTypeID("layerID"));
+			//MessageBox.Show(__id.ToString());
+			try
+			{
+				__ref.PutIdentifier(__appRef.CharIDToTypeID("Lyr "), __id);
+				__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+				__desc.PutBoolean(__appRef.CharIDToTypeID("MkVs"), false);
+				//__appRef.ExecuteAction(__appRef.CharIDToTypeID("slct"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+			}
+			catch (Exception __e)
+			{
+				MessageBox.Show(__e.Message);
+			}
+
+			try
+			{
+				__ref.PutIdentifier(__appRef.CharIDToTypeID("Lyr "), (int)__id);
+				Photoshop.ActionList __list = new Photoshop.ActionList();
+				__list.PutReference(__ref);
+				__desc.PutList(__appRef.CharIDToTypeID("null"), __list);
+				__appRef.ExecuteAction(__appRef.CharIDToTypeID("Shw "), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+			}
+			catch (Exception __e)
+			{
+				MessageBox.Show(__e.Message);
+			}
+
+			/*__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
+			Photoshop.ActionList __list = new Photoshop.ActionList();
+			__list.PutReference(__ref);
+			__desc.PutList(__appRef.CharIDToTypeID("null"), __list);
+			
+			//__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+			//__desc.PutBoolean(__appRef.CharIDToTypeID("MkVs"), false);
+			__appRef.ExecuteAction(__appRef.CharIDToTypeID("Shw "), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+		}*/
+		
+
+		private void hideAllLayers()
+		{
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+			__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
+			Photoshop.ActionList __list = new Photoshop.ActionList();
+			__list.PutReference(__ref);
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			__desc.PutList(__appRef.CharIDToTypeID("null"), __list);
+			__appRef.ExecuteAction(__appRef.CharIDToTypeID("Hd  "), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
 	}	

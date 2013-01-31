@@ -1,4 +1,5 @@
-﻿
+﻿using System.Windows.Forms;
+
 namespace PSTools
 {
 	class ActionDispatcher
@@ -38,7 +39,7 @@ namespace PSTools
 						break;
 					case "-so":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.EXPORT_SO, __args);
+						__action.execute(Action.Actions.EXPORT_SMARTOBJECTS, __args);
 						break;
 					case "-r":
 						__windowState = Form.SW_HIDE;
@@ -55,6 +56,10 @@ namespace PSTools
 					case "-b64":
 						__windowState = Form.SW_HIDE;
 						__action.execute(Action.Actions.EXPORT_BASE64, __args);
+						break;
+					case "-e":
+						__windowState = Form.SW_HIDE;
+						__action.execute(Action.Actions.EXPORT_ASSETS, __args);
 						break;
 					default:
 						__windowState = Form.SW_SHOWNORMAL;
