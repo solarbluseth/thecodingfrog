@@ -597,7 +597,7 @@ namespace PSTools
 				__jpgSaveOptions.FormatOptions = Photoshop.PsFormatOptionsType.psStandardBaseline; // 1 psStandardBaseline
 				__jpgSaveOptions.Matte = Photoshop.PsMatteType.psNoMatte; // 1 psNoMatte
 			}
-			catch (Exception __e)
+			catch //(Exception __e)
 			{
 				DialogResult __dr = MessageBox.Show("Photoshop is busy with open dialog or something." + "\r\n" + "\r\n" + "Please switch to Photoshop then close open dialogs or leave editing state", "Photoshop not ready", MessageBoxButtons.OK);
 				if (__dr == DialogResult.OK)
@@ -1086,7 +1086,7 @@ namespace PSTools
 					__alayer = (Photoshop.ArtLayer)__layer;
 					__isArtLayer = true;
 				}
-				catch (Exception __e)
+				catch //(Exception __e)
 				{
 					__isArtLayer = false;
 				}
@@ -1119,7 +1119,7 @@ namespace PSTools
 							}
 						}
 					}
-					catch (Exception __e)
+					catch //(Exception __e)
 					{
 						//MessageBox.Show("error>" + __e.Message);
 					}
@@ -1285,7 +1285,6 @@ namespace PSTools
 			Photoshop.Layers __layers;
 			object __layer;
 			Photoshop.ArtLayer __alayer;
-			Photoshop.Channel __channel = null;
 			object __res = null;
 			int __j;
 
