@@ -1111,7 +1111,7 @@ namespace PSTools
 							
 							if (__slayer.Name.IndexOf(".png") > -1)
 							{
-								saveAsset(__docRef, __slayer.Name);
+								saveAsset(__docRef, __slayer.Name, __slayer.Layers);
 							}
 							else
 							{
@@ -1153,7 +1153,13 @@ namespace PSTools
 
 		private void saveAsset(Photoshop.Document __docRef, string __name)
 		{
+			saveAsset(__docRef, __name, null);
+		}
+
+		private void saveAsset(Photoshop.Document __docRef, string __name, object __layers)
+		{
 			Photoshop.Document __duppedDocument;
+			object __bounds = null;
 
 			Photoshop.ExportOptionsSaveForWeb __pngExportOptionsSaveForWeb = new Photoshop.ExportOptionsSaveForWeb();
 			__pngExportOptionsSaveForWeb.Format = Photoshop.PsSaveDocumentType.psPNGSave; // 13;
@@ -1164,6 +1170,9 @@ namespace PSTools
 			{
 				Directory.CreateDirectory(__docRef.Path + "+ Assets\\");
 			}
+
+			if (__layers != null)
+				__bounds = checkBounds(__layers);
 
 			Photoshop.ActionDescriptor __desc = __appRef.ExecuteAction(__appRef.StringIDToTypeID("newPlacedLayer"), null, Photoshop.PsDialogModes.psDisplayNoDialogs);
 			
@@ -1177,14 +1186,29 @@ namespace PSTools
 			hideAllLayers();
 			deselectLayers();
 			//System.Threading.Thread.Sleep(2000);
-			
-			__duppedDocument.Trim(Photoshop.PsTrimType.psTransparentPixels, true, true, true, true);
-			__duppedDocument.Export(__docRef.Path + "+ Assets\\" + __name, 2, __pngExportOptionsSaveForWeb);
+			if (__bounds == null)
+			{
+				__duppedDocument.Trim(Photoshop.PsTrimType.psTransparentPixels, true, true, true, true);
+			}
+			else
+			{
+				__duppedDocument.Crop(__bounds, null, null, null);
+			}
+
+			string __tempName = (__name.IndexOf("@1x") > -1) ? Regex.Replace(__name, "@1x", "") : __name;
+			__duppedDocument.Export(__docRef.Path + "+ Assets\\" + __tempName, 2, __pngExportOptionsSaveForWeb);
+
 			if (__name.IndexOf("@2x") > -1)
 			{
-				__duppedDocument.Flatten();
-				__duppedDocument.ResizeImage(__duppedDocument.Width / 2, __duppedDocument.Width / 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
+				//__duppedDocument.ResizeImage(__duppedDocument.Width / 2, __duppedDocument.Width / 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
+				resizeImage(__duppedDocument.Width / 2);
 				__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name,"@2x",""), 2, __pngExportOptionsSaveForWeb);
+			}
+			else if (__name.IndexOf("@1x") > -1)
+			{
+				//__duppedDocument.ResizeImage(__duppedDocument.Width * 2, __duppedDocument.Width * 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
+				resizeImage(__duppedDocument.Width * 2);
+				__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name, "@1x", "@2x"), 2, __pngExportOptionsSaveForWeb);
 			}
 			__duppedDocument.Close(2);
 		}
@@ -1219,6 +1243,7 @@ namespace PSTools
 			__desc.PutEnumerated(__appRef.StringIDToTypeID("selectionModifier"), __appRef.StringIDToTypeID("selectionModifierType"), __appRef.StringIDToTypeID("removeFromSelection"));
 			__desc.PutBoolean(__appRef.CharIDToTypeID("MkVs"), false);
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("slct"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+
 		}
 
 		private void moveLayer(string __name)
@@ -1242,7 +1267,6 @@ namespace PSTools
 			__desc1.PutBoolean(__appRef.CharIDToTypeID("Adjs"), false);
 			__desc1.PutInteger(__appRef.CharIDToTypeID("Vrsn"), 5);
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("move"), __desc1, Photoshop.PsDialogModes.psDisplayNoDialogs);
-			
 		}
 
 		private void hideAllLayers()
@@ -1254,6 +1278,48 @@ namespace PSTools
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
 			__desc.PutList(__appRef.CharIDToTypeID("null"), __list);
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("Hd  "), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+		}
+
+		private object checkBounds(object _layers)
+		{
+			Photoshop.Layers __layers;
+			object __layer;
+			Photoshop.ArtLayer __alayer;
+			Photoshop.Channel __channel = null;
+			object __res = null;
+			int __j;
+
+			__layers = (Photoshop.Layers)_layers;
+			for (__j = 1; __j <= __layers.Count; __j++)
+			{
+				__layer = __layers[__j];
+				try
+				{
+					__alayer = (Photoshop.ArtLayer)__layer;
+
+					if (__alayer.Name.IndexOf("@bounds", StringComparison.InvariantCultureIgnoreCase) > -1)
+					{
+						__res = __alayer.Bounds;
+						break;
+					}
+				}
+				catch
+				{
+				}
+				
+			}
+			return __res;
+		}
+
+		private void resizeImage(double __width)
+		{
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+
+			__desc.PutUnitDouble(__appRef.CharIDToTypeID("Wdth"), __appRef.CharIDToTypeID("#Pxl"), __width);
+			__desc.PutBoolean(__appRef.StringIDToTypeID("scaleStyles"), true);
+			__desc.PutBoolean(__appRef.CharIDToTypeID("CnsP"), true);
+			__desc.PutEnumerated(__appRef.CharIDToTypeID("Intr"), __appRef.CharIDToTypeID("Intp"), __appRef.CharIDToTypeID("Bcbc"));
+			__appRef.ExecuteAction(__appRef.CharIDToTypeID("ImgS"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
 	}	
