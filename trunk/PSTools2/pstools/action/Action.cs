@@ -820,10 +820,16 @@ namespace PSTools
 			Photoshop.Channel __selChannel;
 			object __selBounds;
 			string __fileNameBody;
+			bool __hasSelection = false;
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+			Photoshop.ArtLayer __layer;
+			int __j;
 
 			try
 			{
 				__selChannel = __doc.Channels["screen"];
+				__hasSelection = true;
 				//MessageBox.Show(__selChannel.Name)
 				__doc.Selection.Load(__selChannel, null, null);
 				__selBounds = __doc.Selection.Bounds;
@@ -831,14 +837,44 @@ namespace PSTools
 			}
 			catch (Exception)
 			{
-				MessageBox.Show("You have to create a selection named \"screen\"", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				Application.Exit();
+				__hasSelection = false;
+				
+			}
+			if (!__hasSelection)
+			{
+				for (__j = 1; __j <= __docRef.Layers.Count; __j++)
+				{
+					try
+					{
+						__layer = (Photoshop.ArtLayer)__docRef.Layers[__j];
+
+						if (__layer.Name == "@screen")
+						{
+							__selBounds = __layer.Bounds;
+							__doc.Crop(__selBounds, null, null, null);
+							__hasSelection = true;
+							break;
+						}
+					}
+					catch
+					{
+						__hasSelection = false;
+					}
+				}
 			}
 
-			__fileNameBody = (__docRef.Name.LastIndexOf(".") > -1) ? __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) : __docRef.Name;
-			__fileNameBody += (__idx <= -1) ? "_screen" : "." + __idx + "_screen";
-			__fileNameBody += ".jpg";
-			__doc.SaveAs(__docRef.Path + __fileNameBody, __options, true, null);
+			if (__hasSelection)
+			{
+				__fileNameBody = (__docRef.Name.LastIndexOf(".") > -1) ? __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) : __docRef.Name;
+				__fileNameBody += (__idx <= -1) ? "_screen" : "." + __idx + "_screen";
+				__fileNameBody += ".jpg";
+				__doc.SaveAs(__docRef.Path + __fileNameBody, __options, true, null);
+			}
+			else
+			{
+				MessageBox.Show("You have to create a selection named \"screen\" or a layer named \"@screen\"", "No selection found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				Application.Exit();
+			}
 
 			if (__idx > 0)
 				__doc.Close(2);
@@ -948,6 +984,8 @@ namespace PSTools
 		{
 			bool __value;
 			Photoshop.Channel __selChannel;
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 
 			try
 			{
@@ -957,6 +995,23 @@ namespace PSTools
 			catch (Exception)
 			{
 				__value = false;
+			}
+
+			if (!__value)
+			{
+				try
+				{
+					__ref.PutName(__appRef.CharIDToTypeID("Lyr "), "@screen");
+					__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+					__desc.PutEnumerated(__appRef.StringIDToTypeID("selectionModifier"), __appRef.StringIDToTypeID("selectionModifierType"), __appRef.StringIDToTypeID("removeFromSelection"));
+					__desc.PutBoolean(__appRef.CharIDToTypeID("MkVs"), true);
+					__appRef.ExecuteAction(__appRef.CharIDToTypeID("slct"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+					__value = true;
+				}
+				catch (Exception)
+				{
+					__value = false;
+				}
 			}
 
 			return __value;
