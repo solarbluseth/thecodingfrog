@@ -40,7 +40,7 @@ namespace PSTools
 
 		private Photoshop.Application __appRef = new Photoshop.Application();
 		private bool __openDoc = true;
-		private bool __stayOpen = false;
+		private bool __keepOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
 
@@ -127,7 +127,7 @@ namespace PSTools
 							__appRef.ActiveDocument = __appRef.Documents[i];
 							__docRef = __appRef.ActiveDocument;
 							__openDoc = false;
-							__stayOpen = true;
+							__keepOpen = true;
 						}
 					}
 				}
@@ -157,7 +157,7 @@ namespace PSTools
 		/// <param name="__docRef">Document refrence</param>
 		private void closeDocument(Photoshop.Document __docRef)
 		{
-			if (!__stayOpen)
+			if (!__keepOpen)
 			{
 				__docRef.Close(2);
 			}
@@ -1257,15 +1257,29 @@ namespace PSTools
 			{
 				//__duppedDocument.ResizeImage(__duppedDocument.Width / 2, __duppedDocument.Width / 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
 				resizeImage(__duppedDocument.Width / 2);
-				__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name,"@2x",""), 2, __pngExportOptionsSaveForWeb);
+				try
+				{
+					__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name, "@2x", ""), 2, __pngExportOptionsSaveForWeb);
+				}
+				catch
+				{
+					MessageBox.Show("Please allow to save all slices in Save For Web options");
+				}
 			}
 			else if (__name.IndexOf("@1x") > -1)
 			{
 				//__duppedDocument.ResizeImage(__duppedDocument.Width * 2, __duppedDocument.Width * 2, null, Photoshop.PsResampleMethod.psBicubicSmoother);
 				resizeImage(__duppedDocument.Width * 2);
-				__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name, "@1x", "@2x"), 2, __pngExportOptionsSaveForWeb);
+				try
+				{
+					__duppedDocument.Export(__docRef.Path + "+ Assets\\" + Regex.Replace(__name, "@1x", "@2x"), 2, __pngExportOptionsSaveForWeb);
+				}
+				catch
+				{
+					MessageBox.Show("Please allow to save all slices in Save For Web options");
+				}
 			}
-			__duppedDocument.Close(2);
+			//__duppedDocument.Close(2);
 		}
 
 		private void deselectLayers()
