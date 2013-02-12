@@ -1251,7 +1251,10 @@ namespace PSTools
 			}
 
 			string __tempName = (__name.IndexOf("@1x") > -1) ? Regex.Replace(__name, "@1x", "") : __name;
+			__tempName = Regex.Replace(__tempName, "(\\+)+\\s", "");
 			__duppedDocument.Export(__docRef.Path + "+ Assets\\" + __tempName, 2, __pngExportOptionsSaveForWeb);
+			
+			__name = Regex.Replace(__name, "(\\+)+\\s", "");
 
 			if (__name.IndexOf("@2x") > -1)
 			{
@@ -1279,7 +1282,7 @@ namespace PSTools
 					MessageBox.Show("Please allow to save all slices in Save For Web options");
 				}
 			}
-			//__duppedDocument.Close(2);
+			__duppedDocument.Close(2);
 		}
 
 		private void deselectLayers()
