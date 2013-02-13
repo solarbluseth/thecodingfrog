@@ -1129,6 +1129,12 @@ namespace PSTools
 			File.WriteAllText(__path + __fn + ".html", __dataUrl);
 		}
 
+		/// <summary>
+		/// Exports the assets.
+		/// </summary>
+		/// <param name="__docRef">Document reference</param>
+		/// <param name="_layers">Layers</param>
+		/// <returns></returns>
 		private bool exportAssets(Photoshop.Document __docRef, object _layers)
 		{
 			Photoshop.Layers __layers;
@@ -1192,34 +1198,22 @@ namespace PSTools
 			return true;
 		}
 
-		/*private void createSO()
-		{
-			Photoshop.ActionDescriptor __desc = __appRef.ExecuteAction(__appRef.StringIDToTypeID("newPlacedLayer"), null, Photoshop.PsDialogModes.psDisplayNoDialogs);
-			
-			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
-			Photoshop.ActionDescriptor __desc2 = new Photoshop.ActionDescriptor();
-			__ref.PutEnumerated(__appRef.CharIDToTypeID("Lyr "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt"));
-			__desc2.PutReference(__appRef.CharIDToTypeID("null"), __ref);
-			__appRef.ExecuteAction(__appRef.StringIDToTypeID("rasterizeLayer"), __desc2, Photoshop.PsDialogModes.psDisplayNoDialogs);
-
-			
-			Photoshop.ActionDescriptor __desc3 = new Photoshop.ActionDescriptor();
-			Photoshop.ActionReference __ref3 = new Photoshop.ActionReference();
-			__ref3.PutProperty(__appRef.CharIDToTypeID("Chnl"), __appRef.CharIDToTypeID("fsel"));
-			__desc3.PutReference(__appRef.CharIDToTypeID("null"), __ref3);
-			__desc3.PutEnumerated(__appRef.CharIDToTypeID("T   "), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Al  "));
-			__appRef.ExecuteAction(__appRef.CharIDToTypeID("setd"), __desc3, Photoshop.PsDialogModes.psDisplayNoDialogs);
-			
-			__appRef.ExecuteAction(__appRef.CharIDToTypeID("copy"), null, Photoshop.PsDialogModes.psDisplayNoDialogs);
-				
-			//return true;
-		}*/
-
+		/// <summary>
+		/// Saves the asset.
+		/// </summary>
+		/// <param name="__docRef">Document reference</param>
+		/// <param name="__name">Name</param>
 		private void saveAsset(Photoshop.Document __docRef, string __name)
 		{
 			saveAsset(__docRef, __name, null);
 		}
 
+		/// <summary>
+		/// Saves the asset.
+		/// </summary>
+		/// <param name="__docRef">Document reference</param>
+		/// <param name="__name">Name</param>
+		/// <param name="__layers">Layers</param>
 		private void saveAsset(Photoshop.Document __docRef, string __name, object __layers)
 		{
 			Photoshop.Document __duppedDocument;
@@ -1294,6 +1288,9 @@ namespace PSTools
 			__duppedDocument.Close(2);
 		}
 
+		/// <summary>
+		/// Deselects the layers.
+		/// </summary>
 		private void deselectLayers()
 		{
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
@@ -1304,6 +1301,9 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.StringIDToTypeID("selectNoLayers"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		/// <summary>
+		/// Selects all layers.
+		/// </summary>
 		private void selectAllLayers()
 		{
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
@@ -1314,6 +1314,10 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.StringIDToTypeID("selectAllLayers"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		/// <summary>
+		/// Deselects the layer.
+		/// </summary>
+		/// <param name="__name">Name</param>
 		private void deselectLayer(string __name)
 		{
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
@@ -1327,6 +1331,10 @@ namespace PSTools
 
 		}
 
+		/// <summary>
+		/// Moves the layer.
+		/// </summary>
+		/// <param name="__name">Name</param>
 		private void moveLayer(string __name)
 		{
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
@@ -1350,6 +1358,9 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("move"), __desc1, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		/// <summary>
+		/// Hides all layers.
+		/// </summary>
 		private void hideAllLayers()
 		{
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
@@ -1361,6 +1372,11 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("Hd  "), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		/// <summary>
+		/// Checks the bounds.
+		/// </summary>
+		/// <param name="_layers">Layers</param>
+		/// <returns></returns>
 		private object checkBounds(object _layers)
 		{
 			Photoshop.Layers __layers;
@@ -1391,6 +1407,10 @@ namespace PSTools
 			return __res;
 		}
 
+		/// <summary>
+		/// Resizes the image.
+		/// </summary>
+		/// <param name="__width">Width</param>
 		private void resizeImage(double __width)
 		{
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
@@ -1402,6 +1422,10 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("ImgS"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		/// <summary>
+		/// Copies to dropbox.
+		/// </summary>
+		/// <param name="__args">Arguments</param>
 		private void copyToDropbox(string[] __args)
 		{
 			IniFile __ini;
@@ -1411,10 +1435,10 @@ namespace PSTools
 			string __psdfile = null;
 			string __psdfileext = null;
 
-			if (Directory.Exists(__args[2]))
+			if (Directory.Exists(__args[1 +__form.idx]))
 			{
 				__isdir = true;
-				__path = __args[2];
+				__path = __args[1 +__form.idx];
 			}
 			else
 			{
@@ -1424,9 +1448,6 @@ namespace PSTools
 				__psdfileext = new FileInfo(__args[2]).Extension;
 			}
 			
-
-			//MessageBox.Show(__path);
-
 			if (File.Exists(__path + "\\.dbx"))
 			{
 				__ini = new IniFile(__path + "\\.dbx");
@@ -1441,14 +1462,13 @@ namespace PSTools
 						if (__isdir)
 						{
 							string[] __files = Directory.GetFiles(__path, "*.jpg");
-							//MessageBox.Show(__files.Length.ToString());
+							
 							foreach (string __file in __files)
 							{
-								//MessageBox.Show(__file);
 								FileInfo __fi = new FileInfo(__file);
+								
 								try
 								{
-									//MessageBox.Show(__conf + "\\" + __fi.Name);
 									__fi.CopyTo(__conf + "\\" + __fi.Name, true);
 								}
 								catch(Exception __e)
@@ -1459,18 +1479,14 @@ namespace PSTools
 						}
 						else
 						{
-							//MessageBox.Show(__psdfile);
 							string __tempname = __psdfile.Substring(0, __psdfile.Length - __psdfileext.Length);
-							//MessageBox.Show(__tempname);
 							string[] __files = Directory.GetFiles(__path, __tempname + "*.jpg");
-							//MessageBox.Show(__files.Length.ToString());
+							
 							foreach (string __file in __files)
 							{
-								//MessageBox.Show(__file);
 								FileInfo __fi = new FileInfo(__file);
 								try
 								{
-									//MessageBox.Show(__conf + "\\" + __fi.Name);
 									__fi.CopyTo(__conf + "\\" + __fi.Name, true);
 								}
 								catch (Exception __e)
@@ -1492,11 +1508,11 @@ namespace PSTools
 			}
 			else
 			{
-				//MessageBox.Show("Please config .dbx file");
 				goto config;
 			}
-			//MessageBox.Show(System.Environment.GetEnvironmentVariable("USERPROFILE"));
+			
 			goto stop;
+
 		config:
 			string __prompt = Prompt.ShowDialog("Path to your Dropbox directory", "Configuration");
 			if (__prompt != "")
