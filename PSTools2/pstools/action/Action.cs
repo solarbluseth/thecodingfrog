@@ -1406,11 +1406,31 @@ namespace PSTools
 		{
 			IniFile __ini;
 			FileInfo __inifi;
+			bool __isdir;
+			string __path;
+			string __psdfile = null;
+			string __psdfileext = null;
 
-			if (File.Exists(__args[2] + "\\.dbx"))
+			if (Directory.Exists(__args[2]))
 			{
-				__ini = new IniFile(__args[2] + "\\.dbx");
-				__inifi = new FileInfo(__args[2] + "\\.dbx");
+				__isdir = true;
+				__path = __args[2];
+			}
+			else
+			{
+				__isdir = false;
+				__path = new FileInfo(__args[2]).DirectoryName;
+				__psdfile = new FileInfo(__args[2]).Name;
+				__psdfileext = new FileInfo(__args[2]).Extension;
+			}
+			
+
+			//MessageBox.Show(__path);
+
+			if (File.Exists(__path + "\\.dbx"))
+			{
+				__ini = new IniFile(__path + "\\.dbx");
+				__inifi = new FileInfo(__path + "\\.dbx");
 				__inifi.Attributes = FileAttributes.Hidden;
 
 				string __conf = __ini.IniReadValue("Dropbox", System.Environment.UserName);
@@ -1418,20 +1438,45 @@ namespace PSTools
 				{
 					if (Directory.Exists(__conf))
 					{
-						string[] __files = Directory.GetFiles(__args[2], "*.jpg");
-						//MessageBox.Show(__files.Length.ToString());
-						foreach (string __file in __files)
+						if (__isdir)
 						{
-							//MessageBox.Show(__file);
-							FileInfo __fi = new FileInfo(__file);
-							try
+							string[] __files = Directory.GetFiles(__path, "*.jpg");
+							//MessageBox.Show(__files.Length.ToString());
+							foreach (string __file in __files)
 							{
-								//MessageBox.Show(__conf + "\\" + __fi.Name);
-								__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+								//MessageBox.Show(__file);
+								FileInfo __fi = new FileInfo(__file);
+								try
+								{
+									//MessageBox.Show(__conf + "\\" + __fi.Name);
+									__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+								}
+								catch(Exception __e)
+								{
+									MessageBox.Show(__e.Message);
+								}
 							}
-							catch(Exception __e)
+						}
+						else
+						{
+							//MessageBox.Show(__psdfile);
+							string __tempname = __psdfile.Substring(0, __psdfile.Length - __psdfileext.Length);
+							//MessageBox.Show(__tempname);
+							string[] __files = Directory.GetFiles(__path, __tempname + "*.jpg");
+							//MessageBox.Show(__files.Length.ToString());
+							foreach (string __file in __files)
 							{
-								MessageBox.Show(__e.Message);
+								//MessageBox.Show(__file);
+								FileInfo __fi = new FileInfo(__file);
+								try
+								{
+									//MessageBox.Show(__conf + "\\" + __fi.Name);
+									__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+								}
+								catch (Exception __e)
+								{
+									MessageBox.Show(__e.Message);
+								}
 							}
 						}
 					}
@@ -1456,9 +1501,9 @@ namespace PSTools
 			string __prompt = Prompt.ShowDialog("Path to your Dropbox directory", "Configuration");
 			if (__prompt != "")
 			{
-				__ini = new IniFile(__args[2] + "\\.dbx");
+				__ini = new IniFile(__path + "\\.dbx");
 				__ini.IniWriteValue("Dropbox", System.Environment.UserName, __prompt);
-				__inifi = new FileInfo(__args[2] + "\\.dbx");
+				__inifi = new FileInfo(__path + "\\.dbx");
 				__inifi.Attributes = FileAttributes.Hidden;
 			}
 		stop:
