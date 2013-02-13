@@ -26,6 +26,12 @@ namespace PSTools
 
 		public void installCommons()
 		{
+			__newKey = Registry.ClassesRoot.CreateSubKey("Directory\\\\shell\\\\PSTools");
+			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
+			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.Dropbox;PSTools.Config", RegistryValueKind.String);
+			__newKey.Close();
+			
 			// JPEG BASE64
 			__newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.jpg\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
@@ -72,6 +78,15 @@ namespace PSTools
 
 			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Base64\\\\Command");
 			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"-b64\" \"%1\" \"jpg\" \"index\" \"12\"", RegistryValueKind.String);
+			__newKey.Close();
+
+			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Dropbox");
+			__newKey.SetValue("MUIVerb", "Copy to DropBox", RegistryValueKind.String);
+			__newKey.SetValue("Icon", "shell32.dll,43", RegistryValueKind.String);
+			__newKey.Close();
+
+			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Dropbox\\\\Command");
+			__newKey.SetValue("", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\" \"-dbx\" \"%1\"", RegistryValueKind.String);
 			__newKey.Close();
 		}
 
@@ -261,6 +276,12 @@ namespace PSTools
 
 		public void uninstallCommons()
 		{
+			try
+			{
+				Registry.ClassesRoot.DeleteSubKeyTree("Directory\\\\shell\\\\PSTools");
+			}
+			catch { }
+			
 			// JPEG BASE64
 			try
 			{

@@ -35,31 +35,35 @@ namespace PSTools
 						break;
 					case "-s":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.SAVE, __args);
+						__action.execute(Action.Actions.SAVE, __args, true);
 						break;
 					case "-so":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.EXPORT_SMARTOBJECTS, __args);
+						__action.execute(Action.Actions.EXPORT_SMARTOBJECTS, __args, true);
 						break;
 					case "-r":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.IMAGE_RIGHTS, __args);
+						__action.execute(Action.Actions.IMAGE_RIGHTS, __args, true);
 						break;
 					case "-w":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.CLEAN, __args);
+						__action.execute(Action.Actions.CLEAN, __args, true);
 						break;
 					case "-sc":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.SAVE_SELECTION, __args);
+						__action.execute(Action.Actions.SAVE_SELECTION, __args, true);
 						break;
 					case "-b64":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.EXPORT_BASE64, __args);
+						__action.execute(Action.Actions.EXPORT_BASE64, __args, true);
+						break;
+					case "-dbx":
+						__windowState = Form.SW_HIDE;
+						__action.execute(Action.Actions.COPY_TO_DROPBOX, __args);
 						break;
 					case "-e":
 						__windowState = Form.SW_HIDE;
-						__action.execute(Action.Actions.EXPORT_ASSETS, __args);
+						__action.execute(Action.Actions.EXPORT_ASSETS, __args, true);
 						break;
 					default:
 						__windowState = Form.SW_SHOWNORMAL;
