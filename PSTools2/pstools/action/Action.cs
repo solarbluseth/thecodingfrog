@@ -16,7 +16,8 @@ namespace PSTools
 			EXPORT_SMARTOBJECTS = 4,
 			SAVE_SELECTION = 5,
 			EXPORT_BASE64 = 6,
-			EXPORT_ASSETS = 7
+			EXPORT_ASSETS = 7,
+			COPY_TO_DROPBOX = 8
 		}
 
 		public enum Colors
@@ -60,7 +61,12 @@ namespace PSTools
 		/// <param name="__args">Arguments</param>
 		public void execute(Actions __action, string[] __args)
 		{
-			execute(__action, "", __args);
+			execute(__action, "", __args, false);
+		}
+
+		public void execute(Actions __action, string[] __args, bool __isPhotoshopAction)
+		{
+			execute(__action, "", __args, __isPhotoshopAction);
 		}
 
 		/// <summary>
@@ -69,13 +75,13 @@ namespace PSTools
 		/// <param name="__action">Action</param>
 		/// <param name="__subcommand">Subcommand</param>
 		/// <param name="__args">Arguments</param>
-		public void execute(Actions __action, string __subcommand, string[] __args)
+		public void execute(Actions __action, string __subcommand, string[] __args, bool __isPhotoshopAction)
 		{
-			Photoshop.Document __docRef;
+			Photoshop.Document __docRef = null;
 
 			__cmdargs = __args;
 			//MessageBox.Show(__args[1].ToString());
-			__docRef = this.openDocument();
+			if (__isPhotoshopAction) __docRef = this.openDocument();
 
 			switch (__action)
 			{
@@ -100,9 +106,12 @@ namespace PSTools
 				case Actions.EXPORT_ASSETS:
 					exportAssets(__docRef, __docRef.Layers);
 					break;
+				case Actions.COPY_TO_DROPBOX:
+					copyToDropbox(__args);
+					break;
 			}
 
-			this.closeDocument(__docRef);
+			if (__isPhotoshopAction) this.closeDocument(__docRef);
 
 			// End program
 			Application.Exit();
@@ -288,7 +297,7 @@ namespace PSTools
 			Regex __re = new Regex("(\\+)+\\s", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 			__value = __re.Replace(__name, "");
 
-			__re = new Regex("\\s(copy)\\s(\\d)*", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+			__re = new Regex("\\s(copy|copie)\\s(\\d)*", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 			__value = __re.Replace(__value, "");
 
 			__re = new Regex("(vector)\\s*|^v:", RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -1393,5 +1402,67 @@ namespace PSTools
 			__appRef.ExecuteAction(__appRef.CharIDToTypeID("ImgS"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
 		}
 
+		private void copyToDropbox(string[] __args)
+		{
+			IniFile __ini;
+			FileInfo __inifi;
+
+			if (File.Exists(__args[2] + "\\.dbx"))
+			{
+				__ini = new IniFile(__args[2] + "\\.dbx");
+				__inifi = new FileInfo(__args[2] + "\\.dbx");
+				__inifi.Attributes = FileAttributes.Hidden;
+
+				string __conf = __ini.IniReadValue("Dropbox", System.Environment.UserName);
+				if (__conf != "")
+				{
+					if (Directory.Exists(__conf))
+					{
+						string[] __files = Directory.GetFiles(__args[2], "*.jpg");
+						//MessageBox.Show(__files.Length.ToString());
+						foreach (string __file in __files)
+						{
+							//MessageBox.Show(__file);
+							FileInfo __fi = new FileInfo(__file);
+							try
+							{
+								//MessageBox.Show(__conf + "\\" + __fi.Name);
+								__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+							}
+							catch(Exception __e)
+							{
+								MessageBox.Show(__e.Message);
+							}
+						}
+					}
+					else
+					{
+						goto config;
+					}
+				}
+				else
+				{
+					goto config;
+				}
+			}
+			else
+			{
+				//MessageBox.Show("Please config .dbx file");
+				goto config;
+			}
+			//MessageBox.Show(System.Environment.GetEnvironmentVariable("USERPROFILE"));
+			goto stop;
+		config:
+			string __prompt = Prompt.ShowDialog("Path to your Dropbox directory", "Configuration");
+			if (__prompt != "")
+			{
+				__ini = new IniFile(__args[2] + "\\.dbx");
+				__ini.IniWriteValue("Dropbox", System.Environment.UserName, __prompt);
+				__inifi = new FileInfo(__args[2] + "\\.dbx");
+				__inifi.Attributes = FileAttributes.Hidden;
+			}
+		stop:
+			{ }
+		}
 	}	
 }
