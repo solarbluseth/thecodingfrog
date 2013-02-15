@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace PSTools
 {
@@ -24,9 +25,9 @@ namespace PSTools
 		/// <param name="__form">Form</param>
 		public void Load(Form __form)
 		{
+			__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
 			try
 			{
-				__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
 				if (__key.GetValue("AutoArchive").ToString() == "1")
 				{
 					__form.AutoArchive.Checked = true;
@@ -35,18 +36,30 @@ namespace PSTools
 				{
 					__form.AutoArchive.Checked = false;
 				}
+			}
+			catch
+			{
+				__form.AutoArchive.Checked = true;
+			}
 
-				//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
+			try
+			{
 				if (__key.GetValue("ArchiveDirectory").ToString() != "")
 				{
 					__form.ArchiveDirectory.Text = __key.GetValue("ArchiveDirectory").ToString();
 				}
 				else
 				{
-					__form.ArchiveDirectory.Text = "Archives";
+					__form.ArchiveDirectory.Text = "";
 				}
+			}
+			catch
+			{
+				__form.ArchiveDirectory.Text = "ZZ_Archives";
+			}
 
-				//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
+			try
+			{
 				if (__key.GetValue("ExcludeDirectories").ToString() != "")
 				{
 					__form.ExcludeDirectories.Text = __key.GetValue("ExcludeDirectories").ToString();
@@ -55,9 +68,18 @@ namespace PSTools
 				{
 					__form.ExcludeDirectories.Text = "";
 				}
+			}
+			catch
+			{
+				__form.ExcludeDirectories.Text = "+ Elements";
+			}
 
-				//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
-				//MessageBox.Show(">>> " & key.GetValue("NamedExportQuality"))
+			
+
+			//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
+			//MessageBox.Show(">>> " & key.GetValue("NamedExportQuality"))
+			try
+			{
 				if (__key.GetValue("NamedExportQuality").ToString() != "")
 				{
 					__form.NamedExportQuality.Value = Convert.ToDecimal(__key.GetValue("NamedExportQuality"));
@@ -66,9 +88,16 @@ namespace PSTools
 				{
 					__form.NamedExportQuality.Value = 6;
 				}
+			}
+			catch
+			{
+				__form.NamedExportQuality.Value = 6;
+			}
 
-				//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
-				//MessageBox.Show(">>> " & key.GetValue("ExportLayerComps"))
+			//__key = Registry.CurrentUser.OpenSubKey("Software\\\\PSTools\\\\");
+			//MessageBox.Show(">>> " & key.GetValue("ExportLayerComps"))
+			try
+			{
 				if (__key.GetValue("ExportLayerComps").ToString() == "1")
 				{
 					__form.ExportLayerComps.Checked = true;
@@ -79,7 +108,15 @@ namespace PSTools
 					__form.ExportLayerComps.Checked = false;
 					__doExportLayerComps = false;
 				}
+			}
+			catch
+			{
+				__form.ExportLayerComps.Checked = true;
+				__doExportLayerComps = true;
+			}
 
+			try
+			{
 				if (__version.isInstalled())
 				{
 					__form.Install.Text = "Install";
@@ -88,12 +125,13 @@ namespace PSTools
 				{
 					__form.Install.Text = "Uninstall";
 				}
-
-				__settingsLoaded = true;
 			}
-			catch (Exception)
+			catch
 			{
+				__form.Install.Text = "Install";
 			}
+			
+			__settingsLoaded = true;
 		}
 
 		/// <summary>
