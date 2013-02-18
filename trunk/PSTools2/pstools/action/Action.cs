@@ -1521,6 +1521,7 @@ namespace PSTools
 				__ini.IniWriteValue("Dropbox", System.Environment.UserName, __prompt);
 				__inifi = new FileInfo(__path + "\\.dbx");
 				__inifi.Attributes = FileAttributes.Hidden;
+				copyToDropbox(__args);
 			}
 		stop:
 			{ }
