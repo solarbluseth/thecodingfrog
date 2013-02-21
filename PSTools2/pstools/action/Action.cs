@@ -1461,7 +1461,21 @@ namespace PSTools
 					{
 						if (__isdir)
 						{
-							string[] __files = Directory.GetFiles(__path, "*.jpg");
+							string[] __files;
+							__files = Directory.GetFiles(__conf, "*.jpg");
+							foreach (string __file in __files)
+							{
+								try
+								{
+									File.Delete(__file);
+								}
+								catch//(Exception __e)
+								{
+									//MessageBox.Show(__e.Message);
+								}
+							}
+
+							__files = Directory.GetFiles(__path, "*.jpg");
 							
 							foreach (string __file in __files)
 							{
