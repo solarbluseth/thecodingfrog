@@ -1432,8 +1432,9 @@ namespace PSTools
 			FileInfo __inifi;
 			bool __isdir;
 			string __path;
-			string __psdfile = null;
-			string __psdfileext = null;
+			FileInfo __selectedfile = null;
+			string __selectedfilename = null;
+			string __selectedfileext = null;
 
 			if (Directory.Exists(__args[1 +__form.idx]))
 			{
@@ -1444,8 +1445,9 @@ namespace PSTools
 			{
 				__isdir = false;
 				__path = new FileInfo(__args[2]).DirectoryName;
-				__psdfile = new FileInfo(__args[2]).Name;
-				__psdfileext = new FileInfo(__args[2]).Extension;
+				__selectedfile = new FileInfo(__args[2]);
+				__selectedfilename = __selectedfile.Name;
+				__selectedfileext = __selectedfile.Extension;
 			}
 			
 			if (File.Exists(__path + "\\.dbx"))
@@ -1459,7 +1461,7 @@ namespace PSTools
 				{
 					if (Directory.Exists(__conf))
 					{
-						if (__isdir)
+						if (__isdir) // IF DIRECTORY
 						{
 							string[] __files;
 							__files = Directory.GetFiles(__conf, "*.jpg");
@@ -1491,22 +1493,30 @@ namespace PSTools
 								}
 							}
 						}
-						else
+						else // IF FILE
 						{
-							string __tempname = __psdfile.Substring(0, __psdfile.Length - __psdfileext.Length);
-							string[] __files = Directory.GetFiles(__path, __tempname + "*.jpg");
-							
-							foreach (string __file in __files)
+							//MessageBox.Show(__selectedfileext);
+							if (__selectedfileext.ToLower() == ".psd") //IF PSD FILE
 							{
-								FileInfo __fi = new FileInfo(__file);
-								try
+								string __tempname = __selectedfilename.Substring(0, __selectedfilename.Length - __selectedfileext.Length);
+								string[] __files = Directory.GetFiles(__path, __tempname + "*.jpg");
+
+								foreach (string __file in __files)
 								{
-									__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+									FileInfo __fi = new FileInfo(__file);
+									try
+									{
+										__fi.CopyTo(__conf + "\\" + __fi.Name, true);
+									}
+									catch (Exception __e)
+									{
+										MessageBox.Show(__e.Message);
+									}
 								}
-								catch (Exception __e)
-								{
-									MessageBox.Show(__e.Message);
-								}
+							}
+							else if (__selectedfileext.ToLower() == ".jpg" || __selectedfileext.ToLower() == ".png") //IF JPEG/PNG FILE
+							{
+								__selectedfile.CopyTo(__conf + "\\" + __selectedfilename, true);
 							}
 						}
 					}
