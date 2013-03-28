@@ -86,6 +86,8 @@ namespace PSTools
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
+			//MessageBox.Show("debug");
+
 			string __strTitle;
 			int __rtnLen;
 			int __hwnd;
