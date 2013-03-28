@@ -42,13 +42,13 @@ namespace PSTools
 			__newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.jpg\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.Base64;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.Dropbox;PSTools.Base64;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			__newKey = Registry.ClassesRoot.CreateSubKey("jpegfile\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.Base64;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.Dropbox;PSTools.Base64;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			// GIF BASE64
@@ -68,13 +68,13 @@ namespace PSTools
 			__newKey = Registry.ClassesRoot.CreateSubKey("ACDSee Pro 4.png\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.Base64;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.Dropbox;PSTools.Base64;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			__newKey = Registry.ClassesRoot.CreateSubKey("pngfile\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
-			__newKey.SetValue("SubCommands", "PSTools.Base64;PSTools.Config", RegistryValueKind.String);
+			__newKey.SetValue("SubCommands", "PSTools.Dropbox;PSTools.Base64;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
 			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Base64");
