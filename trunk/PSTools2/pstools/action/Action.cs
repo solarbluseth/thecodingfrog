@@ -696,7 +696,11 @@ namespace PSTools
 
 					//outFileName = Args.Item(1)
 					if (__hasSelection)
-						saveScreenSelection(__docRef, __docRef, __jpgSaveOptions); 
+					{
+						__duppedDocument = __docRef.Duplicate(null, null);
+						saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
+						__duppedDocument.Close(2);
+					}
 					
 					if (!__selectionOnly) // IF screen selection then save crop
 					{
