@@ -855,12 +855,53 @@ namespace PSTools
 			}
 			if (!__hasSelection)
 			{
+				/*try
+				{
+					
+					__ref.PutName(__appRef.CharIDToTypeID("Lyr "), "@screen");
+					__desc.PutReference(__appRef.CharIDToTypeID("null"), __ref);
+					__desc.PutEnumerated(__appRef.StringIDToTypeID("selectionModifier"), __appRef.StringIDToTypeID("selectionModifierType"), __appRef.StringIDToTypeID("removeFromSelection"));
+					__desc.PutBoolean(__appRef.CharIDToTypeID("MkVs"), true);
+					//__appRef.ExecuteAction(__appRef.CharIDToTypeID("slct"), __desc, Photoshop.PsDialogModes.psDisplayNoDialogs);
+					__desc = __appRef.ExecuteActionGet(__ref);
+
+					//__layer = (Photoshop.ArtLayer)__docRef.ActiveLayer;
+					//__selBounds = __layer.Bounds;
+					//__doc.Crop(__selBounds, null, null, null);
+					//__hasSelection = true;
+
+					string __res = __desc.GetString(__appRef.CharIDToTypeID("Nm  "));
+
+					if (__res == "@screen")
+					{
+						//int __index = __desc.GetInteger(__appRef.CharIDToTypeID("ItmI"));
+						MessageBox.Show(__desc.GetReference(__appRef.CharIDToTypeID("ItmI")).ToString());
+
+						//__docRef.ActiveLayer = __docRef.ArtLayers[__index];
+						//MessageBox.Show(__index.ToString());
+						//__layer = (Photoshop.ArtLayer)__doc.ArtLayers[__index];
+						//__selBounds = __layer.Bounds;
+						//__doc.Crop(__selBounds, null, null, null); 
+						__hasSelection = true;
+					}
+					else
+					{
+						__hasSelection = false;
+					}
+				}
+				catch (Exception __e)
+				{
+					MessageBox.Show(__e.Message);
+					__hasSelection = false;
+				}
+				*/
+
 				for (__j = 1; __j <= __docRef.Layers.Count; __j++)
 				{
 					try
 					{
 						__layer = (Photoshop.ArtLayer)__docRef.Layers[__j];
-
+						//MessageBox.Show(__layer.Name);
 						if (__layer.Name == "@screen")
 						{
 							__selBounds = __layer.Bounds;
