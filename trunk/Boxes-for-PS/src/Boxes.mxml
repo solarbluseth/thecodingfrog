@@ -32,10 +32,10 @@
 		<mx:CheckBox x="151" y="71" id="boxRelative" selected="true"/>
 		
 		<mx:Label text="Border radius" x="14" y="93.5" color="#000000"/>
-		<mx:NumericStepper x="34" y="113" width="41.5" id="boxLTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="102" y="114" width="41.5" id="boxRTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="34" y="143" width="41.5" id="boxLBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="102" y="143" width="41.5" id="boxRBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="34" y="113" width="41.5" id="boxLTCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="102" y="114" width="41.5" id="boxRTCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="34" y="143" width="41.5" id="boxLBCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="102" y="143" width="41.5" id="boxRBCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
 		<mx:CheckBox x="151" y="129" id="boxLockCorners"/>
 		
 		<mx:Label text="Color" x="14" y="168" color="#000000"/>
@@ -65,10 +65,10 @@
 		<mx:CheckBox x="151" y="71" id="confBoxRelative" selected="true"/>
 		
 		<mx:Label text="Border radius" x="14" y="93.5" color="#000000"/>
-		<mx:NumericStepper x="34" y="113" width="41.5" id="confBoxLTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="102" y="114" width="41.5" id="confBoxRTCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="34" y="143" width="41.5" id="confBoxLBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
-		<mx:NumericStepper x="102" y="143" width="41.5" id="confBoxRBCorner" minimum="0" maximum="100" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="34" y="113" width="41.5" id="confBoxLTCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="102" y="114" width="41.5" id="confBoxRTCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="34" y="143" width="41.5" id="confBoxLBCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
+		<mx:NumericStepper x="102" y="143" width="41.5" id="confBoxRBCorner" minimum="0" maximum="999" stepSize="0.5" value="0"/>
 		<mx:CheckBox x="151" y="129" id="confBoxLockCorners"/>
 		
 		<mx:Label text="Color" x="14" y="168" color="#000000"/>
