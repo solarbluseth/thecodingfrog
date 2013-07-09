@@ -697,7 +697,7 @@ namespace PSTools
 			//MessageBox.Show(__args(3))
 			
 			//MessageBox.Show(__imageType)
-
+			//listFonts();
 
 			__compsCount = __docRef.LayerComps.Count;
 
@@ -1627,6 +1627,33 @@ namespace PSTools
 			}
 		stop:
 			{ }
+		}
+
+		private void listFonts()
+		{
+			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
+			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+
+			__ref.PutEnumerated(__appRef.CharIDToTypeID("Dcmn"), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt") );
+			int __count = __appRef.ExecuteActionGet(__ref).GetInteger(__appRef.CharIDToTypeID("NmbL")) + 1;
+			//MessageBox.Show(__count.ToString());
+			for(int i = 1; i < __count; i++)
+			{
+				__ref = new Photoshop.ActionReference();
+				__ref.PutIndex( __appRef.CharIDToTypeID("Lyr "), i);
+				__desc = __appRef.ExecuteActionGet(__ref);
+				string __layerName = __desc.GetString(__appRef.CharIDToTypeID("Nm  "));
+				//string __layerType = __appRef.TypeIDToStringID(__desc.GetEnumerationValue( __appRef.StringIDToTypeID("layerSection")));
+
+				MessageBox.Show(__layerName + ":" + __layerType);
+
+				/*var Id = desc.getInteger(stringIDToTypeID( 'layerID' ));
+				if(layerName.match(/^<\/Layer group/) ) continue;
+				var layerType = typeIDToStringID(desc.getEnumerationValue( stringIDToTypeID( 'layerSection' )));
+				var isLayerSet =( layerType == 'layerSectionContent') ? false:true;
+				var vis = desc.getBoolean(charIDToTypeID( "Vsbl" ));
+				if(!isLayerSet && vis) Names.push(Id);*/
+		   }
 		}
 	}	
 }
