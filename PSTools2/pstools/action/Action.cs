@@ -36,7 +36,8 @@ namespace PSTools
 		{
 			JPG,
 			PNG,
-			GIF
+			GIF,
+			PDF
 		}
 
 		private Photoshop.Application __appRef = new Photoshop.Application();
@@ -629,6 +630,10 @@ namespace PSTools
 				case "gif":
 					__imageFormat = Format.GIF;
 					break;
+				case "pdf":
+					__imageFormat = Format.PDF;
+					__exportLayerComps = true;
+					break;
 				case "sc":
 					__jpgSaveOptions.Quality = 12;
 					__imageFormat = Format.JPG;
@@ -675,6 +680,20 @@ namespace PSTools
 			__pngExportOptionsSaveForWeb.PNG8 = false;
 			__pngExportOptionsSaveForWeb.Transparency = true;
 
+			Photoshop.PDFSaveOptions __pdfSaveOptions = new Photoshop.PDFSaveOptions();
+			__pdfSaveOptions.AlphaChannels = false;
+			__pdfSaveOptions.Annotations = false;
+			__pdfSaveOptions.DowngradeColorProfile = true;
+			__pdfSaveOptions.EmbedColorProfile = true;
+			__pdfSaveOptions.Encoding = Photoshop.PsPDFEncodingType.psPDFJPEG;
+			__pdfSaveOptions.Interpolation = false;
+			__pdfSaveOptions.JPEGQuality = 9;
+			__pdfSaveOptions.Layers = false;
+			__pdfSaveOptions.SpotColors = false;
+			__pdfSaveOptions.Transparency = false;
+			__pdfSaveOptions.UseOutlines = false;
+			__pdfSaveOptions.VectorData = false;
+			
 			//MessageBox.Show(__args(3))
 			
 			//MessageBox.Show(__imageType)
@@ -713,6 +732,11 @@ namespace PSTools
 						{
 							__fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".png";
 							__docRef.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
+						}
+						else if (__imageFormat == Format.PDF)
+						{
+							__fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".pdf";
+							__docRef.SaveAs(__docRef.Path + __fileNameBody, __pdfSaveOptions, false, Photoshop.PsExtensionType.psLowercase);
 						}
 						else
 						{
@@ -764,6 +788,15 @@ namespace PSTools
 							{
 								__fileNameBody += ".png";
 								__duppedDocument.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
+							}
+							else if (__imageFormat == Format.PDF)
+							{
+								__fileNameBody += ".pdf";
+								//MessageBox.Show(__docRef.Path + __fileNameBody);
+								//__duppedDocument.Export(__docRef.Path + __fileNameBody, 2, __pdfExportOptionsSaveForWeb);
+								
+
+								__duppedDocument.SaveAs(__docRef.Path + __fileNameBody, __pdfSaveOptions, false, Photoshop.PsExtensionType.psLowercase);
 							}
 							else
 							{
