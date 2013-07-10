@@ -33,9 +33,9 @@ else
 			{
 				__LayersComps[__j].name = __docRef.name.replace(re, "_" + (__j + 1));
 			}
-			else if (__LayersComps[__j].name.indexOf(__docName) == -1)
+			else if (__LayersComps[__j].name.indexOf(__docName) > -1)
 			{
-				__LayersComps[__j].name = __docRef.name.replace(re, "_" + __LayersComps[__j].name);
+				__LayersComps[__j].name = __docRef.name.replace(re, "_" + (__j + 1));
 			}
 		}
 	}

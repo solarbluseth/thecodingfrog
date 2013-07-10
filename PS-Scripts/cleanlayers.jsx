@@ -50,8 +50,10 @@ function ProcessCleanLayersName(__ActiveDocument, __idx)
 		{
 			__Layer.name = repeat("+", __idx) + " " + __Layer.name.replace(re, "");
 			var __NewLayerName = ProcessCleanLayersName(__Layer, __idx + 1);
-			if (__NewLayerName != "" && __reg.test(__Layer.name) > -1)
+			if (__NewLayerName != "" && __reg.test(__Layer.name) == true)
+			{
 				__Layer.name = repeat("+", __idx) + " " + __NewLayerName;
+			}
 		}
 		else if (__Layer.typename == "ArtLayer")
 		{
