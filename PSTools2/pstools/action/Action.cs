@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace PSTools
 {
@@ -17,7 +18,8 @@ namespace PSTools
 			SAVE_SELECTION = 5,
 			EXPORT_BASE64 = 6,
 			EXPORT_ASSETS = 7,
-			COPY_TO_DROPBOX = 8
+			COPY_TO_DROPBOX = 8,
+			LIST_FONTS = 9
 		}
 
 		public enum Colors
@@ -109,6 +111,9 @@ namespace PSTools
 					break;
 				case Actions.COPY_TO_DROPBOX:
 					copyToDropbox(__args);
+					break;
+				case Actions.LIST_FONTS:
+					listFonts(__docRef);
 					break;
 			}
 
@@ -697,8 +702,7 @@ namespace PSTools
 			//MessageBox.Show(__args(3))
 			
 			//MessageBox.Show(__imageType)
-			//listFonts();
-
+			
 			__compsCount = __docRef.LayerComps.Count;
 
 			__hasSelection = false;
@@ -834,6 +838,8 @@ namespace PSTools
 					//duppedDocument.Close(2)
 				}
 			}
+
+			listFonts(__docRef);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
@@ -1629,10 +1635,12 @@ namespace PSTools
 			{ }
 		}
 
-		private void listFonts()
+		private void listFonts(Photoshop.Document __docRef)
 		{
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
+			Regex __RegexObj = new Regex("^</Layer group");
+			List<string> __fonts = new List<string>();
 
 			__ref.PutEnumerated(__appRef.CharIDToTypeID("Dcmn"), __appRef.CharIDToTypeID("Ordn"), __appRef.CharIDToTypeID("Trgt") );
 			int __count = __appRef.ExecuteActionGet(__ref).GetInteger(__appRef.CharIDToTypeID("NmbL")) + 1;
@@ -1643,17 +1651,66 @@ namespace PSTools
 				__ref.PutIndex( __appRef.CharIDToTypeID("Lyr "), i);
 				__desc = __appRef.ExecuteActionGet(__ref);
 				string __layerName = __desc.GetString(__appRef.CharIDToTypeID("Nm  "));
-				//string __layerType = __appRef.TypeIDToStringID(__desc.GetEnumerationValue( __appRef.StringIDToTypeID("layerSection")));
+				string __layerType = __appRef.TypeIDToStringID(__desc.GetEnumerationValue( __appRef.StringIDToTypeID("layerSection")));
+				
+				if (__RegexObj.IsMatch(__layerName))
+					continue;
 
-				MessageBox.Show(__layerName + ":" + __layerType);
+				if( __desc.HasKey(__appRef.StringIDToTypeID("textKey")))
+				{
+					Photoshop.ActionDescriptor __list = __desc.GetObjectValue(__appRef.CharIDToTypeID("Txt "));
+					Photoshop.ActionList __tsr = __list.GetList(__appRef.CharIDToTypeID("Txtt"));
+					//MessageBox.Show(__tsr.Count.ToString());
+					for(var j = 0; j < __tsr.Count; j++)
+					{
+						//MessageBox.Show("ok");
+						Photoshop.ActionDescriptor __tsr0 = __tsr.GetObjectValue(j); 
+						Photoshop.ActionDescriptor __textStyle = __tsr0.GetObjectValue(__appRef.CharIDToTypeID("TxtS"));
+						string __font = __textStyle.GetString(__appRef.CharIDToTypeID("FntN"));
+						string __style = __textStyle.GetString(__appRef.CharIDToTypeID("FntS"));
+						//MessageBox.Show(__font + "-" + __style);
+						if (!__fonts.Contains(__font + "-" + __style))
+							__fonts.Add(__font + "-" + __style);
+					}
+				}
+			}
+			//MessageBox.Show(__fonts.Count.ToString());
+			addFont(__docRef, __fonts);
+		}
 
-				/*var Id = desc.getInteger(stringIDToTypeID( 'layerID' ));
-				if(layerName.match(/^<\/Layer group/) ) continue;
-				var layerType = typeIDToStringID(desc.getEnumerationValue( stringIDToTypeID( 'layerSection' )));
-				var isLayerSet =( layerType == 'layerSectionContent') ? false:true;
-				var vis = desc.getBoolean(charIDToTypeID( "Vsbl" ));
-				if(!isLayerSet && vis) Names.push(Id);*/
-		   }
+		private void addFont(Photoshop.Document __docRef, List<string> __fonts)
+		{
+			StreamWriter __sw;
+			List<string> __existingFonts = new List<string>();
+			string __outputFonts;
+
+			if (File.Exists(__docRef.Path + "\\fonts.txt"))
+			{
+				string[] __lines = File.ReadAllLines(__docRef.Path + "\\fonts.txt");
+				__existingFonts = new List<string>(__lines);
+				
+
+				//__sw = File.AppendText(__docRef.Path + "\\fonts.txt");
+			}
+			else
+			{
+				//__sw = File.CreateText(__docRef.Path + "\\fonts.txt");
+			}
+
+			foreach (string __item in __fonts)
+			{
+				if (!__existingFonts.Contains(__item))
+					__existingFonts.Add(__item);
+			}
+
+			__existingFonts.Sort();
+
+			__outputFonts = string.Join(Environment.NewLine, __existingFonts.ToArray());
+
+			File.WriteAllText(__docRef.Path + "\\fonts.txt", __outputFonts, System.Text.Encoding.UTF8);
+
+			//__sw.Close();
+
 		}
 	}	
 }

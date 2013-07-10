@@ -65,6 +65,10 @@ namespace PSTools
 						__windowState = Form.SW_HIDE;
 						__action.execute(Action.Actions.EXPORT_ASSETS, __args, true);
 						break;
+					case "-lf":
+						__windowState = Form.SW_HIDE;
+						__action.execute(Action.Actions.LIST_FONTS, __args, true);
+						break;
 					default:
 						__windowState = Form.SW_SHOWNORMAL;
 						break;
