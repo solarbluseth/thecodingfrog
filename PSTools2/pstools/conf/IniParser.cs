@@ -211,6 +211,8 @@ namespace PSTools
 				strToSave += "\r\n";
 			}
 
+			sections.Sort();
+
 			try
 			{
 				TextWriter tw = new StreamWriter(newFilePath);
