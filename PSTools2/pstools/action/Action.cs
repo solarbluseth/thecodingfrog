@@ -113,7 +113,7 @@ namespace PSTools
 					copyToDropbox(__args);
 					break;
 				case Actions.LIST_FONTS:
-					listFonts(__docRef, __docRef.Name);
+					listFonts(__docRef, __docRef.Name, true);
 					break;
 			}
 
@@ -839,7 +839,7 @@ namespace PSTools
 				}
 			}
 
-			listFonts(__docRef, __docRef.Name);
+			listFonts(__docRef, __docRef.Name, false);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
@@ -1635,7 +1635,7 @@ namespace PSTools
 			{ }
 		}
 
-		private void listFonts(Photoshop.Document __docRef, string __filename)
+		private void listFonts(Photoshop.Document __docRef, string __filename, bool __messageWhenDone)
 		{
 			//MessageBox.Show(__filename);
 
@@ -1677,10 +1677,10 @@ namespace PSTools
 				}
 			}
 			//MessageBox.Show(__fonts.Count.ToString());
-			addFont(__docRef, __fonts, __filename);
+			addFont(__docRef, __fonts, __filename, __messageWhenDone);
 		}
 
-		private void addFont(Photoshop.Document __docRef, List<string> __fonts, string __filename)
+		private void addFont(Photoshop.Document __docRef, List<string> __fonts, string __filename, bool __messageWhenDone)
 		{
 			Regex __RegexObj = new Regex("_v\\d*$");
 			string __shortfilename = __docRef.Name.Substring(0, __filename.LastIndexOf("."));
@@ -1740,6 +1740,9 @@ namespace PSTools
 				__ini.AddSetting(__item, __shortfilename, DateTime.Now.ToString());
 			}
 			__ini.SaveSettings();
+
+			if (__messageWhenDone) MessageBox.Show("Fonts list saved !");
+					
 		}
 	}	
 }
