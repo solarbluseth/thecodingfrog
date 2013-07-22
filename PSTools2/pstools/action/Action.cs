@@ -113,7 +113,7 @@ namespace PSTools
 					copyToDropbox(__args);
 					break;
 				case Actions.LIST_FONTS:
-					listFonts(__docRef);
+					listFonts(__docRef, __docRef.Name);
 					break;
 			}
 
@@ -839,7 +839,7 @@ namespace PSTools
 				}
 			}
 
-			listFonts(__docRef);
+			listFonts(__docRef, __docRef.Name);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
@@ -1635,8 +1635,10 @@ namespace PSTools
 			{ }
 		}
 
-		private void listFonts(Photoshop.Document __docRef)
+		private void listFonts(Photoshop.Document __docRef, string __filename)
 		{
+			//MessageBox.Show(__filename);
+
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
 			Regex __RegexObj = new Regex("^</Layer group");
@@ -1675,12 +1677,20 @@ namespace PSTools
 				}
 			}
 			//MessageBox.Show(__fonts.Count.ToString());
-			addFont(__docRef, __fonts);
+			addFont(__docRef, __fonts, __filename);
 		}
 
-		private void addFont(Photoshop.Document __docRef, List<string> __fonts)
+		private void addFont(Photoshop.Document __docRef, List<string> __fonts, string __filename)
 		{
+			Regex __RegexObj = new Regex("_v\\d*$");
+			string __shortfilename = __docRef.Name.Substring(0, __filename.LastIndexOf("."));
+			__shortfilename = __RegexObj.Replace(__shortfilename, "");
+
+
+
 			StreamWriter __sw;
+			
+			/*
 			List<string> __existingFonts = new List<string>();
 			string __outputFonts;
 
@@ -1708,9 +1718,28 @@ namespace PSTools
 			__outputFonts = string.Join(Environment.NewLine, __existingFonts.ToArray());
 
 			File.WriteAllText(__docRef.Path + "\\fonts.txt", __outputFonts, System.Text.Encoding.UTF8);
-
+			*/
 			//__sw.Close();
 
+			if (!File.Exists(__docRef.Path + "\\fonts.txt"))
+			{
+				__sw = File.CreateText(__docRef.Path + "\\fonts.txt");
+				__sw.Close();
+			}
+
+
+			IniParser __ini = new IniParser(__docRef.Path + "\\fonts.txt");
+			
+			foreach (string __item in __ini.EnumAllSections())
+			{
+				__ini.DeleteSetting(__item, __shortfilename);
+			}
+
+			foreach (string __item in __fonts)
+			{
+				__ini.AddSetting(__item, __shortfilename, DateTime.Now.ToString());
+			}
+			__ini.SaveSettings();
 		}
 	}	
 }
