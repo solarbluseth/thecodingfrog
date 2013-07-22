@@ -57,10 +57,10 @@ namespace PSTools
 									currentRoot = "ROOT";
 
 								sectionPair.Section = currentRoot;
-								sectionPair.Key = keyPair[0];
+								sectionPair.Key = keyPair[0].Trim();
 
 								if (keyPair.Length > 1)
-									value = keyPair[1];
+									value = keyPair[1].Trim();
 
 								keyPairs.Add(sectionPair, value);
 							}
@@ -182,6 +182,7 @@ namespace PSTools
 		public void SaveSettings(String newFilePath)
 		{
 			ArrayList sections = new ArrayList();
+			ArrayList __values = new ArrayList();
 			String tmpValue = "";
 			String strToSave = "";
 
@@ -191,9 +192,13 @@ namespace PSTools
 					sections.Add(sectionPair.Section);
 			}
 
+			sections.Sort();
+
 			foreach (String section in sections)
 			{
 				strToSave += ("[" + section + "]\r\n");
+
+				__values = new ArrayList();
 
 				foreach (SectionPair sectionPair in keyPairs.Keys)
 				{
@@ -202,16 +207,23 @@ namespace PSTools
 						tmpValue = (String)keyPairs[sectionPair];
 
 						if (tmpValue != null)
-							tmpValue = "=" + tmpValue;
+							tmpValue = " = " + tmpValue;
 
-						strToSave += (sectionPair.Key + tmpValue + "\r\n");
+						//strToSave += (sectionPair.Key + tmpValue + "\r\n");
+						__values.Add(sectionPair.Key + tmpValue);
+						
 					}
+				}
+
+				__values.Sort();
+
+				foreach (String __item in __values)
+				{
+					strToSave += (__item + "\r\n");
 				}
 
 				strToSave += "\r\n";
 			}
-
-			sections.Sort();
 
 			try
 			{
