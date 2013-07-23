@@ -207,7 +207,7 @@ namespace PSTools
 						tmpValue = (String)keyPairs[sectionPair];
 
 						if (tmpValue != null)
-							tmpValue = " = " + tmpValue;
+							tmpValue = new string('\t', (int)(4 - (sectionPair.Key.ToString().Length / 15))) + "= " + tmpValue;
 
 						//strToSave += (sectionPair.Key + tmpValue + "\r\n");
 						__values.Add(sectionPair.Key + tmpValue);
