@@ -85,6 +85,7 @@
     <Compile Include="Form.Designer.cs">
       <DependentUpon>Form.cs</DependentUpon>
     </Compile>
+    <Compile Include="pstools\action\AutoClosingMessageBox.cs" />
     <Compile Include="pstools\action\ImageRight.cs" />
     <Compile Include="pstools\conf\IniParser.cs" />
     <Compile Include="pstools\action\Prompt.cs" />
@@ -187,7 +188,7 @@ copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />

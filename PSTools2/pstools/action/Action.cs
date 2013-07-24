@@ -111,6 +111,7 @@ namespace PSTools
 					break;
 				case Actions.COPY_TO_DROPBOX:
 					copyToDropbox(__args);
+					AutoClosingMessageBox.Show("All files were copied to Dropbox", "PSTools", 3000);
 					break;
 				case Actions.LIST_FONTS:
 					listFonts(__docRef, __docRef.Name, true);
@@ -1741,7 +1742,7 @@ namespace PSTools
 			}
 			__ini.SaveSettings();
 
-			if (__messageWhenDone) MessageBox.Show("Fonts list saved !");
+			if (__messageWhenDone) AutoClosingMessageBox.Show("Fonts list saved !", "PSTools", 3000);
 					
 		}
 	}	
