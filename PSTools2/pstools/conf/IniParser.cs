@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Windows.Forms;
 
 namespace PSTools
 {
@@ -207,7 +208,17 @@ namespace PSTools
 						tmpValue = (String)keyPairs[sectionPair];
 
 						if (tmpValue != null)
-							tmpValue = new string('\t', (int)(4 - (sectionPair.Key.ToString().Length / 15))) + "= " + tmpValue;
+						{
+							int __int1 = (sectionPair.Key.ToString().Length >= 15) ? 1:0;
+
+							int __int2 = (__int1 > 0) ? sectionPair.Key.ToString().Length - 15: 0;
+
+							//double __dbl = (double)sectionPair.Key.ToString().Length;
+							//tmpValue = new string('\t', (int)(4 - Math.Floor(__dbl / 12))) + "= " + tmpValue;
+							tmpValue = new string('\t', (int)(4 - __int1 - Math.Floor((double)__int2 / 8))) + "= " + tmpValue;
+							//MessageBox.Show(Math.Floor(__dbl / 15).ToString());
+						}
+							
 
 						//strToSave += (sectionPair.Key + tmpValue + "\r\n");
 						__values.Add(sectionPair.Key + tmpValue);
