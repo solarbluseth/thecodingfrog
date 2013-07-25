@@ -111,7 +111,7 @@ namespace PSTools
 					break;
 				case Actions.COPY_TO_DROPBOX:
 					copyToDropbox(__args);
-					AutoClosingMessageBox.Show("All files were copied to Dropbox", "PSTools", 3000);
+					AutoClosingMessageBox.Show("All files were copied to Dropbox", "PSTools", 1500);
 					break;
 				case Actions.LIST_FONTS:
 					listFonts(__docRef, __docRef.Name, true);
