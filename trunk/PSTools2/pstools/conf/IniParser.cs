@@ -214,8 +214,8 @@ namespace PSTools
 							int __int2 = (__int1 > 0) ? sectionPair.Key.ToString().Length - 15: 0;
 
 							//double __dbl = (double)sectionPair.Key.ToString().Length;
-							//tmpValue = new string('\t', (int)(4 - Math.Floor(__dbl / 12))) + "= " + tmpValue;
-							tmpValue = new string('\t', (int)(4 - __int1 - Math.Floor((double)__int2 / 8))) + "= " + tmpValue;
+							tmpValue = new string('\t', (int)(6 - Math.Floor((double)sectionPair.Key.ToString().Length / 8))) + "= " + tmpValue;
+							//tmpValue = new string('\t', (int)(4 - __int1 - Math.Floor((double)__int2 / 8))) + "= " + tmpValue;
 							//MessageBox.Show(Math.Floor(__dbl / 15).ToString());
 						}
 							
