@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="2.0" ExtensionBundleId="Boxes" ExtensionBundleVersion="1.5.55" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ExtensionManifest Version="2.0" ExtensionBundleId="Boxes" ExtensionBundleVersion="1.5.58" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Author>Jean-Louis PERSAT</Author>
     <Contact mailto="jeanlouis.persat@gmail.com"/>
     <Abstract>
@@ -9,14 +9,12 @@
       ]]>
     </Abstract>
   <ExtensionList>
-    <Extension Id="Boxes" Version="1.5.55"/>
+    <Extension Id="Boxes" Version="1.5.58"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
-      <Host Name="PHSP" Version="11.0"/>
-      <Host Name="PHXS" Version="11.0"/>
-      <Host Name="PHSP" Version="12.0"/>
-      <Host Name="PHXS" Version="12.0"/>
+     <Host Name="PHSP" Version="[11.0,12.9]"/>
+	  <Host Name="PHXS" Version="[11.0,12.9]"/>
     </HostList>
     <LocaleList>
       <Locale Code="All"/>
