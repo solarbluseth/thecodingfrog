@@ -111,8 +111,9 @@ namespace PSTools
 			if (__version.isInstalled())
 			{
 				__args = Environment.GetCommandLineArgs();
+				// 0 if debug mode
 				__idx = 1;
-				//__args = new string[] { "-w", "c:/nest.psd", "jpg", "index", "12" };
+				//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
 /*#if DEBUG
 #else
 				MessageBox.Show("debug");

@@ -840,7 +840,10 @@ namespace PSTools
 				}
 			}
 
-			listFonts(__docRef, __docRef.Name, false);
+			FileInfo __selectedfile = new FileInfo(__docRef.Name);
+			string __selectedfileext = __selectedfile.Extension;
+			//MessageBox.Show(__selectedfile.Extension);
+			if (__selectedfile.Extension.ToLower() == ".psd") listFonts(__docRef, __docRef.Name, false);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
