@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="pstools\conf\Settings.cs" />
     <Compile Include="pstools\conf\Version.cs" />
+    <Compile Include="pstools\log\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form.resx">
@@ -188,7 +189,7 @@ copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
