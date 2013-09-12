@@ -843,7 +843,8 @@ namespace PSTools
 			FileInfo __selectedfile = new FileInfo(__docRef.Name);
 			string __selectedfileext = __selectedfile.Extension;
 			//MessageBox.Show(__selectedfile.Extension);
-			if (__selectedfile.Extension.ToLower() == ".psd") listFonts(__docRef, __docRef.Name, false);
+			List<string> __allowedext = new List<string>(new string[] { ".psd", ".psb" });
+			if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, false);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)

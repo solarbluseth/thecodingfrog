@@ -87,61 +87,69 @@ namespace PSTools
 			InitializeComponent();
 
 			//MessageBox.Show("debug");
-
-			string __strTitle;
-			int __rtnLen;
-			int __hwnd;
-
-			__strTitle = new StringBuilder().Append(' ', 256).ToString();
-				
-			__rtnLen = GetConsoleTitle(__strTitle, 256);
-			if (__rtnLen > 0)
+			try
 			{
-				__strTitle = __strTitle.Substring(0, __rtnLen);
-			}
-			
-			__hwnd = FindWindow(null, __strTitle);
-			
-			this.Text = (string) (System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.ToString());
-			this.LabelCompiled.Text = (string) ("V " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major.ToString() + "." + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString() + "." + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build.ToString() + ", Compiled " + CompileDate.BuildDate.ToString());
+				string __strTitle;
+				int __rtnLen;
+				int __hwnd;
 
-			
-			__settings.Load(this);
+				__strTitle = new StringBuilder().Append(' ', 256).ToString();
 
-			if (__version.isInstalled())
-			{
-				__args = Environment.GetCommandLineArgs();
-				// 0 if debug mode
-				__idx = 1;
-				//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
-/*#if DEBUG
-#else
-				MessageBox.Show("debug");
-				
-				
-#endif*/
-				//MessageBox.Show(__args[0].ToString());
-				int __num = __args.Length - 1;
-
-				__actionDispatcher = new ActionDispatcher(this);
-				int __windowState = __actionDispatcher.command(__args);
-				ShowWindow(__hwnd, __windowState);
-				if (__windowState == SW_HIDE)
+				__rtnLen = GetConsoleTitle(__strTitle, 256);
+				if (__rtnLen > 0)
 				{
-					this.Visible = false;
-					this.ShowInTaskbar = false;
-					this.WindowState = FormWindowState.Minimized;
-					Application.Exit();
-					Process.GetCurrentProcess().Kill();
+					__strTitle = __strTitle.Substring(0, __rtnLen);
+				}
+
+				__hwnd = FindWindow(null, __strTitle);
+
+				this.Text = (string)(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.ToString());
+				this.LabelCompiled.Text = (string)("V " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major.ToString() + "." + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString() + "." + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build.ToString() + ", Compiled " + CompileDate.BuildDate.ToString());
+
+
+				__settings.Load(this);
+
+				if (__version.isInstalled())
+				{
+					__args = Environment.GetCommandLineArgs();
+					// 0 if debug mode
+					__idx = 1;
+					//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
+					/*#if DEBUG
+					#else
+									MessageBox.Show("debug");
+				
+				
+					#endif*/
+					//MessageBox.Show(__args[0].ToString());
+					int __num = __args.Length - 1;
+
+					__actionDispatcher = new ActionDispatcher(this);
+					int __windowState = __actionDispatcher.command(__args);
+					ShowWindow(__hwnd, __windowState);
+					if (__windowState == SW_HIDE)
+					{
+						this.Visible = false;
+						this.ShowInTaskbar = false;
+						this.WindowState = FormWindowState.Minimized;
+						Application.Exit();
+						Process.GetCurrentProcess().Kill();
+					}
+					else
+					{
+						SyncUI();
+					}
 				}
 				else
 				{
 					SyncUI();
 				}
 			}
-			else
+			catch (Exception __e)
 			{
-				SyncUI();
+				FileLogger.Instance.Open(@"C:\pstools.log", true); 
+				FileLogger.Instance.CreateEntry(__e.Message);
+				FileLogger.Instance.Close();
 			}
 
 			//MessageBox.Show("ok");
