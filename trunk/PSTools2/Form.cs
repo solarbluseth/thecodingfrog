@@ -14,6 +14,13 @@ namespace PSTools
 		[STAThread]
 		static void Main()
 		{
+			if (PriorProcess() != null)
+			{
+
+				MessageBox.Show("Another instance of the app is already running.");
+				return;
+			}
+
 			AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
 			{
 				AssemblyName requestedName = new AssemblyName(e.Name);
@@ -80,15 +87,32 @@ namespace PSTools
 		private ActionDispatcher __actionDispatcher;
 		private Installer __installer = new Installer();
 		private int __idx = 0;
-		
+
+		public static Process PriorProcess()
+		// Returns a System.Diagnostics.Process pointing to
+		// a pre-existing process with the same name as the
+		// current one, if any; or null if the current process
+		// is unique.
+		{
+			Process curr = Process.GetCurrentProcess();
+			Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+			foreach (Process p in procs)
+			{
+				if ((p.Id != curr.Id) &&
+					(p.MainModule.FileName == curr.MainModule.FileName))
+					return p;
+			}
+			return null;
+		}
+
 		public Form()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
 			//MessageBox.Show("debug");
-			try
-			{
+			/*try
+			{*/
 				string __strTitle;
 				int __rtnLen;
 				int __hwnd;
@@ -115,6 +139,7 @@ namespace PSTools
 					// 0 if debug mode
 					__idx = 1;
 					//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
+					//__args = new string[] { "-s", "V:\\CERA_CaisseEpargneRhoneAlpes\\SIMU_SimulateurAllocationActifs\\04_Design\\02_Tablette\\05_diagnostic_v06.psd", "jpg", "index", "12" };
 					/*#if DEBUG
 					#else
 									MessageBox.Show("debug");
@@ -126,6 +151,7 @@ namespace PSTools
 
 					__actionDispatcher = new ActionDispatcher(this);
 					int __windowState = __actionDispatcher.command(__args);
+					//MessageBox.Show(__windowState.ToString());
 					ShowWindow(__hwnd, __windowState);
 					if (__windowState == SW_HIDE)
 					{
@@ -137,24 +163,27 @@ namespace PSTools
 					}
 					else
 					{
+						//MessageBox.Show("here");
 						SyncUI();
 					}
 				}
 				else
 				{
+					//MessageBox.Show("there");
 					SyncUI();
 				}
-			}
+			/*}
 			catch (Exception __e)
 			{
 				FileLogger.Instance.Open(@"C:\pstools.log", true); 
 				FileLogger.Instance.CreateEntry(__e.Message);
 				FileLogger.Instance.Close();
-			}
+			}*/
 
 			//MessageBox.Show("ok");
 			
 		}
+
 
 		private void SyncUI()
 		{
