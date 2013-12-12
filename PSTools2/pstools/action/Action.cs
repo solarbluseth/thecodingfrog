@@ -736,6 +736,7 @@ namespace PSTools
 						else if (__imageFormat == Format.PNG)
 						{
 							__fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".png";
+							//MessageBox.Show(__docRef.Path + __fileNameBody);
 							__docRef.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
 						}
 						else if (__imageFormat == Format.PDF)

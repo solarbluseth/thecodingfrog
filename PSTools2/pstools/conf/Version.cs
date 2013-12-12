@@ -16,7 +16,7 @@ namespace PSTools
 		    CS4 = 11,
 		    CS5 = 12,
 			CS55 = 55,
-			CS6 = 60,
+			CS6 = 13,
 		}
 
 		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16" };
