@@ -18,7 +18,7 @@ namespace PSTools
 				if (__version.check(__item))
 				{
 					//MessageBox.Show((int)__item + " > ");
-					installVersion((int)__item, Version.IllustratorVersions[__i]);
+					installVersion((int)__item, Version.IllustratorVersions[__i], Version.PSBVersions[__i]);
 				}
 				__i++;
 			}
@@ -105,7 +105,7 @@ namespace PSTools
 			__newKey.Close();
 		}
 
-		public void installVersion(int __psVersion, string __aiVersion)
+		public void installVersion(int __psVersion, string __aiVersion, string __psbVersion)
 		{
 			// Commands
 			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.Image." + __psVersion + "\\\\shell\\\\PSTools");
@@ -114,7 +114,7 @@ namespace PSTools
 			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.PDFByIndex;PSTools.ListFonts;PSTools.ExportAssets;PSTools.Dropbox;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
-			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." + __psVersion + "\\\\shell\\\\PSTools");
+			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." + __psbVersion + "\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);
 			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.PDFByIndex;PSTools.ListFonts;PSTools.ExportAssets;PSTools.Dropbox;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
@@ -323,7 +323,7 @@ namespace PSTools
 				if (__version.check(__item))
 				{
 					//MessageBox.Show((int)__item + " > " + Version.IllustratorVersions[__i].ToString());
-					uninstallVersion((int)__item, Version.IllustratorVersions[__i]);
+					uninstallVersion((int)__item, Version.IllustratorVersions[__i], Version.PSBVersions[__i]);
 				}
 				__i++;
 			}
@@ -389,7 +389,7 @@ namespace PSTools
 			catch { }
 		}
 
-		public void uninstallVersion(int __psVersion, string __aiVersion)
+		public void uninstallVersion(int __psVersion, string __aiVersion, string __psbVersion)
 		{
 			try
 			{
@@ -399,7 +399,7 @@ namespace PSTools
 
 			try
 			{
-				Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." + __psVersion + "\\\\shell\\\\PSTools");
+				Registry.ClassesRoot.DeleteSubKeyTree("Photoshop.PSBFile." + __psbVersion + "\\\\shell\\\\PSTools");
 			}
 			catch { }
 
