@@ -20,6 +20,7 @@ namespace PSTools
 		}
 
 		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16" };
+		public static List<string> PSBVersions = new List<string>() { "11", "12", "13", "55", "60" };
 		//public decimal IllustratorVersions = {"12", "13", "14", "15.1"};
 
 		/// <summary>

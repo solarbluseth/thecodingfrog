@@ -738,6 +738,11 @@ namespace PSTools
 							__fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".png";
 							//MessageBox.Show(__docRef.Path + __fileNameBody);
 							__docRef.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
+							try
+							{
+								File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+							}
+							catch { }
 						}
 						else if (__imageFormat == Format.PDF)
 						{
@@ -793,7 +798,13 @@ namespace PSTools
 							else if (__imageFormat == Format.PNG)
 							{
 								__fileNameBody += ".png";
+								//MessageBox.Show(__docRef.Path + __fileNameBody); 
 								__duppedDocument.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
+								try
+								{
+									File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+								}
+								catch{}
 							}
 							else if (__imageFormat == Format.PDF)
 							{
