@@ -739,14 +739,17 @@ namespace PSTools
 							//MessageBox.Show(__docRef.Path + __fileNameBody);
 							__docRef.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
 
-							if (File.Exists(__docRef.Path + __fileNameBody))
-								File.Delete(__docRef.Path + __fileNameBody);
-							try
+							if (__fileNameBody.IndexOf("-") > -1)
 							{
-								MessageBox.Show(__fileNameBody.Replace(" ", "-"));
-								File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+								if (File.Exists(__docRef.Path + __fileNameBody))
+									File.Delete(__docRef.Path + __fileNameBody);
+								try
+								{
+									MessageBox.Show(__fileNameBody.Replace(" ", "-"));
+									File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+								}
+								catch { }
 							}
-							catch {}
 						}
 						else if (__imageFormat == Format.PDF)
 						{
@@ -804,14 +807,17 @@ namespace PSTools
 								__fileNameBody += ".png";
 								//MessageBox.Show(__docRef.Path + __fileNameBody); 
 								__duppedDocument.Export(__docRef.Path + __fileNameBody, 2, __pngExportOptionsSaveForWeb);
-								
-								if (File.Exists(__docRef.Path + __fileNameBody))
-									File.Delete(__docRef.Path + __fileNameBody);
-								try
+
+								if (__fileNameBody.IndexOf("-") > -1) 
 								{
-									File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+									if (File.Exists(__docRef.Path + __fileNameBody))
+										File.Delete(__docRef.Path + __fileNameBody);
+									try
+									{
+										File.Move(__docRef.Path + __fileNameBody.Replace(" ", "-"), __docRef.Path + __fileNameBody);
+									}
+									catch{}
 								}
-								catch{}
 							}
 							else if (__imageFormat == Format.PDF)
 							{
