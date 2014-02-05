@@ -132,6 +132,18 @@ namespace PSTools
 			return (String[])tmpArray.ToArray(typeof(String));
 		}
 
+		public String[] EnumAllKeys()
+		{
+			ArrayList tmpArray = new ArrayList();
+
+			foreach (SectionPair pair in keyPairs)
+			{
+				tmpArray.Add(pair.Section);
+			}
+
+			return (String[])tmpArray.ToArray(typeof(String));
+		}
+
 		/// <summary>
 		/// Adds or replaces a setting to the table to be saved.
 		/// </summary>

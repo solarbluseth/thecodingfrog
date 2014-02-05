@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+//using System.Drawing.Text;
+//using System.Drawing.FontFamily;
 
 namespace PSTools
 {
@@ -47,6 +49,7 @@ namespace PSTools
 		private bool __keepOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
+		private static List<string> __systemFont = new List<string>() { "Arial", "Verdana", "Tahoma", "Georgia", "Times New Roman" };
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Action"/> class.
@@ -1759,17 +1762,46 @@ namespace PSTools
 
 
 			IniParser __ini = new IniParser(__docRef.Path + "\\fonts.txt");
-			
+
 			foreach (string __item in __ini.EnumAllSections())
 			{
 				__ini.DeleteSetting(__item, __shortfilename);
 			}
+			__ini.DeleteSetting("Z---------------------------Z", "Total non system fonts");
 
 			foreach (string __item in __fonts)
 			{
 				__ini.AddSetting(__item, __shortfilename, DateTime.Now.ToString());
 			}
+
+			int __countFont = 0;
+			List<string> __addedFont = new List<string>();
+			string __fontname;
+			foreach (string __item in __ini.EnumAllSections())
+			{
+				//MessageBox.Show(__item);
+
+				if (__item.IndexOf("-") > -1)
+					__fontname = __item.Substring(0, __item.IndexOf("-"));
+				else
+					__fontname = __item;
+				
+				if (!__systemFont.Contains(__fontname) && !__addedFont.Contains(__item))
+				{
+					__countFont++;
+					__addedFont.Add(__item);
+				}
+			}
+			__ini.AddSetting("Z---------------------------Z", "Total non system fonts", __countFont.ToString());
 			__ini.SaveSettings();
+
+			/*InstalledFontCollection __fontsCollection = new InstalledFontCollection();
+			FontFamily[] __fontFamilies = __fontsCollection.Families;
+			List<string> __sysfonts = new List<string>();
+			foreach (FontFamily __font in __fontFamilies)
+			{
+				__sysfonts.Add(__font.Source);
+			}*/
 
 			if (__messageWhenDone) AutoClosingMessageBox.Show("Fonts list saved !", "PSTools", 3000);
 					
