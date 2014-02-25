@@ -50,16 +50,16 @@ namespace PSTools
 		private string[] __cmdargs;
 		private Form __form;
 		private static List<string> __systemFont = new List<string>() { "Arial",
-																		"Verdana",
-																		"Tahoma",
-																		"Georgia",
-																		"Times New Roman",
-																		"Myriad-Pro",
-																		"Trebuchet MS",
 																		"Calibri",
 																		"Cambria",
+																		"Georgia",
 																		"Lucida Console Regular",
-																		"Lucida Grande"
+																		"Lucida Grande",
+																		"Myriad-Pro",
+																		"Tahoma",
+																		"Times New Roman",
+																		"Trebuchet MS",
+																		"Verdana"
 																		};
 
 		/// <summary>
