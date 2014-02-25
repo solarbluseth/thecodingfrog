@@ -49,7 +49,18 @@ namespace PSTools
 		private bool __keepOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
-		private static List<string> __systemFont = new List<string>() { "Arial", "Verdana", "Tahoma", "Georgia", "Times New Roman" };
+		private static List<string> __systemFont = new List<string>() { "Arial",
+																		"Verdana",
+																		"Tahoma",
+																		"Georgia",
+																		"Times New Roman",
+																		"Myriad-Pro",
+																		"Trebuchet MS",
+																		"Calibri",
+																		"Cambria",
+																		"Lucida Console Regular",
+																		"Lucida Grande"
+																		};
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Action"/> class.
