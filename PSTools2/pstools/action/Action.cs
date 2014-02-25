@@ -792,6 +792,11 @@ namespace PSTools
 
 							if (!__isNamedLayerComp)
 							{
+								// cleaning single JPEG file if layer comps > 1
+								if (File.Exists(__docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".jpg"))
+								{
+									File.Delete(__docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + ".jpg");
+								}
 								__fileNameBody = __docRef.Name.Substring(0, __docRef.Name.LastIndexOf(".")) + "." + __compsIndex;
 							}
 							else
