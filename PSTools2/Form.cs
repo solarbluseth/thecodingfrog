@@ -139,7 +139,7 @@ namespace PSTools
 					// 0 if debug mode
 					__idx = 1;
 					//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
-					//__args = new string[] { "-s", "V:\\CERA_CaisseEpargneRhoneAlpes\\SIMU_SimulateurAllocationActifs\\04_Design\\02_Tablette\\05_diagnostic_v06.psd", "jpg", "index", "12" };
+					//__args = new string[] { "-s", "V:\\MMV_MMV\\WEB14_RefonteSiteWeb2014\\04_Design\\02_Desktop\\02_liste_v04.psd", "jpg", "index", "12" };
 					/*#if DEBUG
 					#else
 									MessageBox.Show("debug");
