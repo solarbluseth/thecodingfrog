@@ -49,6 +49,7 @@ namespace PSTools
 		private bool __keepOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
+		private string[] __lcompSaveToScreen;
 		private static List<string> __systemFont = new List<string>() { "Arial",
 																		"Calibri",
 																		"Cambria",
@@ -790,16 +791,32 @@ namespace PSTools
 						__compRef.Apply();
 
 						//msgbox(compRef.Name)
+						__duppedDocument = null;
+
 						if (__hasSelection)
 						{
-							__duppedDocument = __docRef.Duplicate(null, null);
+							try
+							{
+								__duppedDocument = __docRef.Duplicate(null, null);
+							}
+							catch (Exception)
+							{
+								MessageBox.Show("Essayez de redémarrer UTC FMCore");
+							}
 							saveScreenSelection(__docRef, __duppedDocument, __compsIndex, __jpgSaveOptions);
 						}
 
 						if (!__selectionOnly)
 						{
 
-							__duppedDocument = __docRef.Duplicate(null, null);
+							try
+							{
+								__duppedDocument = __docRef.Duplicate(null, null);
+							}
+							catch (Exception)
+							{
+								MessageBox.Show("Essayez de redémarrer UTC FMCore");
+							}
 
 							if (!__isNamedLayerComp)
 							{
@@ -888,7 +905,7 @@ namespace PSTools
 			string __selectedfileext = __selectedfile.Extension;
 			//MessageBox.Show(__selectedfile.Extension);
 			List<string> __allowedext = new List<string>(new string[] { ".psd", ".psb" });
-			if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, false);
+			if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, true);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
@@ -1129,7 +1146,20 @@ namespace PSTools
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 
-			try
+
+			__value = false; 
+			foreach (Photoshop.Channel __channel in __doc.Channels)
+			{
+				//MessageBox.Show(__channel.Name);
+				if (__channel.Name.Contains("screen"))
+				{
+					__selChannel = __channel;
+					__value = true;
+					break;
+				}
+			}
+
+			/*try
 			{
 				__selChannel = __doc.Channels["screen"];
 				__value = true;
@@ -1137,7 +1167,7 @@ namespace PSTools
 			catch (Exception)
 			{
 				__value = false;
-			}
+			}*/
 
 			if (!__value)
 			{
