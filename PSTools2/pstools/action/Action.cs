@@ -49,7 +49,7 @@ namespace PSTools
 		private bool __keepOpen = false;
 		private string[] __cmdargs;
 		private Form __form;
-		private string[] __lcompSaveToScreen;
+		private List<string> __screenSelectionList;
 		private static List<string> __systemFont = new List<string>() { "Arial",
 																		"Calibri",
 																		"Cambria",
@@ -803,7 +803,17 @@ namespace PSTools
 							{
 								MessageBox.Show("Essayez de redémarrer UTC FMCore");
 							}
-							saveScreenSelection(__docRef, __duppedDocument, __compsIndex, __jpgSaveOptions);
+							if (__screenSelectionList.Count > 0)
+							{
+								if (__screenSelectionList.Contains(__compsIndex.ToString()))
+									saveScreenSelection(__docRef, __duppedDocument, __compsIndex, __jpgSaveOptions);
+								else
+									__duppedDocument.Close(2);
+							}
+							else
+							{
+								saveScreenSelection(__docRef, __duppedDocument, __compsIndex, __jpgSaveOptions);
+							}
 						}
 
 						if (!__selectionOnly)
@@ -946,7 +956,7 @@ namespace PSTools
 
 			try
 			{
-				__selChannel = __doc.Channels["screen"];
+				__selChannel = getScreenSelectionChannel(__doc);
 				__hasSelection = true;
 				//MessageBox.Show(__selChannel.Name)
 				__doc.Selection.Load(__selChannel, null, null);
@@ -1132,6 +1142,39 @@ namespace PSTools
 		finish:{ }
 		}
 
+		private Photoshop.Channel getScreenSelectionChannel(Photoshop.Document __doc)
+		{
+			Photoshop.Channel __selChannel = null;
+			
+			__screenSelectionList = new List<string> { };
+			foreach (Photoshop.Channel __channel in __doc.Channels)
+			{
+				//MessageBox.Show(__channel.Name);
+				if (__channel.Name.Contains("screen"))
+				{
+					__selChannel = __channel;
+
+					char[] __delimiters = new char[] { '=' };
+					string[] __indexes = __channel.Name.Split(__delimiters, StringSplitOptions.RemoveEmptyEntries);
+					if (__indexes.Length > 1)
+					{
+						char[] __delimitersOne = new char[] { ',' };
+						string[] __indexesOne = __indexes[1].Split(__delimitersOne, StringSplitOptions.RemoveEmptyEntries);
+
+						foreach (string __index in __indexesOne)
+						{
+							//MessageBox.Show(__index.ToString());
+							if (!__screenSelectionList.Contains(__index))
+								__screenSelectionList.Add(__index);
+						}
+					}
+					break;
+				}
+			}
+
+			return __selChannel;
+		}
+
 		/// <summary>
 		/// Determines whether [has screen selection] [the specified __doc].
 		/// </summary>
@@ -1142,22 +1185,11 @@ namespace PSTools
 		private bool hasScreenSelection(Photoshop.Document __doc)
 		{
 			bool __value;
-			Photoshop.Channel __selChannel;
 			Photoshop.ActionDescriptor __desc = new Photoshop.ActionDescriptor();
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 
 
-			__value = false; 
-			foreach (Photoshop.Channel __channel in __doc.Channels)
-			{
-				//MessageBox.Show(__channel.Name);
-				if (__channel.Name.Contains("screen"))
-				{
-					__selChannel = __channel;
-					__value = true;
-					break;
-				}
-			}
+			__value = __value = (getScreenSelectionChannel(__doc) != null) ? true : false;
 
 			/*try
 			{
