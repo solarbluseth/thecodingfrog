@@ -615,7 +615,7 @@ namespace PSTools
 			Format __imageFormat;
 
 			__exportLayerComps = __form.ExportLayerComps.Checked;
-			//MessageBox.Show(__args.ToString());
+			//MessageBox.Show(__exportLayerComps.ToString());
 
 			bool __isNamedLayerComp = false;
 
@@ -642,11 +642,11 @@ namespace PSTools
 				case "jpg":
 					__jpgSaveOptions.Quality = int.Parse(__args[4 + __form.idx]);
 					__imageFormat = Format.JPG;
-					__exportLayerComps = true; //force using this mode
+					//__exportLayerComps = true; //force using this mode
 					break;
 				case "png":
 					__imageFormat = Format.PNG;
-					__exportLayerComps = true;
+					//__exportLayerComps = true;
 					break;
 				case "gif":
 					__imageFormat = Format.GIF;
@@ -889,6 +889,12 @@ namespace PSTools
 
 				//MsgBox(Me.AutoArchive.Checked)
 				archiveFiles(__docRef);
+
+				FileInfo __selectedfile = new FileInfo(__docRef.Name);
+				string __selectedfileext = __selectedfile.Extension;
+				//MessageBox.Show(__selectedfile.Extension);
+				List<string> __allowedext = new List<string>(new string[] { ".psd", ".psb" });
+				if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, true);
 			}
 			else //Exporting each layers by name
 			{
@@ -910,12 +916,6 @@ namespace PSTools
 					//duppedDocument.Close(2)
 				}
 			}
-
-			FileInfo __selectedfile = new FileInfo(__docRef.Name);
-			string __selectedfileext = __selectedfile.Extension;
-			//MessageBox.Show(__selectedfile.Extension);
-			List<string> __allowedext = new List<string>(new string[] { ".psd", ".psb" });
-			if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, true);
 
 			//ExportImagesRights()
 			if (__compsCount > 0)
