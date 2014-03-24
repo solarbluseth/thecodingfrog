@@ -612,6 +612,7 @@ namespace PSTools
 			Photoshop.Document __duppedDocument;
 			string __fileNameBody = null;
 			bool __hasSelection;
+			bool __exportFonts = false;
 			Format __imageFormat;
 
 			__exportLayerComps = __form.ExportLayerComps.Checked;
@@ -641,6 +642,10 @@ namespace PSTools
 			{
 				case "jpg":
 					__jpgSaveOptions.Quality = int.Parse(__args[4 + __form.idx]);
+					if (__jpgSaveOptions.Quality == 12)
+					{
+						__exportFonts = true;
+					}
 					__imageFormat = Format.JPG;
 					//__exportLayerComps = true; //force using this mode
 					break;
@@ -894,7 +899,7 @@ namespace PSTools
 				string __selectedfileext = __selectedfile.Extension;
 				//MessageBox.Show(__selectedfile.Extension);
 				List<string> __allowedext = new List<string>(new string[] { ".psd", ".psb" });
-				if (__allowedext.Contains(__selectedfile.Extension.ToLower())) listFonts(__docRef, __docRef.Name, true);
+				if (__allowedext.Contains(__selectedfile.Extension.ToLower()) && __exportFonts) listFonts(__docRef, __docRef.Name, true);
 			}
 			else //Exporting each layers by name
 			{
