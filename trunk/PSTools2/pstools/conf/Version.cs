@@ -17,10 +17,11 @@ namespace PSTools
 		    CS5 = 12,
 			CS55 = 55,
 			CS6 = 13,
+			CC = 14
 		}
 
-		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16" };
-		public static List<string> PSBVersions = new List<string>() { "11", "12", "13", "55", "60" };
+		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16", "17" };
+		public static List<string> PSBVersions = new List<string>() { "11", "12", "13", "55", "60", "70" };
 		//public decimal IllustratorVersions = {"12", "13", "14", "15.1"};
 
 		/// <summary>
