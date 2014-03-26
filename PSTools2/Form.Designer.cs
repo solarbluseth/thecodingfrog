@@ -47,6 +47,7 @@ namespace PSTools
 			this.ArchiveDirectory = new System.Windows.Forms.TextBox();
 			this.AutoArchive = new System.Windows.Forms.CheckBox();
 			this.GroupBox2 = new System.Windows.Forms.GroupBox();
+			this.LabelCS6 = new System.Windows.Forms.Label();
 			this.CS6 = new System.Windows.Forms.Label();
 			this.LabelCS55 = new System.Windows.Forms.Label();
 			this.CS55 = new System.Windows.Forms.Label();
@@ -65,7 +66,8 @@ namespace PSTools
 			this.GroupBox4 = new System.Windows.Forms.GroupBox();
 			this.ExcludeDirectories = new System.Windows.Forms.TextBox();
 			this.LabelCompiled = new System.Windows.Forms.Label();
-			this.LabelCS6 = new System.Windows.Forms.Label();
+			this.CC = new System.Windows.Forms.Label();
+			this.LabelCC = new System.Windows.Forms.Label();
 			this.GroupBox1.SuspendLayout();
 			this.GroupBox2.SuspendLayout();
 			this.GroupBox3.SuspendLayout();
@@ -77,7 +79,7 @@ namespace PSTools
 			// 
 			this.Install.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.Install.Location = new System.Drawing.Point(6, 138);
+			this.Install.Location = new System.Drawing.Point(6, 164);
 			this.Install.Name = "Install";
 			this.Install.Size = new System.Drawing.Size(247, 23);
 			this.Install.TabIndex = 0;
@@ -92,7 +94,7 @@ namespace PSTools
 			this.GroupBox1.Controls.Add(this.Label1);
 			this.GroupBox1.Controls.Add(this.ArchiveDirectory);
 			this.GroupBox1.Controls.Add(this.AutoArchive);
-			this.GroupBox1.Location = new System.Drawing.Point(12, 185);
+			this.GroupBox1.Location = new System.Drawing.Point(12, 211);
 			this.GroupBox1.Name = "GroupBox1";
 			this.GroupBox1.Size = new System.Drawing.Size(260, 74);
 			this.GroupBox1.TabIndex = 1;
@@ -132,6 +134,8 @@ namespace PSTools
 			this.GroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.GroupBox2.Controls.Add(this.LabelCC);
+			this.GroupBox2.Controls.Add(this.CC);
 			this.GroupBox2.Controls.Add(this.LabelCS6);
 			this.GroupBox2.Controls.Add(this.CS6);
 			this.GroupBox2.Controls.Add(this.LabelCS55);
@@ -145,10 +149,19 @@ namespace PSTools
 			this.GroupBox2.Controls.Add(this.Install);
 			this.GroupBox2.Location = new System.Drawing.Point(12, 12);
 			this.GroupBox2.Name = "GroupBox2";
-			this.GroupBox2.Size = new System.Drawing.Size(260, 167);
+			this.GroupBox2.Size = new System.Drawing.Size(260, 193);
 			this.GroupBox2.TabIndex = 2;
 			this.GroupBox2.TabStop = false;
 			this.GroupBox2.Text = "Install";
+			// 
+			// LabelCS6
+			// 
+			this.LabelCS6.AutoSize = true;
+			this.LabelCS6.Location = new System.Drawing.Point(102, 112);
+			this.LabelCS6.Name = "LabelCS6";
+			this.LabelCS6.Size = new System.Drawing.Size(54, 13);
+			this.LabelCS6.TabIndex = 10;
+			this.LabelCS6.Text = "Not found";
 			// 
 			// CS6
 			// 
@@ -238,7 +251,7 @@ namespace PSTools
 			this.GroupBox3.Controls.Add(this.ExportLayerComps);
 			this.GroupBox3.Controls.Add(this.NamedExportQuality);
 			this.GroupBox3.Controls.Add(this.Label2);
-			this.GroupBox3.Location = new System.Drawing.Point(12, 327);
+			this.GroupBox3.Location = new System.Drawing.Point(12, 353);
 			this.GroupBox3.Name = "GroupBox3";
 			this.GroupBox3.Size = new System.Drawing.Size(260, 54);
 			this.GroupBox3.TabIndex = 3;
@@ -311,7 +324,7 @@ namespace PSTools
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.GroupBox4.Controls.Add(this.Label3);
 			this.GroupBox4.Controls.Add(this.ExcludeDirectories);
-			this.GroupBox4.Location = new System.Drawing.Point(12, 266);
+			this.GroupBox4.Location = new System.Drawing.Point(12, 292);
 			this.GroupBox4.Name = "GroupBox4";
 			this.GroupBox4.Size = new System.Drawing.Size(260, 55);
 			this.GroupBox4.TabIndex = 5;
@@ -331,27 +344,37 @@ namespace PSTools
 			this.LabelCompiled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelCompiled.AutoSize = true;
 			this.LabelCompiled.Enabled = false;
-			this.LabelCompiled.Location = new System.Drawing.Point(13, 393);
+			this.LabelCompiled.Location = new System.Drawing.Point(13, 419);
 			this.LabelCompiled.Name = "LabelCompiled";
 			this.LabelCompiled.Size = new System.Drawing.Size(54, 13);
 			this.LabelCompiled.TabIndex = 6;
 			this.LabelCompiled.Text = "Version v.";
 			// 
-			// LabelCS6
+			// CC
 			// 
-			this.LabelCS6.AutoSize = true;
-			this.LabelCS6.Location = new System.Drawing.Point(102, 112);
-			this.LabelCS6.Name = "LabelCS6";
-			this.LabelCS6.Size = new System.Drawing.Size(54, 13);
-			this.LabelCS6.TabIndex = 10;
-			this.LabelCS6.Text = "Not found";
+			this.CC.AutoSize = true;
+			this.CC.Location = new System.Drawing.Point(8, 135);
+			this.CC.Name = "CC";
+			this.CC.Size = new System.Drawing.Size(84, 13);
+			this.CC.TabIndex = 11;
+			this.CC.Text = "Photoshop CC : ";
+			this.CC.Click += new System.EventHandler(this.label4_Click);
+			// 
+			// LabelCC
+			// 
+			this.LabelCC.AutoSize = true;
+			this.LabelCC.Location = new System.Drawing.Point(102, 135);
+			this.LabelCC.Name = "LabelCC";
+			this.LabelCC.Size = new System.Drawing.Size(54, 13);
+			this.LabelCC.TabIndex = 12;
+			this.LabelCC.Text = "Not found";
 			// 
 			// Form
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(284, 418);
+			this.ClientSize = new System.Drawing.Size(284, 444);
 			this.Controls.Add(this.LabelCompiled);
 			this.Controls.Add(this.GroupBox3);
 			this.Controls.Add(this.GroupBox2);
@@ -400,6 +423,8 @@ namespace PSTools
 		private System.ComponentModel.IContainer components;
 		internal Label CS6;
 		internal Label LabelCS6;
+		internal Label CC;
+		internal Label LabelCC;
 	}
 	
 }

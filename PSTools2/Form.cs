@@ -318,6 +318,11 @@ namespace PSTools
 		{
 			get { return __idx; }
 		}
+
+		private void label4_Click(object sender, EventArgs e)
+		{
+
+		}
 		
 		
 	}
