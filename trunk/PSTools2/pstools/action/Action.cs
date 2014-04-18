@@ -726,8 +726,10 @@ namespace PSTools
 			
 			__compsCount = __docRef.LayerComps.Count;
 
+			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
+
 			__hasSelection = false;
-			__hasSelection = hasScreenSelection(__docRef);
+			__hasSelection = __asss.hasSelection;
 
 			// Exporting layercomps by index or name
 			if (__exportLayerComps)
@@ -739,11 +741,26 @@ namespace PSTools
 					//textItemRef.TextItem.Contents = Args.Item(1)
 
 					//outFileName = Args.Item(1)
-					if (__hasSelection)
+					int __count = __asss.count;
+					if (__count > 1)
 					{
-						__duppedDocument = __docRef.Duplicate(null, null);
-						saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
-						__duppedDocument.Close(2);
+						__asss.saveAll();
+						/*for (int __idx = 0; __idx < __count; __idx++ )
+						{
+							__duppedDocument = __docRef.Duplicate(null, null);
+							saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
+							__duppedDocument.Close(2);
+						}*/
+					}
+					else
+					{
+
+						if (__hasSelection)
+						{
+							__duppedDocument = __docRef.Duplicate(null, null);
+							saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
+							__duppedDocument.Close(2);
+						}
 					}
 					
 					if (!__selectionOnly) // IF screen selection then save crop
@@ -1177,6 +1194,21 @@ namespace PSTools
 			return __selChannel;
 		}
 
+		private int countScreenSelection(Photoshop.Document __doc)
+		{
+			int __count = 0;
+			foreach (Photoshop.Channel __channel in __doc.Channels)
+			{
+				//MessageBox.Show(__channel.Name);
+				if (__channel.Name.Contains("screen"))
+				{
+					__count++;
+				}
+			}
+
+			return __count;
+		}
+
 		/// <summary>
 		/// Determines whether [has screen selection] [the specified __doc].
 		/// </summary>
@@ -1191,7 +1223,7 @@ namespace PSTools
 			Photoshop.ActionReference __ref = new Photoshop.ActionReference();
 
 
-			__value = __value = (getScreenSelectionChannel(__doc) != null) ? true : false;
+			__value = (getScreenSelectionChannel(__doc) != null) ? true : false;
 
 			/*try
 			{

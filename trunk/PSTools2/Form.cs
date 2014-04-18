@@ -138,7 +138,7 @@ namespace PSTools
 					__args = Environment.GetCommandLineArgs();
 					// 0 if debug mode
 					__idx = 1;
-					//__args = new string[] { "-s", "V:\\ACS_ACSFrance\\ATLAS_Atlas\\05_CharteConception\\Elements\\icon_connected_1.ai", "jpg", "index", "12" };
+					//__args = new string[] { "-s", "V:\\SMB_SavoieMontBlanc\\MOB13_Mobilite2013\\04_Design\\02_decouvrir_v01.psd", "jpg", "index", "12" };
 					//__args = new string[] { "-s", "E:\\AI\\02_liste_v04.psd", "jpg", "index", "12" };
 					/*#if DEBUG
 					#else
