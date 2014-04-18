@@ -728,7 +728,6 @@ namespace PSTools
 
 			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
 
-			__hasSelection = false;
 			__hasSelection = __asss.hasSelection;
 
 			// Exporting layercomps by index or name
@@ -741,29 +740,14 @@ namespace PSTools
 					//textItemRef.TextItem.Contents = Args.Item(1)
 
 					//outFileName = Args.Item(1)
-					int __count = __asss.count;
-					if (__count > 1)
+					if (__selectionOnly) // IF screen selection then save crop
 					{
-						__asss.saveAll();
-						/*for (int __idx = 0; __idx < __count; __idx++ )
+						if (__asss.count >= 1)
 						{
-							__duppedDocument = __docRef.Duplicate(null, null);
-							saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
-							__duppedDocument.Close(2);
-						}*/
-					}
-					else
-					{
-
-						if (__hasSelection)
-						{
-							__duppedDocument = __docRef.Duplicate(null, null);
-							saveScreenSelection(__docRef, __duppedDocument, __jpgSaveOptions);
-							__duppedDocument.Close(2);
+							__asss.saveAll();
 						}
 					}
-					
-					if (!__selectionOnly) // IF screen selection then save crop
+					else
 					{
 						//MessageBox.Show(__args[1]);
 						if (__imageFormat == Format.JPG)
@@ -812,7 +796,9 @@ namespace PSTools
 						//msgbox(compRef.Name)
 						__duppedDocument = null;
 
-						if (__hasSelection)
+
+						
+						/*if (__hasSelection)
 						{
 							try
 							{
@@ -833,9 +819,16 @@ namespace PSTools
 							{
 								saveScreenSelection(__docRef, __duppedDocument, __compsIndex, __jpgSaveOptions);
 							}
-						}
+						}*/
 
-						if (!__selectionOnly)
+						if (__selectionOnly)
+						{
+							if (__asss.count >= 1)
+							{
+								__asss.saveAll(__compsCount, __compsIndex);
+							}
+						}
+						else
 						{
 
 							try
@@ -1194,20 +1187,6 @@ namespace PSTools
 			return __selChannel;
 		}
 
-		private int countScreenSelection(Photoshop.Document __doc)
-		{
-			int __count = 0;
-			foreach (Photoshop.Channel __channel in __doc.Channels)
-			{
-				//MessageBox.Show(__channel.Name);
-				if (__channel.Name.Contains("screen"))
-				{
-					__count++;
-				}
-			}
-
-			return __count;
-		}
 
 		/// <summary>
 		/// Determines whether [has screen selection] [the specified __doc].
