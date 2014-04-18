@@ -52,6 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -85,6 +86,7 @@
     <Compile Include="Form.Designer.cs">
       <DependentUpon>Form.cs</DependentUpon>
     </Compile>
+    <Compile Include="pstools\action\ActionSaveScreenSelection.cs" />
     <Compile Include="pstools\action\AutoClosingMessageBox.cs" />
     <Compile Include="pstools\action\ImageRight.cs" />
     <Compile Include="pstools\conf\IniParser.cs" />
