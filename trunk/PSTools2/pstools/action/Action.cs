@@ -1806,7 +1806,7 @@ namespace PSTools
 
 		private void addFont(Photoshop.Document __docRef, List<string> __fonts, string __filename, bool __messageWhenDone)
 		{
-			Regex __RegexObj = new Regex("_v\\d*$");
+			Regex __RegexObj = new Regex("_(v|V)\\d*$");
 			string __shortfilename = __docRef.Name.Substring(0, __filename.LastIndexOf("."));
 			__shortfilename = __RegexObj.Replace(__shortfilename, "");
 
