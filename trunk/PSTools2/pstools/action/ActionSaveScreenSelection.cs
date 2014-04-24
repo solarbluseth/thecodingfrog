@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace PSTools
 {
 	class ActionSaveScreenSelection
 	{
-		private Photoshop.Document __doc;
+		private Photoshop.Document __doc = null;
 		private Photoshop.JPEGSaveOptions __saveOptions;
 		private List<List<string>> __channelsSelectionList = new List<List<string>> ();
 		private List<List<string>> __boundsSelectionList = new List<List<string>> ();
@@ -92,6 +93,7 @@ namespace PSTools
 			Photoshop.ArtLayer __layer;
 			object __selBounds;
 			int __idx = 0;
+			
 
 			if (__countChannels > 0)
 			{
@@ -230,6 +232,43 @@ namespace PSTools
 				Directory.CreateDirectory(__doc.Path + "/+ Screens/");
 
 			__duppedDocument.SaveAs(__doc.Path + "/+ Screens/" + __fileNameBody, __saveOptions, true, null);
+		}
+
+		public void wipeOldScreens()
+		{
+			//MessageBox.Show(__doc.Name); 
+			FileInfo[] __afi;
+			DirectoryInfo __di =  null;
+
+			if (__doc != null)
+			{
+				try
+				{
+					__di = new DirectoryInfo(__doc.Path + "/+ Screens/");
+				}
+				catch (Exception)
+				{
+				}
+
+				Regex __RegexObj = new Regex("(.*_[vV])\\d*");
+
+				Match __match = __RegexObj.Match(__doc.Name);
+
+				if (__match.Groups.Count > 0)
+				{
+					string __shortName = __match.Groups[1].Value; 
+					
+					__afi = __di.GetFiles(__shortName + "*.jpg");
+					foreach (FileInfo __fi in __afi)
+					{
+						try
+						{
+							File.Delete(__doc.Path + "/+ Screens/" + __fi.Name);
+						}
+						catch { }
+					}
+				}
+			}
 		}
 
 		public bool hasSelection

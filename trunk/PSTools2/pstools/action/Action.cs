@@ -729,6 +729,8 @@ namespace PSTools
 			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
 
 			__hasSelection = __asss.hasSelection;
+			if (__asss.hasSelection)
+				__asss.wipeOldScreens();
 
 			// Exporting layercomps by index or name
 			if (__exportLayerComps)
