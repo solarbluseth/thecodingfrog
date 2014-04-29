@@ -242,33 +242,38 @@ namespace PSTools
 
 			if (__doc != null)
 			{
-				try
+				if (Directory.Exists(__doc.Path + "/+ Screens/"))
 				{
-					__di = new DirectoryInfo(__doc.Path + "/+ Screens/");
-				}
-				catch (Exception)
-				{
-				}
-
-				Regex __RegexObj = new Regex("(.*_[vV])\\d*");
-
-				Match __match = __RegexObj.Match(__doc.Name);
-
-				if (__match.Groups.Count > 0)
-				{
-					string __shortName = __match.Groups[1].Value; 
-					
-					__afi = __di.GetFiles(__shortName + "*.jpg");
-					foreach (FileInfo __fi in __afi)
+					try
 					{
-						try
+						__di = new DirectoryInfo(__doc.Path + "/+ Screens/");
+					}
+					catch (Exception)
+					{
+						goto finish;
+					}
+
+					Regex __RegexObj = new Regex("(.*_[vV])\\d*");
+
+					Match __match = __RegexObj.Match(__doc.Name);
+
+					if (__match.Groups.Count > 0)
+					{
+						string __shortName = __match.Groups[1].Value;
+
+						__afi = __di.GetFiles(__shortName + "*.jpg");
+						foreach (FileInfo __fi in __afi)
 						{
-							File.Delete(__doc.Path + "/+ Screens/" + __fi.Name);
+							try
+							{
+								File.Delete(__doc.Path + "/+ Screens/" + __fi.Name);
+							}
+							catch { }
 						}
-						catch { }
 					}
 				}
 			}
+			finish: { }
 		}
 
 		public bool hasSelection
