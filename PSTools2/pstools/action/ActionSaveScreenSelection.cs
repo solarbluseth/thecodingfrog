@@ -10,7 +10,8 @@ namespace PSTools
 	class ActionSaveScreenSelection
 	{
 		private Photoshop.Document __doc = null;
-		private Photoshop.JPEGSaveOptions __saveOptions;
+		//private Photoshop.JPEGSaveOptions __saveOptions;
+		private Photoshop.ExportOptionsSaveForWeb __saveOptions;
 		private List<List<string>> __channelsSelectionList = new List<List<string>> ();
 		private List<List<string>> __boundsSelectionList = new List<List<string>> ();
 		private int __countTotal = 0;
@@ -19,7 +20,8 @@ namespace PSTools
 		private char[] __delimitersOne = new char[] { '=' };
 		private char[] __delimitersTwo = new char[] { ',' };
 
-		public ActionSaveScreenSelection(Photoshop.Document __docRef, Photoshop.JPEGSaveOptions __jpgSaveOptions)
+		//public ActionSaveScreenSelection(Photoshop.Document __docRef, Photoshop.JPEGSaveOptions __jpgSaveOptions)
+		public ActionSaveScreenSelection(Photoshop.Document __docRef, Photoshop.ExportOptionsSaveForWeb __jpgSaveOptions)
 		{
 			__doc = __docRef;
 			__saveOptions = __jpgSaveOptions;
@@ -52,6 +54,8 @@ namespace PSTools
 					if (__layer.Name.Contains("@screen"))
 					{
 						__countBounds++;
+						if (__layer.Visible) // Hide bounds before saving
+							__layer.Visible = false;
 						addToCompList(__layer.Name, __boundsSelectionList);
 					}
 				}
@@ -227,11 +231,13 @@ namespace PSTools
 				__sidx = "." + __subindex;
 			__fileNameBody = (__doc.Name.LastIndexOf(".") > -1) ? __doc.Name.Substring(0, __doc.Name.LastIndexOf(".")) : __doc.Name;
 			__fileNameBody += (__count <= 1) ? "" : "." + __idx + __sidx + "";
-			__fileNameBody += ".jpg";
+			//__fileNameBody += ".jpg";
+			__fileNameBody += ".png";
 			if (!Directory.Exists(__doc.Path + "/+ Screens/"))
 				Directory.CreateDirectory(__doc.Path + "/+ Screens/");
 
-			__duppedDocument.SaveAs(__doc.Path + "/+ Screens/" + __fileNameBody, __saveOptions, true, null);
+			//__duppedDocument.SaveAs(__doc.Path + "/+ Screens/" + __fileNameBody, __saveOptions, true, null);
+			__duppedDocument.Export(__doc.Path + "/+ Screens/" + __fileNameBody, 2, __saveOptions);
 		}
 
 		public void wipeOldScreens()
