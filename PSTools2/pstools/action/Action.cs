@@ -728,7 +728,7 @@ namespace PSTools
 			__compsCount = __docRef.LayerComps.Count;
 
 			//ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
-			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __pngExportOptionsSaveForWeb);
+			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef);
 
 			__hasSelection = __asss.hasSelection;
 			if (__asss.hasSelection)

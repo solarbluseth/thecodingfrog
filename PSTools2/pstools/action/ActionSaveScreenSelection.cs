@@ -11,7 +11,8 @@ namespace PSTools
 	{
 		private Photoshop.Document __doc = null;
 		//private Photoshop.JPEGSaveOptions __saveOptions;
-		private Photoshop.ExportOptionsSaveForWeb __saveOptions;
+		//private Photoshop.ExportOptionsSaveForWeb __saveOptions;
+		private Photoshop.PNGSaveOptions __saveOptions;
 		private List<List<string>> __channelsSelectionList = new List<List<string>> ();
 		private List<List<string>> __boundsSelectionList = new List<List<string>> ();
 		private int __countTotal = 0;
@@ -21,10 +22,11 @@ namespace PSTools
 		private char[] __delimitersTwo = new char[] { ',' };
 
 		//public ActionSaveScreenSelection(Photoshop.Document __docRef, Photoshop.JPEGSaveOptions __jpgSaveOptions)
-		public ActionSaveScreenSelection(Photoshop.Document __docRef, Photoshop.ExportOptionsSaveForWeb __jpgSaveOptions)
+		public ActionSaveScreenSelection(Photoshop.Document __docRef)
 		{
 			__doc = __docRef;
-			__saveOptions = __jpgSaveOptions;
+
+			__saveOptions = new Photoshop.PNGSaveOptions();
 
 			countSelections(__doc);
 		}
@@ -231,13 +233,11 @@ namespace PSTools
 				__sidx = "." + __subindex;
 			__fileNameBody = (__doc.Name.LastIndexOf(".") > -1) ? __doc.Name.Substring(0, __doc.Name.LastIndexOf(".")) : __doc.Name;
 			__fileNameBody += (__count <= 1) ? "" : "." + __idx + __sidx + "";
-			//__fileNameBody += ".jpg";
 			__fileNameBody += ".png";
 			if (!Directory.Exists(__doc.Path + "/+ Screens/"))
 				Directory.CreateDirectory(__doc.Path + "/+ Screens/");
 
-			//__duppedDocument.SaveAs(__doc.Path + "/+ Screens/" + __fileNameBody, __saveOptions, true, null);
-			__duppedDocument.Export(__doc.Path + "/+ Screens/" + __fileNameBody, 2, __saveOptions);
+			__duppedDocument.SaveAs(__doc.Path + "/+ Screens/" + __fileNameBody, __saveOptions, true, null);
 		}
 
 		public void wipeOldScreens()
@@ -267,7 +267,7 @@ namespace PSTools
 					{
 						string __shortName = __match.Groups[1].Value;
 
-						__afi = __di.GetFiles(__shortName + "*.jpg");
+						__afi = __di.GetFiles(__shortName + "*.png");
 						foreach (FileInfo __fi in __afi)
 						{
 							try

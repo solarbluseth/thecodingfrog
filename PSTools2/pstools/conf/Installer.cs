@@ -293,7 +293,7 @@ namespace PSTools
 
 			// PSTools.Screen
 			__newKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\CommandStore\\\\shell\\\\PSTools.Screen");
-			__newKey.SetValue("MUIVerb", "Save Screen Selection As JPEG", RegistryValueKind.String);
+			__newKey.SetValue("MUIVerb", "Save Screen Selection As PNG", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "shell32.dll,259", RegistryValueKind.String);
 			__newKey.Close();
 
