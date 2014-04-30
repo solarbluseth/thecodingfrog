@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 //using System.Drawing.Text;
 //using System.Drawing.FontFamily;
 
@@ -726,7 +727,8 @@ namespace PSTools
 			
 			__compsCount = __docRef.LayerComps.Count;
 
-			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
+			//ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __jpgSaveOptions);
+			ActionSaveScreenSelection __asss = new ActionSaveScreenSelection(__docRef, __pngExportOptionsSaveForWeb);
 
 			__hasSelection = __asss.hasSelection;
 			if (__asss.hasSelection)
@@ -1659,14 +1661,24 @@ namespace PSTools
 				__selectedfilename = __selectedfile.Name;
 				__selectedfileext = __selectedfile.Extension;
 			}
-			
-			if (File.Exists(__path + "\\.dbx"))
+
+			if (File.Exists(__path + "\\.dbx") || File.Exists(__path + "\\+ Screens\\.dbx"))
 			{
 				__ini = new IniFile(__path + "\\.dbx");
-				__inifi = new FileInfo(__path + "\\.dbx");
+				string __conf = __ini.IniReadValue("Dropbox", System.Environment.UserName);
+				if (__conf == "")
+				{
+					__ini = new IniFile(__path + "\\+ Screens\\.dbx");
+					__conf = __ini.IniReadValue("Dropbox", System.Environment.UserName);
+					__inifi = new FileInfo(__path + "\\+ Screens\\.dbx");
+				}
+				else
+				{
+					__inifi = new FileInfo(__path + "\\.dbx");
+				}
 				__inifi.Attributes = FileAttributes.Hidden;
 
-				string __conf = __ini.IniReadValue("Dropbox", System.Environment.UserName);
+				string[] extensions = { ".jpg", ".png", ".gif" };
 				if (__conf != "")
 				{
 					if (Directory.Exists(__conf))
@@ -1674,7 +1686,7 @@ namespace PSTools
 						if (__isdir) // IF DIRECTORY
 						{
 							string[] __files;
-							__files = Directory.GetFiles(__conf, "*.jpg");
+							__files = Directory.GetFiles(__conf, "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 							foreach (string __file in __files)
 							{
 								try
@@ -1687,7 +1699,7 @@ namespace PSTools
 								}
 							}
 
-							__files = Directory.GetFiles(__path, "*.jpg");
+							__files = Directory.GetFiles(__path, "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 							
 							foreach (string __file in __files)
 							{
@@ -1709,7 +1721,7 @@ namespace PSTools
 							if (__selectedfileext.ToLower() == ".psd") //IF PSD FILE
 							{
 								string __tempname = __selectedfilename.Substring(0, __selectedfilename.Length - __selectedfileext.Length);
-								string[] __files = Directory.GetFiles(__path, __tempname + "*.jpg");
+								string[] __files = Directory.GetFiles(__path + "/+ Screens", __tempname + "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 
 								foreach (string __file in __files)
 								{
