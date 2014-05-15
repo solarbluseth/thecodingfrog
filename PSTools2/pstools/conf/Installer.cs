@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace PSTools
 {
@@ -15,10 +16,11 @@ namespace PSTools
 			int __i = 0; 
 			foreach (Version.Versions __item in Enum.GetValues(typeof(Version.Versions)))
 			{
-				if (__version.check(__item))
+                if (__version.check(__item))
 				{
-					//MessageBox.Show((int)__item + " > ");
-					installVersion((int)__item, Version.IllustratorVersions[__i], Version.PSBVersions[__i]);
+                    // fix for Enum.GetValues sorting
+                    int __idx = Version.OrderVersions.IndexOf(__item.ToString());
+                    installVersion((int)__item, Version.IllustratorVersions[__i], Version.PSBVersions[__idx]);
 				}
 				__i++;
 			}
@@ -114,6 +116,7 @@ namespace PSTools
 			__newKey.SetValue("SubCommands", "PSTools.JPEGByIndex100;PSTools.Screen;PSTools.JPEGByIndex60;PSTools.JPEGByName100;PSTools.JPEGByName60;PSTools.PNGByIndex;PSTools.PNGByName;PSTools.GIFByIndex;PSTools.PDFByIndex;PSTools.ListFonts;PSTools.ExportAssets;PSTools.Dropbox;PSTools.ImagesRights;PSTools.SO;PSTools.Clean;PSTools.Config", RegistryValueKind.String);
 			__newKey.Close();
 
+            //MessageBox.Show(__psbVersion);
 			__newKey = Registry.ClassesRoot.CreateSubKey("Photoshop.PSBFile." + __psbVersion + "\\\\shell\\\\PSTools");
 			__newKey.SetValue("MUIVerb", "Photoshop actions...", RegistryValueKind.String);
 			__newKey.SetValue("Icon", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\",0", RegistryValueKind.String);

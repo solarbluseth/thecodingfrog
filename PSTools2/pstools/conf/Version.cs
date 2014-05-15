@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace PSTools
 {
@@ -20,6 +21,7 @@ namespace PSTools
 			CC = 14
 		}
 
+        public static List<string> OrderVersions = new List<string>() { "CS3", "CS4", "CS5", "CS55", "CS6", "CC" };
 		public static List<string> IllustratorVersions = new List<string>() { "12", "13", "14", "15.1", "16", "17" };
 		public static List<string> PSBVersions = new List<string>() { "11", "12", "13", "55", "60", "70" };
 		//public decimal IllustratorVersions = {"12", "13", "14", "15.1"};
@@ -65,7 +67,9 @@ namespace PSTools
 		/// <returns></returns>
 		public bool check(Versions __version)
 		{
+            //MessageBox.Show(">" + ((int)__version).ToString());
 			__key = Registry.ClassesRoot.OpenSubKey("Photoshop.Image." + (int)__version);
+            //MessageBox.Show(__key.Name);
 			if (__key != null)
 			{
 				//MessageBox.Show(__key.Name);
