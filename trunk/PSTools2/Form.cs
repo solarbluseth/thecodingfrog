@@ -138,7 +138,7 @@ namespace PSTools
 					__args = Environment.GetCommandLineArgs();
 					// 0 if debug mode
 					__idx = 1;
-					//__args = new string[] { "-s", "V:\\OTMONT_OT_Montpellier\\WEB14\\04_Design\\Mobile\\01_HomeMob_v02.psd", "jpg", "index", "12" };
+                    //__args = new string[] { "-s", "V:\\OTCLYON_OfficeTourismeCongrèsLyon\\LCC_LyonCityCard\\04_Design\\02_Desktop\\+ Elements\\++ J’achète la citycard_v01.psb", "jpg", "index", "12" };
 					//__args = new string[] { "-s", "E:\\AI\\02_liste_v04.psd", "jpg", "index", "12" };
 					/*#if DEBUG
 					#else
