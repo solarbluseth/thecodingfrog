@@ -1,2 +1,2 @@
-REM java -jar ucf.jar -package -storetype PKCS12 -keystore jlp.pfx -storepass zorglub ./Boxes.zxp -C E:/dev/Boxes
-java -jar ucf.jar -package -storetype PKCS12 -keystore jlp.pfx -storepass zorglub Boxes.zxp -C ./Package E:/dev/Boxes/Package
+REM java -jar ucf.jar -package -storetype PKCS12 -keystore jlp.pfx -storepass zorglub ./Boxes.zxp -C D:/dev/Boxes
+java -jar ucf.jar -package -storetype PKCS12 -keystore jlp.pfx -storepass zorglub Boxes.zxp -C ./Package D:/dev/Boxes/Package
