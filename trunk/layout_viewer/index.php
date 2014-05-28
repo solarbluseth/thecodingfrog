@@ -38,6 +38,7 @@
   <meta charset="UTF-8">
   <title>Prévisualisation des maquettes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function(){
@@ -105,9 +106,9 @@
     .left{float:left}
     .right{float:right}
     .control{width:100%;position:fixed;top:0;left:0}
-    .control a{width:33.33%;margin:0 auto;padding:50px 0;background-color:rgba(0,0,0,.0)}
-	.control a:hover{background-color:rgba(0,0,0,.5)}
-    a.menu{width:33%;float:left;z-index: 2;}
+    .control a{width:33.33%;margin:0 auto;padding:50px 0;background-color:rgba(0,0,0,.0);color:rgba(255,255,255,.0);text-align:center;}
+	.control a:hover{background-color:rgba(0,0,0,.5);color:rgba(255,255,255,1);}
+    a.menu{width:33%;float:left;z-index: 2;text-align:center;}
     .bckg{display:none;width:100%;height:100%;position:fixed;z-index:1;top:0;left:0;background-color:rgba(0,0,0,.6)}
     aside{width:80%;position:fixed;z-index:3;top:0;right:-85%;text-align:left;height:100%;background-color:#444;box-shadow:-2px 0 10px rgba(0,0,0,.5);overflow-y:auto}
     ul{padding:0;list-style:none}
@@ -123,9 +124,9 @@
 <body>
    
   <div class="control">
-    <a href="" class="right next"></a>
-    <a href="" class="left prev"></a>
-    <a href="#" class="menu"></a>
+    <a href="" class="right next"><i class="fa fa-angle-right fa-2x"></i></a>
+    <a href="" class="left prev"><i class="fa fa-angle-left fa-2x"></i></a>
+    <a href="#" class="menu"><i class="fa fa-bars fa-2x"></i></a>
   </div>
 
   <aside>
