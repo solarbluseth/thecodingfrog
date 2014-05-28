@@ -126,8 +126,8 @@ namespace PSTools
 					exportAssets(__docRef, __docRef.Layers);
 					break;
 				case Actions.COPY_TO_DROPBOX:
-					copyToDropbox(__args);
-					AutoClosingMessageBox.Show("All files were copied to Dropbox", "PSTools", 1500);
+					int __nbfiles = copyToDropbox(__args);
+					AutoClosingMessageBox.Show(__nbfiles + " file(s) were copied to Dropbox", "PSTools", 1500);
 					break;
 				case Actions.LIST_FONTS:
 					listFonts(__docRef, __docRef.Name, true);
@@ -1638,7 +1638,7 @@ namespace PSTools
 		/// Copies to dropbox.
 		/// </summary>
 		/// <param name="__args">Arguments</param>
-		private void copyToDropbox(string[] __args)
+		private int copyToDropbox(string[] __args)
 		{
 			IniFile __ini;
 			FileInfo __inifi;
@@ -1647,6 +1647,7 @@ namespace PSTools
 			FileInfo __selectedfile = null;
 			string __selectedfilename = null;
 			string __selectedfileext = null;
+            int __count = 0;
 
 			if (Directory.Exists(__args[1 +__form.idx]))
 			{
@@ -1686,7 +1687,7 @@ namespace PSTools
 						if (__isdir) // IF DIRECTORY
 						{
 							string[] __files;
-							__files = Directory.GetFiles(__conf, "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
+							__files = Directory.GetFiles(__conf, "*.*", SearchOption.TopDirectoryOnly).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 							foreach (string __file in __files)
 							{
 								try
@@ -1699,10 +1700,11 @@ namespace PSTools
 								}
 							}
 
-							__files = Directory.GetFiles(__path, "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
+                            __files = Directory.GetFiles(__path, "*.*", SearchOption.TopDirectoryOnly).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 							
 							foreach (string __file in __files)
 							{
+                                __count++;
 								FileInfo __fi = new FileInfo(__file);
 								
 								try
@@ -1721,11 +1723,12 @@ namespace PSTools
 							if (__selectedfileext.ToLower() == ".psd") //IF PSD FILE
 							{
 								string __tempname = __selectedfilename.Substring(0, __selectedfilename.Length - __selectedfileext.Length);
-								string[] __files = Directory.GetFiles(__path + "/+ Screens", __tempname + "*.*", SearchOption.AllDirectories).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
+								string[] __files = Directory.GetFiles(__path + "/+ Screens", __tempname + "*.*", SearchOption.TopDirectoryOnly).Where(f => extensions.Contains(new FileInfo(f).Extension.ToLower())).ToArray();
 
 								foreach (string __file in __files)
 								{
-									FileInfo __fi = new FileInfo(__file);
+                                    __count++;
+                                    FileInfo __fi = new FileInfo(__file);
 									try
 									{
 										__fi.CopyTo(__conf + "\\" + __fi.Name, true);
@@ -1738,7 +1741,8 @@ namespace PSTools
 							}
 							else if (__selectedfileext.ToLower() == ".jpg" || __selectedfileext.ToLower() == ".png") //IF JPEG/PNG FILE
 							{
-								__selectedfile.CopyTo(__conf + "\\" + __selectedfilename, true);
+                                __count++;
+                                __selectedfile.CopyTo(__conf + "\\" + __selectedfilename, true);
 							}
 						}
 					}
@@ -1767,10 +1771,12 @@ namespace PSTools
 				__ini.IniWriteValue("Dropbox", System.Environment.UserName, __prompt);
 				__inifi = new FileInfo(__path + "\\.dbx");
 				__inifi.Attributes = FileAttributes.Hidden;
-				copyToDropbox(__args);
+				return copyToDropbox(__args);
 			}
-		stop:
-			{ }
+        stop:
+            {
+                return __count;                        
+            }
 		}
 
 		private void listFonts(Photoshop.Document __docRef, string __filename, bool __messageWhenDone)
