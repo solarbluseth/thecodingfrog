@@ -12,7 +12,6 @@
 			$__maquettes[$count]['file'] = $file;
 			$__maquettes[$count]['filename'] = $path_parts['filename'];
 			$__maquettes[$count]['filedate'] = filemtime($file);
-			//echo $path_parts['filename'] . " > " . $_COOKIE[$path_parts['filename']] . "\n";
 			if ($_COOKIE[str_replace(".", "_", $path_parts['filename'])] != '')
 			{
 				if ($_COOKIE[str_replace(".", "_", $path_parts['filename'])] == filemtime($file))
@@ -106,7 +105,8 @@
     .left{float:left}
     .right{float:right}
     .control{width:100%;position:fixed;top:0;left:0}
-    .control a{width:33.33%;margin:0 auto;padding:50px 0}
+    .control a{width:33.33%;margin:0 auto;padding:50px 0;background-color:rgba(0,0,0,.0)}
+	.control a:hover{background-color:rgba(0,0,0,.5)}
     a.menu{width:33%;float:left;z-index: 2;}
     .bckg{display:none;width:100%;height:100%;position:fixed;z-index:1;top:0;left:0;background-color:rgba(0,0,0,.6)}
     aside{width:80%;position:fixed;z-index:3;top:0;right:-85%;text-align:left;height:100%;background-color:#444;box-shadow:-2px 0 10px rgba(0,0,0,.5);overflow-y:auto}
