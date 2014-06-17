@@ -1,5 +1,5 @@
 using System;
 public class CompileDate
 {
-	public static DateTime BuildDate = new DateTime(2014, 5, 28, 15, 18, 54);
+	public static DateTime BuildDate = new DateTime(2014, 6, 11, 15, 22, 2);
 }

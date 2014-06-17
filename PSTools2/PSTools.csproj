@@ -194,15 +194,15 @@ copy $(TargetFileName) "R:\JLP"</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.Increment.None" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files (x86)\Microsoft Visual Studio 9.0\pre-build.vbs" $(ProjectExt) $(ProjectDir)</PreBuildEvent>
-    <PostBuildEvent>copy $(TargetPath) "C:\Program Files (x86)\Adobe"
-"C:\Program Files (x86)\winzip\wzzip.exe" $(projectDir)PSTools2.zip $(TargetPath) 
-copy $(TargetFileName) "R:\JLP"
-copy $(projectDir)PSTools2.zip "R:\JLP"</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(TargetPath) "C:\Program Files (x86)\Adobe"
+"C:\Program Files\7-Zip\7z.exe" a $(projectDir)PSTools2.zip $(TargetPath) 
+REM copy $(TargetPath) "R:\JLP\"
+REM copy /Y $(projectDir)PSTools2.zip R:\JLP</PostBuildEvent>
   </PropertyGroup>
 </Project>
