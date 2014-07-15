@@ -1920,7 +1920,7 @@ namespace PSTools
 				__sysfonts.Add(__font.Source);
 			}*/
 
-			if (__messageWhenDone) AutoClosingMessageBox.Show("Fonts list saved !", "PSTools", 3000);
+			if (__messageWhenDone) AutoClosingMessageBox.Show("Fonts list saved !", "PSTools", 1500);
 					
 		}
 	}	
