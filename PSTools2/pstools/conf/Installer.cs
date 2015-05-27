@@ -20,7 +20,7 @@ namespace PSTools
 				{
                     // fix for Enum.GetValues sorting
                     int __idx = Version.OrderVersions.IndexOf(__item.ToString());
-                    installVersion((int)__item, Version.IllustratorVersions[__i], Version.PSBVersions[__idx]);
+                    installVersion((int)__item, Version.IllustratorVersions[__idx], Version.PSBVersions[__idx]);
 				}
 				__i++;
 			}
